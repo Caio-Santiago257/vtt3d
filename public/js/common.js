@@ -30,6 +30,8 @@ export const HEROES = [
 export const MONSTERS = [
   // size: quantos quadrados o monstro ocupa de cada lado (Enorme = 3); o servidor lê o mesmo número do manifest
   { id: 'Dragao_Negro', nome: 'Dragão do Véu Corrompido', url: '/assets/characters/dragao_negro/char_dragao_negro.glb', scale: M, size: 3, fly: 24 },
+  // Kobold: Pequeno, 1,2 m; pernas digitígradas e cauda (fontes/blender/kobold_*.py)
+  { id: 'Kobold', nome: 'Kobold', url: '/assets/characters/kobold/char_kobold.glb', scale: M },
   { id: 'Skeleton_Warrior', nome: 'Esqueleto guerreiro' },
   { id: 'Skeleton_Minion', nome: 'Esqueleto lacaio' },
   { id: 'Skeleton_Rogue', nome: 'Esqueleto ladino' },

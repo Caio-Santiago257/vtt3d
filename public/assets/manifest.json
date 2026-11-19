@@ -104,6 +104,16 @@
   "voo": 24
  },
  {
+  "id": "Kobold",
+  "nome": "Kobold",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "tamanho": 1,
+  "deslocamento": 9,
+  "url": "/assets/characters/kobold/char_kobold.glb",
+  "nota": "Guerreiro kobold — modelo recebido (Meshy KoboldWarrior3D, 1,3 mi de triângulos), reduzido para 80 mil, rigado e animado por script (fontes/blender/kobold_*.py): pernas digitígradas, cauda em 5 ossos, mandíbula. 1,2 m até os chifres; tamanho Pequeno (1 quadrado)."
+ },
+ {
   "id": "Skeleton_Warrior",
   "nome": "Esqueleto guerreiro",
   "categoria": "Inimigos",

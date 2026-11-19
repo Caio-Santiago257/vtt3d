@@ -148,7 +148,7 @@ Os arquivos ficam em `public/assets/maps/estrada/`. O motor de mapas (`public/js
 
 ## Retratos da ordem de iniciativa
 
-- **Arte desenhada:** a Kaira, nas três versões do modelo, o Ghult'ok, o Guy, o Dragão do Véu Corrompido e os quatro tipos de esqueleto usam a arte desenhada no lugar da foto do modelo 3D.
+- **Arte desenhada:** a Kaira, nas três versões do modelo, o Ghult'ok, o Guy, o Kobold, o Dragão do Véu Corrompido e os quatro tipos de esqueleto usam a arte desenhada no lugar da foto do modelo 3D.
 - **Arquivos:** os originais estão em `fontes/recebidos/retratos/`. Os recortes do rosto, em 256 px, estão em `public/assets/retratos/`.
 - **Moldura:** o retrato é quadrado, com uma moldura dourada fina e dois losangos dourados nos cantos, uma versão simples da moldura da arte. Os cartões da ordem ficaram menores.
 - **Novos retratos:** acrescente uma linha em `ART`, em `public/js/combate-ui.js`.
@@ -431,6 +431,23 @@ A Kaira anterior, modelada inteira por script (`fontes/blender/kaira.py`), conti
   - `hit` e `death`.
 - **Câmera:** os olhos ficam mais baixos, a 1,15 em vez de 1,8. A câmera de 3ª pessoa fica mais perto e mais baixa, na mesma proporção.
 - **Não foi feito no Unity:** este ambiente não tem Unity. Tudo foi feito por script, com Blender.
+
+**Kobold (monstro):** vem do modelo recebido (`fontes/recebidos/kobold_recebido.glb`, original preservado), preparado em duas etapas:
+
+1. `fontes/blender/kobold_1_reduzir.py`: reduz de 1,3 milhão para 80 mil triângulos.
+2. `fontes/blender/kobold_2_rig.py`: costura as emendas soltas da malha, cria o esqueleto, distribui os pesos, gera as animações e exporta `public/assets/characters/kobold/char_kobold.glb` (6,2 MB).
+
+- **Ficha no jogo:** aparece na lista de monstros (Inimigos). Tamanho Pequeno (1 quadrado), 1,2 m de altura, deslocamento 9 m. O retrato da ordem de iniciativa é `public/assets/retratos/kobold.webp`.
+- **Esqueleto:** coluna, pescoço em duas partes, cabeça e mandíbula, cauda com 5 ossos, pernas digitígradas (coxa, canela, pé e dedos) e tanga na frente e atrás. Tem os mesmos sockets dos outros personagens.
+- **Pesos:** as partes são separadas por posição e pela cor da textura (a tanga amarela, as adagas do cinto e o vermelho das escamas). As adagas do cinto seguem só o quadril.
+- **Pés no chão:** em cada quadro, o script calcula a posição dos pés e ajusta a altura do corpo para o pé de apoio tocar o chão.
+- **Animações:**
+  - `idle`: 4 s; agachado, olha em volta aos trancos, como um réptil, rosna, mexe as garras e a cauda;
+  - `walk` e `run`: passos curtos e rápidos, corpo inclinado para a frente, cauda balançando;
+  - `attack`: bote com as garras e mordida;
+  - `cast`: grito de guerra com a boca bem aberta;
+  - `hit` e `death`.
+- **Limites:** em poses extremas, aparecem pequenos esticões no cinto e na junção do quadril.
 
 **Kaira alada (Revelação Celestial):** vem do segundo modelo recebido do Meshy (`fontes/recebidos/kaira_asas_recebido.glb`, original preservado), preparado em duas etapas:
 

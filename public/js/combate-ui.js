@@ -111,6 +111,7 @@ const ART = {
   Skeleton_Warrior: '/assets/retratos/esqueleto.webp', Skeleton_Minion: '/assets/retratos/esqueleto.webp',
   Skeleton_Rogue: '/assets/retratos/esqueleto.webp', Skeleton_Mage: '/assets/retratos/esqueleto.webp',
   Dragao_Negro: '/assets/retratos/dragao_veu.webp', Ghultok: '/assets/retratos/ghultok.webp', Guy: '/assets/retratos/guy.webp',
+  Kobold: '/assets/retratos/kobold.webp',
 };
 export const hasArt = (model) => !!ART[model];
 export function setPortrait(img, model) {
