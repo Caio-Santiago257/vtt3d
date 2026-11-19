@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b10">
+<title>VTT 3D — Jogador</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VTT 3D">
+<link rel="stylesheet" href="/css/estilo.css">
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+</head>
+<body class="jogador">
+<canvas id="c"></canvas>
+
+<div id="entrada" class="painel-central">
+  <h1>Entrar na sessão</h1>
+  <label for="nome">Nome do personagem</label>
+  <input id="nome" maxlength="20" autocomplete="off" placeholder="Ex.: Rellgan">
+  <p class="rotulo">Escolha o personagem</p>
+  <div id="herois" class="grade"></div>
+  <button id="entrar" class="primario">Entrar</button>
+  <p id="erro" class="erro" hidden></p>
+</div>
+
+<div id="hud" hidden>
+  <div id="aviso" class="faixa" hidden></div>
+  <div id="dica" class="dica">Esquerda: andar · Direita: olhar</div>
+  <div id="stick" class="stick" hidden><div></div></div>
+  <button id="interagir" class="acao" hidden>Abrir porta</button>
+  <div id="voo" class="voo" hidden>
+    <button id="voo-sobe" aria-label="Subir">▲</button>
+    <div class="voo-alt"><span>ALTURA</span><b id="voo-alt">0 m</b></div>
+    <button id="voo-desce" aria-label="Descer">▼</button>
+  </div>
+  <div id="ordem"></div>
+  <div id="cmd" class="cmd" hidden></div>
+  <div id="mov" class="mov" hidden><div class="mov-txt"><span>MOVIMENTO</span><b id="mov-n">9 m</b><span id="mov-de"></span><span id="mov-tag" class="mov-tag" hidden></span></div><div class="mov-bar"><i id="mov-bar"></i></div></div>
+  <button id="vista" class="vista">3ª PESSOA</button>
+  <button id="telacheia" class="telacheia" hidden aria-label="Tela cheia">⛶</button>
+  <button id="revelar" class="revelar" hidden>✦ REVELAÇÃO CELESTIAL</button>
+  <button id="btn-area" class="btn-area" hidden>◎ ÁREA DE MAGIA</button>
+  <div id="area-escolha" class="area-escolha" hidden>
+    <div class="ae-topo"><b id="ae-titulo">ÁREA DA MAGIA</b><button id="ae-fechar" aria-label="Fechar">✕</button></div>
+    <div id="ae-corpo" class="ae-corpo"></div>
+  </div>
+  <div id="tatico" class="tatico" hidden>
+    <div class="tt-topo"><b id="tt-nome"></b><span id="tt-desc"></span></div>
+    <div id="tt-dica" class="tt-dica">Arraste o dedo no mapa para posicionar a área</div>
+    <div id="tt-alvos" class="tt-alvos"></div>
+    <div class="tt-zoom"><button id="tt-mais" aria-label="Aproximar">＋</button><button id="tt-menos" aria-label="Afastar">－</button></div>
+    <div class="tt-botoes"><button id="tt-cancelar" class="tt-cancelar">CANCELAR</button><button id="tt-confirmar" class="tt-confirmar">CONFIRMAR</button></div>
+  </div>
+  <div id="possuido" class="possuido" hidden><span>VISÃO DE</span><b id="possuido-nome"></b><button id="possuido-sair">◀ VOLTAR AO MESTRE</button></div>
+</div>
+<script type="module" src="/js/jogador.js"></script>
+</body>
+</html>

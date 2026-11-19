@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VTT 3D — Galeria de assets</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/css/estilo.css">
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+<style>
+  body.galeria { overflow: hidden; }
+  #g-lista { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; overflow-y: auto; background: #14141a; border-right: 1px solid #2a2a35; padding: 12px; }
+  #g-lista h1 { font: 22px 'Anton', sans-serif; letter-spacing: .06em; color: #ffdf9e; margin: 0 0 10px; }
+  #g-lista h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #a9a59b; margin: 14px 0 6px; }
+  #g-lista button { display: block; width: 100%; text-align: left; padding: 6px 9px; margin-bottom: 4px; border-radius: 7px; border: 1px solid #2c2c38; background: #1b1b23; font-size: 13px; }
+  #g-lista button.sel { border-color: #e0a84a; background: #33290f; color: #ffdf9e; }
+  #g-lista button small { color: #807c74; margin-left: 4px; }
+  body.galeria canvas#c { left: 240px; width: calc(100% - 240px); }
+  #g-barra { position: fixed; left: 252px; right: 12px; top: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; z-index: 5; }
+  #g-barra button, #g-barra select { padding: 6px 10px; border-radius: 7px; border: 1px solid #34343f; background: rgba(20,20,26,.9); color: inherit; font: inherit; font-size: 13px; }
+  #g-barra button.on { border-color: #e0a84a; color: #ffdf9e; }
+  #g-info { position: fixed; right: 12px; bottom: 12px; z-index: 5; background: rgba(12,11,16,.85); border: 1px solid #2c2c38; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; min-width: 220px; }
+  #g-info b { color: #ffdf9e; }
+  #g-info table { border-collapse: collapse; width: 100%; } #g-info td { padding: 1px 0; } #g-info td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  #g-rotulos { position: fixed; left: 240px; right: 0; bottom: 18px; display: flex; pointer-events: none; z-index: 4; }
+  #g-rotulos span { flex: 1; text-align: center; font: 15px 'Anton', sans-serif; letter-spacing: .08em; color: #fff; text-shadow: 1px 1px 0 #000, 0 0 6px rgba(0,0,0,.7); }
+  #g-titulo { position: fixed; left: 256px; top: 52px; z-index: 4; font: 30px 'Anton', sans-serif; letter-spacing: .04em; color: #ffdf9e; text-shadow: 2px 2px 0 #000; pointer-events: none; }
+  #g-titulo small { display: block; font: 600 13px system-ui, sans-serif; letter-spacing: 0; color: #cfcbc2; }
+</style>
+</head>
+<body class="galeria">
+<aside id="g-lista"><h1>GALERIA</h1></aside>
+<canvas id="c"></canvas>
+<div id="g-barra">
+  <button id="g-modo">Turnaround</button>
+  <select id="g-anim" title="Animação"></select>
+  <button id="g-pausa">Pausar</button>
+  <select id="g-luz" title="Iluminação"><option value="dia">Luz do dia</option><option value="masmorra">Masmorra</option><option value="estudio">Estúdio</option></select>
+  <button id="g-arame">Malha</button>
+  <button id="g-regua" class="on">Régua</button>
+</div>
+<div id="g-titulo"></div>
+<div id="g-rotulos" hidden><span>FRENTE</span><span>3/4 FRENTE</span><span>LATERAL</span><span>3/4 COSTAS</span><span>COSTAS</span></div>
+<div id="g-info"></div>
+<script type="module" src="/js/galeria.js"></script>
+</body>
+</html>

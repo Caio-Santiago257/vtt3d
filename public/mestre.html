@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VTT 3D — Mestre</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/css/estilo.css">
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three/addons/" } }</script>
+</head>
+<body class="mestre">
+<aside id="lateral">
+  <nav class="abas">
+    <button data-aba="cena" class="sel">Cena</button>
+    <button data-aba="construir">Construir</button>
+    <button data-aba="pecas">Peças</button>
+    <button data-aba="combate">Combate</button>
+  </nav>
+  <section class="aba" data-aba="cena">
+
+  <h2>Sessão</h2>
+  <img id="qr" alt="QR code para os jogadores entrarem">
+  <p id="link"></p>
+  <p class="pequeno">Os celulares precisam estar no mesmo Wi-Fi deste PC.</p>
+  <ul id="jogadores"></ul>
+  <button id="congelar" class="bt">Pausar movimento dos jogadores</button>
+
+  <h2>Mapa</h2>
+  <p id="mapa-nome" class="pequeno"></p>
+  <button id="importar" class="bt">Importar Universal VTT (.dd2vtt)…</button>
+  <input id="arquivo" type="file" accept=".dd2vtt,.uvtt,.df2vtt,.json" hidden>
+  <button id="piso" class="bt" hidden>Chão: peças 3D</button>
+  <button id="entrada-bt" class="bt">Definir ponto de entrada</button>
+  <button id="novo" class="bt">Novo mapa vazio…</button>
+  <button id="exemplo" class="bt">Voltar ao mapa de exemplo</button>
+  <p id="mapa-msg" class="pequeno"></p>
+
+  <h2>Mapas prontos</h2>
+  <p class="pequeno">Cenários grandes com relevo, água e monstros já posicionados.</p>
+  <div id="prontos"></div>
+
+  <h2>Mapas salvos</h2>
+  <button id="salvar" class="bt">Salvar mapa atual…</button>
+  <div id="salvos"></div>
+
+  </section>
+  <section class="aba" data-aba="construir" hidden>
+  <h2>Paredes e portas</h2>
+  <div class="lista">
+    <button class="bt" id="w-parede">Desenhar parede</button>
+    <button class="bt" id="w-porta">Desenhar porta</button>
+    <button class="bt" id="w-apagar">Apagar</button>
+  </div>
+  <p class="pequeno">Arraste de um canto de quadrado a outro. Segure Shift para meio quadrado. Apagar remove um quadrado de parede por vez.</p>
+
+  <h2>Terreno</h2>
+  <p class="pequeno">Bioma: preenche o mapa inteiro e muda o clima que os jogadores veem.</p>
+  <div id="biomas" class="lista"></div>
+  <label class="pequeno" for="clima" style="display:block;margin-top:8px">Só o clima (sem repintar)</label>
+  <select id="clima"></select>
+  <p class="pequeno" style="margin-top:12px">Pincel: escolha um chão e pinte no mapa.</p>
+  <div id="pinceis" class="lista"></div>
+  <div class="linha-bt"><span class="pequeno">Tamanho</span><span id="tamanhos"></span></div>
+  <div class="linha-bt"><button class="bt" id="modo-pincel">Pincel</button><button class="bt" id="modo-ret">Retângulo</button></div>
+
+  </section>
+  <section class="aba" data-aba="pecas" hidden>
+  <h2>Selecionado</h2>
+  <div id="sel"><p class="pequeno" id="sel-nada">Clique em um monstro ou objeto no mapa.</p>
+    <div id="sel-ctl" hidden>
+      <strong id="sel-nome"></strong>
+      <div class="linha"><button class="bt" id="girar-e">⟲ Girar</button><button class="bt" id="girar-d">Girar ⟳</button></div>
+      <p class="pequeno" style="margin-bottom:0">Tamanho</p>
+      <input id="escala" type="range" min="0.5" max="3" step="0.05" value="1">
+      <button class="bt visao" id="ver-visao" style="margin-top:8px" title="Entrar na visão deste monstro (atalho: V)">👁 Ver visão do token</button>
+      <button class="bt" id="apagar" style="margin-top:8px">Remover</button>
+    </div>
+  </div>
+
+  <h2>Monstros</h2>
+  <div id="monstros" class="lista"></div>
+  <h2>Objetos</h2>
+  <div id="objetos" class="lista"></div>
+  </section>
+  <section class="aba" data-aba="combate" hidden>
+    <div id="cb-run" hidden>
+      <div class="cb-rodada"><span id="cb-round">RODADA 1</span><button class="bt" id="cb-end">Encerrar combate</button></div>
+      <div id="cb-cur" class="cb-cur"></div>
+      <div class="linha-bt"><button class="bt" id="cb-prev">◀ Anterior</button><button class="bt forte" id="cb-next">Próximo turno ▶</button></div>
+      <p class="pequeno">Atalho: tecla N passa o turno.</p>
+    </div>
+    <h2>Participantes</h2>
+    <button class="bt" id="cb-pick">Selecionar no mapa</button>
+    <p class="pequeno" id="cb-pick-help">Ligue e clique nos jogadores e monstros do mapa para incluir ou tirar do combate.</p>
+    <div class="lista"><button class="bt" id="cb-all-pl">+ Todos os jogadores</button><button class="bt" id="cb-all-mo">+ Todos os monstros</button></div>
+    <h2>Ordem de iniciativa</h2>
+    <div id="cb-list"></div>
+    <button class="bt" id="cb-roll">Rolar d20 para monstros sem valor</button>
+    <button class="bt" id="cb-sort">Reordenar pela iniciativa</button>
+    <button class="bt forte grande" id="cb-start">INICIAR COMBATE</button>
+    <h2>Registro</h2>
+    <div id="cb-log"><p class="pequeno">As ações dos jogadores aparecem aqui.</p></div>
+  </section>
+</aside>
+<div id="ordem-gm"></div>
+<canvas id="c"></canvas>
+<div id="status">Conectando…</div>
+<div id="ajuda">Combate: aba Combate · Escolha um chão em Terreno e arraste no mapa para pintar · Escolha um monstro ou objeto e clique no mapa para colocar · Arraste para mover · Esc solta a ferramenta · Q / E giram · Delete remove · Clique numa porta para abrir ou fechar · Botão direito arrasta o mapa · Roda do mouse dá zoom</div>
+<script type="module" src="/js/mestre.js"></script>
+</body>
+</html>

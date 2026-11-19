@@ -1,0 +1,8 @@
+{
+  "name": "vtt3d-prototipo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Protótipo de VTT 3D em primeira pessoa para mesa presencial",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "qrcode": "^1.5.4", "ws": "^8.18.0" }
+}

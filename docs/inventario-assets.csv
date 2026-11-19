@@ -1,0 +1,213 @@
+﻿Arquivo;Tipo;Categoria;Origem;Formato;Triângulos;Vértices;Materiais;Texturas;Dimensões (unidades, X x Y x Z);Altura (m);Rig;Animações;Usado no jogo;Estado;Ação proposta
+barrier.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;90;180;1;1024x1024;4.00 x 1.10 x 0.50;0.83;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+barrier_colum_half.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;86;176;1;1024x1024;2.35 x 1.40 x 0.70;1.05;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+barrier_column.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;110;224;1;1024x1024;4.00 x 1.40 x 0.70;1.05;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+barrier_corner.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;128;260;1;1024x1024;2.39 x 1.40 x 2.39;1.05;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+barrier_half.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;42;84;1;1024x1024;2.00 x 1.10 x 0.50;0.83;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+column.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;44;92;1;1024x1024;0.70 x 1.40 x 0.70;1.05;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+pillar.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;136;241;1;1024x1024;1.50 x 4.00 x 1.50;3.00;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+pillar_decorated.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;761;1276;1;1024x1024;2.23 x 4.00 x 1.71;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;358;756;1;1024x1024;5.00 x 5.10 x 4.00;3.82;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+stairs_narrow.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;358;756;1;1024x1024;4.00 x 5.10 x 4.00;3.82;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_wall_left.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;574;1162;1;1024x1024;4.00 x 5.10 x 5.00;3.82;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_wall_right.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;574;1164;1;1024x1024;4.00 x 5.10 x 5.00;3.82;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_walled.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;790;1572;1;1024x1024;5.00 x 4.00 x 4.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_wide.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;358;756;1;1024x1024;7.00 x 5.10 x 4.00;3.82;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_wood.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;296;494;1;1024x1024;3.30 x 4.05 x 6.00;3.04;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stairs_wood_decorated.glb;Modelo 3D;Construção;KayKit Dungeon Remastered 1.0;GLB;2537;4337;1;1024x1024;3.30 x 4.05 x 6.00;3.04;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;494;1037;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+wall_Tsplit.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;596;1234;1;1024x1024;4.00 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_Tsplit_sloped.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;555;1152;1;1024x1024;4.00 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_arched.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;724;1492;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_archedwindow_gated.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;732;1354;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_archedwindow_gated_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;674;1247;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_archedwindow_open.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;635;1163;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_broken.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;784;1486;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_corner.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;443;923;1;1024x1024;2.50 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_corner_gated.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;557;961;1;1024x1024;2.50 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_corner_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;515;1065;1;1024x1024;2.50 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_corner_small.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;223;477;1;1024x1024;1.50 x 4.00 x 1.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_cracked.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;2010;3416;1;1024x1024;4.00 x 4.00 x 1.26;3.00;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+wall_crossing.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;698;1427;1;1024x1024;4.00 x 4.00 x 4.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_doorway.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;1068;1563;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+wall_doorway_Tsplit.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;1096;2173;1;1024x1024;8.00 x 4.00 x 2.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_doorway_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;1150;1736;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_doorway_sides.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;1160;2293;1;1024x1024;5.00 x 4.00 x 4.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_endcap.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;222;480;1;1024x1024;1.07 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_gated.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;449;833;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_half.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;272;568;1;1024x1024;2.00 x 4.00 x 1.00;3.00;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+wall_half_endcap.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;268;565;1;1024x1024;2.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_half_endcap_sloped.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;230;467;1;1024x1024;2.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_open_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;196;366;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_pillar.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;540;1091;1;1024x1024;4.00 x 4.00 x 1.50;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;584;1216;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_shelves.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;1582;2992;1;1024x1024;4.00 x 4.00 x 1.37;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_sloped.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;257;544;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_window_closed.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;664;1264;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_window_closed_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;736;1408;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_window_open.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;604;1144;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+wall_window_open_scaffold.glb;Modelo 3D;Construção (parede);KayKit Dungeon Remastered 1.0;GLB;676;1288;1;1024x1024;4.00 x 4.00 x 1.00;3.00;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_large.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;104;216;1;1024x1024;4.00 x 0.21 x 4.00;0.16;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_large_rocky.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;187;375;1;1024x1024;4.00 x 0.39 x 4.00;0.29;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_A.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;45;97;1;1024x1024;2.00 x 0.19 x 2.00;0.14;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_B.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;36;70;1;1024x1024;2.00 x 0.19 x 2.00;0.14;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_C.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;33;69;1;1024x1024;2.00 x 0.21 x 2.00;0.16;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_D.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;20;40;1;1024x1024;2.00 x 0.14 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_corner.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;56;105;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_dirt_small_weeds.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;416;676;1;1024x1024;2.00 x 0.30 x 2.00;0.23;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_allsides.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;360;804;1;1024x1024;2.20 x 2.00 x 2.20;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_corner.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;202;430;1;1024x1024;2.10 x 2.00 x 2.10;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_diagonal_corner.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;111;229;1;1024x1024;2.10 x 2.00 x 2.10;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_front.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;123;243;1;1024x1024;2.00 x 2.00 x 2.10;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_front_and_back.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;202;430;1;1024x1024;2.00 x 2.00 x 2.20;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_foundation_front_and_sides.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;281;617;1;1024x1024;2.20 x 2.00 x 2.10;1.50;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_big_grate.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;292;548;1;1024x1024;4.00 x 1.05 x 4.00;0.79;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_big_grate_open.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;284;532;1;1024x1024;4.00 x 1.05 x 4.00;0.79;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_big_spikes.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;638;1202;1;1024x1024;4.00 x 2.10 x 4.00;1.58;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_extralarge_grates.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;772;1398;1;1024x1024;8.00 x 1.13 x 8.00;0.85;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_extralarge_grates_open.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;764;1382;1;1024x1024;8.00 x 1.13 x 8.00;0.85;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_grate.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;142;276;1;1024x1024;4.00 x 1.03 x 2.00;0.77;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_grate_open.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;140;272;1;1024x1024;4.00 x 1.03 x 2.00;0.77;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_large.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;188;311;1;1024x1024;4.00 x 0.15 x 4.00;0.11;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+floor_tile_large_rocks.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;338;604;1;1024x1024;4.00 x 0.64 x 4.00;0.48;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;66;104;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+floor_tile_small_broken_A.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;94;142;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small_broken_B.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;76;129;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small_corner.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;31;52;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small_decorated.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;390;670;1;1024x1024;2.00 x 0.77 x 2.00;0.58;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small_weeds_A.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;589;733;1;1024x1024;2.00 x 0.30 x 2.00;0.23;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_tile_small_weeds_B.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;447;708;1;1024x1024;2.00 x 0.30 x 2.00;0.23;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_wood_large.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;272;530;1;1024x1024;4.00 x 0.15 x 4.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_wood_large_dark.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;272;530;1;1024x1024;4.00 x 0.15 x 4.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_wood_small.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;78;146;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+floor_wood_small_dark.glb;Modelo 3D;Construção (piso);KayKit Dungeon Remastered 1.0;GLB;78;146;1;1024x1024;2.00 x 0.15 x 2.00;0.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternA_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;110;232;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternB_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_patternC_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+banner_shield_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_shield_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_shield_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_shield_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_shield_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_shield_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;639;1068;1;1024x1024;2.23 x 3.20 x 0.37;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_thin_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;83;172;1;1024x1024;1.10 x 3.17 x 0.36;2.38;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_blue.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_brown.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_green.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_red.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_triple_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;263;549;1;1024x1024;3.70 x 3.20 x 0.36;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_white.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+banner_yellow.glb;Modelo 3D;Decoração;KayKit Dungeon Remastered 1.0;GLB;97;205;1;1024x1024;1.50 x 3.20 x 0.31;2.40;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+Skeleton_Mage.glb;Modelo 3D;Inimigo;KayKit Skeletons 1.0;GLB;4588;4056;2;1024x1024;1.94 x 2.59 x 1.74;1.94;Sim, 41 ossos;13;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Skeleton_Minion.glb;Modelo 3D;Inimigo;KayKit Skeletons 1.0;GLB;5288;4858;2;1024x1024;1.94 x 2.17 x 0.91;1.63;Sim, 41 ossos;13;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Skeleton_Rogue.glb;Modelo 3D;Inimigo;KayKit Skeletons 1.0;GLB;5278;5259;2;1024x1024;1.94 x 3.29 x 1.15;2.47;Sim, 41 ossos;13;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Skeleton_Warrior.glb;Modelo 3D;Inimigo;KayKit Skeletons 1.0;GLB;5934;6117;2;1024x1024;1.94 x 2.17 x 1.46;1.63;Sim, 41 ossos;13;Sim;Fora da direção art. (low-poly/chibi);Recriar
+barrel_large.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;561;745;1;1024x1024;1.80 x 2.00 x 1.80;1.50;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+barrel_large_decorated.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1047;1570;1;1024x1024;1.94 x 2.56 x 1.86;1.92;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+barrel_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;207;429;1;1024x1024;1.00 x 1.02 x 1.00;0.77;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+barrel_small_stack.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1149;2316;1;1024x1024;1.85 x 1.77 x 1.00;1.33;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bed_decorated.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1410;2162;1;1024x1024;2.61 x 1.70 x 3.06;1.28;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+bed_floor.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;232;222;1;1024x1024;1.50 x 0.56 x 3.00;0.42;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+bed_frame.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;304;370;1;1024x1024;1.50 x 1.06 x 3.00;0.80;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_A_brown.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;256;1;1024x1024;0.37 x 0.89 x 0.37;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_A_green.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;266;1;1024x1024;0.37 x 0.89 x 0.37;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_A_labeled_brown.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;260;1;1024x1024;0.37 x 0.89 x 0.37;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_A_labeled_green.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;270;1;1024x1024;0.37 x 0.89 x 0.37;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_B_brown.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;256;1;1024x1024;0.55 x 0.89 x 0.55;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_B_green.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;266;1;1024x1024;0.55 x 0.89 x 0.55;0.67;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_C_brown.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;256;1;1024x1024;0.74 x 0.91 x 0.74;0.68;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+bottle_C_green.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;144;266;1;1024x1024;0.74 x 0.91 x 0.74;0.68;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+box_large.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;188;330;1;1024x1024;1.50 x 1.50 x 1.50;1.12;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+box_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;188;330;1;1024x1024;1.00 x 1.00 x 1.00;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+box_small_decorated.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;928;1565;1;1024x1024;1.49 x 1.48 x 1.49;1.11;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+box_stacked.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;2173;3651;1;1024x1024;3.48 x 3.31 x 3.63;2.48;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+chair.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;294;544;1;1024x1024;0.75 x 1.23 x 0.75;0.92;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+chest.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;728;1204;1;1024x1024;1.70 x 0.97 x 1.91;0.73;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+chest_gold.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1568;2322;1;1024x1024;1.70 x 1.21 x 1.91;0.91;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+coin.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;80;132;1;1024x1024;0.36 x 0.13 x 0.36;0.10;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+coin_stack_large.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1776;2292;1;1024x1024;1.44 x 1.16 x 1.66;0.87;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+coin_stack_medium.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;968;1284;1;1024x1024;0.99 x 0.64 x 1.03;0.48;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+coin_stack_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;416;588;1;1024x1024;0.96 x 0.48 x 0.90;0.36;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+crates_stacked.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1331;2457;1;1024x1024;2.09 x 2.14 x 2.25;1.61;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+keg.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;807;1187;1;1024x1024;1.80 x 2.05 x 2.00;1.54;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+keg_decorated.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;2058;3519;1;1024x1024;3.52 x 2.05 x 2.00;1.54;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+key.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;160;200;1;1024x1024;0.90 x 0.40 x 0.14;0.30;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+keyring.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;728;864;1;1024x1024;1.03 x 0.26 x 1.21;0.20;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+keyring_hanging.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;728;864;1;1024x1024;0.68 x 1.22 x 0.38;0.92;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+plate.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;120;159;1;1024x1024;0.97 x 0.13 x 0.97;0.10;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+plate_food_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;547;652;1;1024x1024;1.02 x 0.79 x 0.97;0.59;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+plate_food_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;306;408;1;1024x1024;0.97 x 0.24 x 0.97;0.18;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+plate_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;120;159;1;1024x1024;0.49 x 0.13 x 0.49;0.10;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+plate_stack.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;360;515;1;1024x1024;1.00 x 0.56 x 1.00;0.42;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+rubble_half.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;390;607;1;1024x1024;4.00 x 3.50 x 3.00;2.62;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+rubble_large.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;788;1200;1;1024x1024;8.13 x 3.50 x 3.18;2.62;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+shelf_large.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;76;142;1;1024x1024;2.00 x 0.45 x 0.50;0.34;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+shelf_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;60;110;1;1024x1024;1.00 x 0.40 x 0.50;0.30;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+shelf_small_candles.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;231;362;1;1024x1024;1.00 x 0.99 x 0.50;0.74;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+shelves.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;152;284;1;1024x1024;2.00 x 1.95 x 0.50;1.46;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+stool.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;172;326;1;1024x1024;0.75 x 0.50 x 0.75;0.38;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+sword_shield.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;542;857;1;1024x1024;2.23 x 1.67 x 0.34;1.25;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+sword_shield_broken.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;396;641;1;1024x1024;1.43 x 1.96 x 0.34;1.47;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+sword_shield_gold.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;542;857;1;1024x1024;2.23 x 1.67 x 0.34;1.25;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_long.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;280;513;1;1024x1024;2.00 x 1.00 x 4.00;0.75;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+table_long_broken.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;550;1088;1;1024x1024;2.41 x 1.27 x 4.40;0.95;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_long_decorated_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1961;2873;1;1024x1024;2.06 x 1.89 x 4.00;1.42;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_long_decorated_C.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;3499;6047;1;1024x1024;2.00 x 2.77 x 4.03;2.08;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_long_tablecloth.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;354;601;1;1024x1024;2.00 x 1.00 x 4.00;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_long_tablecloth_decorated_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;2035;2961;1;1024x1024;2.06 x 1.89 x 4.00;1.42;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_medium.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;256;477;1;1024x1024;2.00 x 1.00 x 2.00;0.75;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+table_medium_broken.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;247;519;1;1024x1024;2.28 x 0.97 x 2.43;0.73;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_medium_decorated_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1186;1825;1;1024x1024;2.00 x 1.89 x 2.00;1.42;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_medium_tablecloth.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;270;515;1;1024x1024;2.00 x 1.00 x 2.00;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_medium_tablecloth_decorated_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1200;1863;1;1024x1024;2.00 x 1.89 x 2.00;1.42;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_small.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;192;366;1;1024x1024;1.00 x 1.00 x 1.00;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_small_decorated_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;986;1396;1;1024x1024;1.04 x 1.62 x 1.21;1.22;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+table_small_decorated_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;1576;2454;1;1024x1024;1.01 x 2.16 x 1.00;1.62;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_large_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;1.50 x 1.00 x 1.30;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_large_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;1.50 x 1.00 x 1.30;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_large_C.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;1.50 x 1.00 x 1.30;0.75;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_medium_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;148;264;1;1024x1024;0.95 x 0.73 x 0.88;0.55;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_medium_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;148;264;1;1024x1024;0.95 x 0.73 x 0.88;0.55;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_medium_C.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;148;264;1;1024x1024;0.95 x 0.73 x 0.88;0.55;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_small_A.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;0.68 x 0.48 x 0.58;0.36;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_small_B.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;0.68 x 0.48 x 0.58;0.36;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+trunk_small_C.glb;Modelo 3D;Objeto;KayKit Dungeon Remastered 1.0;GLB;204;371;1;1024x1024;0.68 x 0.48 x 0.58;0.36;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;66;104;1;1024x1024;0.33 x 0.87 x 0.33;0.65;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle_lit.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;120;152;1;1024x1024;0.33 x 1.05 x 0.33;0.79;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle_melted.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;66;104;1;1024x1024;0.33 x 0.70 x 0.33;0.53;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle_thin.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;66;104;1;1024x1024;0.19 x 0.87 x 0.19;0.65;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle_thin_lit.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;120;152;1;1024x1024;0.19 x 1.05 x 0.19;0.79;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+candle_triple.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;198;312;1;1024x1024;0.50 x 0.87 x 0.39;0.65;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+torch.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;216;344;1;1024x1024;0.55 x 1.04 x 0.55;0.78;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+torch_lit.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;270;392;1;1024x1024;0.55 x 1.13 x 0.55;0.85;Não;0;Sim;Fora da direção art. (low-poly/chibi);Recriar
+torch_mounted.glb;Modelo 3D;Objeto (luz);KayKit Dungeon Remastered 1.0;GLB;278;452;1;1024x1024;0.55 x 1.06 x 0.62;0.80;Não;0;Não;Fora da direção art. (low-poly/chibi);Manter como legado
+Barbarian.glb;Modelo 3D;Personagem jogável;KayKit Adventurers 1.0;GLB;6543;5922;1;1024x1024;1.94 x 3.31 x 1.26;2.48;Sim, 41 ossos;10;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Knight.glb;Modelo 3D;Personagem jogável;KayKit Adventurers 1.0;GLB;6952;7024;1;1024x1024;1.94 x 3.44 x 1.25;2.58;Sim, 41 ossos;10;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Mage.glb;Modelo 3D;Personagem jogável;KayKit Adventurers 1.0;GLB;5683;5279;1;1024x1024;2.09 x 3.36 x 2.09;2.52;Sim, 41 ossos;10;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Rogue.glb;Modelo 3D;Personagem jogável;KayKit Adventurers 1.0;GLB;6377;5901;1;1024x1024;1.94 x 3.31 x 1.66;2.48;Sim, 41 ossos;10;Sim;Fora da direção art. (low-poly/chibi);Recriar
+Rogue_Hooded.glb;Modelo 3D;Personagem jogável;KayKit Adventurers 1.0;GLB;6035;5586;1;1024x1024;1.94 x 3.37 x 1.73;2.53;Sim, 41 ossos;10;Sim;Fora da direção art. (low-poly/chibi);Recriar

@@ -1,0 +1,178 @@
+[
+ {
+  "id": "Kaira",
+  "nome": "Kaira",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "url": "/assets/characters/kaira/char_kaira_modelo.glb",
+  "nota": "Elfa etérea — modelo recebido (EtherealElfGameModel.glb), reduzido, rigado e animado por script (fontes/blender/kaira_glb_*.py)"
+ },
+ {
+  "id": "Guy",
+  "nome": "Guy",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "url": "/assets/characters/guy/char_guy.glb",
+  "nota": "Halfling clérigo — modelo recebido (Meshy HalflingCleric3D), reduzido, rigado e animado por script (fontes/blender/guy_*.py). 1 m de altura; tamanho Pequeno (ocupa 1 quadrado)."
+ },
+ {
+  "id": "Ghultok",
+  "nome": "Ghult'ok",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "url": "/assets/characters/ghultok/char_ghultok.glb",
+  "nota": "Orc bárbaro — modelo recebido (Meshy OrcBarbarian3D, 5,3 mi de triângulos), reduzido em fatias, rigado e animado por script (fontes/blender/ghultok_*.py). 2,1 m de altura."
+ },
+ {
+  "id": "Kaira_Asas",
+  "nome": "Kaira com asas (Revelação Celestial)",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "url": "/assets/characters/kaira/char_kaira_asas.glb",
+  "nota": "Modelo recebido (Meshy), reduzido para 60 mil triângulos, rigado e animado por script (fontes/blender/kaira_asas_*.py): revelar, fly_idle, fly, recolher."
+ },
+ {
+  "id": "Kaira_script",
+  "nome": "Kaira (feita por script)",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "url": "/assets/characters/kaira/char_kaira_script.glb",
+  "nota": "Versão anterior, modelada por script (fontes/blender/kaira.py)"
+ },
+ {
+  "id": "kaira_glb_estatico",
+  "nome": "Kaira (modelo recebido, sem rig)",
+  "categoria": "Personagens",
+  "tipo": "glb",
+  "url": "/assets/characters/kaira/kaira_glb_estatico.glb",
+  "nota": "Malha recebida reduzida para 60 mil triângulos, parada"
+ },
+ {
+  "id": "Knight",
+  "nome": "Cavaleiro",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Knight.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Barbarian",
+  "nome": "Bárbaro",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Barbarian.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Mage",
+  "nome": "Mago",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Mage.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Rogue",
+  "nome": "Ladino",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Rogue.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Rogue_Hooded",
+  "nome": "Ladino encapuzado",
+  "categoria": "Personagens",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Rogue_Hooded.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Dragao_Negro",
+  "nome": "Dragão negro adulto",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "tamanho": 3,
+  "url": "/assets/characters/dragao_negro/char_dragao_negro.glb",
+  "nota": "Dragão do Véu Corrompido — modelo novo recebido do Meshy (CorruptedVeilDragon3D), reduzido, rigado e animado por script (fontes/blender/dragao_veu_*.py). O modelo antigo ficou em fontes/antigos/.",
+  "deslocamento": 12,
+  "voo": 24
+ },
+ {
+  "id": "Skeleton_Warrior",
+  "nome": "Esqueleto guerreiro",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Skeleton_Warrior.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Skeleton_Minion",
+  "nome": "Esqueleto lacaio",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Skeleton_Minion.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Skeleton_Rogue",
+  "nome": "Esqueleto ladino",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Skeleton_Rogue.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "Skeleton_Mage",
+  "nome": "Esqueleto mago",
+  "categoria": "Inimigos",
+  "tipo": "char",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/chars/Skeleton_Mage.glb",
+  "nota": "KayKit — legado, será substituído"
+ },
+ {
+  "id": "barrel_large",
+  "nome": "Barril grande",
+  "categoria": "Objetos",
+  "tipo": "prop",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/dungeon/barrel_large.glb",
+  "nota": "KayKit — legado"
+ },
+ {
+  "id": "chest",
+  "nome": "Baú",
+  "categoria": "Objetos",
+  "tipo": "prop",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/dungeon/chest.glb",
+  "nota": "KayKit — legado"
+ },
+ {
+  "id": "table_medium",
+  "nome": "Mesa",
+  "categoria": "Objetos",
+  "tipo": "prop",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/dungeon/table_medium.glb",
+  "nota": "KayKit — legado"
+ },
+ {
+  "id": "pillar",
+  "nome": "Pilar",
+  "categoria": "Objetos",
+  "tipo": "prop",
+  "legado": true,
+  "url": "/assets/legacy/kaykit/dungeon/pillar.glb",
+  "nota": "KayKit — legado"
+ }
+]
