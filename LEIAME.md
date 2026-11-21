@@ -11,7 +11,7 @@ O mestre monta a cena no PC, vista de cima. Os jogadores entram pelo celular e v
 
 Na primeira vez, o Windows pergunta se o Node pode aceitar conexões. Permita em **redes privadas**, senão os celulares não conseguem entrar.
 
-Não é preciso `npm install`: as dependências já estão na pasta.
+Na primeira vez, o `iniciar.bat` (ou o `iniciar.sh`) roda `npm install` sozinho para baixar as dependências; precisa de internet só nessa hora. Se aparecer "npm não é reconhecido", o Node.js não está instalado: instale a versão LTS e abra um prompt novo.
 
 ## Tela do mestre
 
