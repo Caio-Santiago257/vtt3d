@@ -47,6 +47,7 @@
   <div class="btns-esq">
     <button id="btn-ficha" class="btn-ficha" hidden>📜 FICHA</button>
     <button id="btn-regua" class="btn-regua" title="Régua (R)">📏 RÉGUA</button>
+    <button id="btn-mapa" class="btn-mapa" title="Mapa do mundo (M)">🗺 MAPA</button>
   </div>
   <div id="regua-hud" class="regua-hud" hidden>
     <div class="tt-topo"><b>RÉGUA</b><span>cada quadrado vale 1,5 m · a diagonal também conta 1</span></div>
@@ -67,6 +68,9 @@
   </div>
   <div id="possuido" class="possuido" hidden><span>VISÃO DE</span><b id="possuido-nome"></b><button id="possuido-sair">◀ VOLTAR AO MESTRE</button></div>
 </div>
+<div id="mesa-mundo" class="mesa-camada" hidden></div>
+<div id="mesa-imagem" class="mesa-camada" hidden></div>
+<button id="mesa-fechar" class="mesa-fechar" hidden>✕ FECHAR O MAPA</button>
 <script type="module" src="/js/jogador.js"></script>
 </body>
 </html>

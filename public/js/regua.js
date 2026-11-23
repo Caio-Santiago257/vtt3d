@@ -157,6 +157,7 @@ export class ReguaTool {
   }
   redraw() {
     if (!this.a || !this.b) return;
+    this.ctx.onMeasure && this.ctx.onMeasure(this.a, this.b);
     this.draw.set(this.a.x, this.a.z, this.b.x, this.b.z, this.k.y + 0.06, Math.max(0.12, (this.h || 30) * 0.006));
   }
   pick(e) {

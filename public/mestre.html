@@ -11,13 +11,31 @@
 <body class="mestre">
 <aside id="lateral">
   <nav class="abas">
-    <button data-aba="cena" class="sel">Cena</button>
+    <button data-aba="mesa" class="sel">Mesa</button>
+    <button data-aba="cena">Cena</button>
     <button data-aba="construir">Construir</button>
     <button data-aba="pecas">Peças</button>
     <button data-aba="combate">Combate</button>
     <button data-aba="fichas">Fichas</button>
   </nav>
-  <section class="aba" data-aba="cena">
+  <section class="aba" data-aba="mesa">
+    <h2>O que os jogadores veem</h2>
+    <div class="mesa-modos"><button class="bt" data-modo="mundo">🗺 Mapa do mundo</button><button class="bt" data-modo="cena">⚔ Cena 3D</button><button class="bt" data-modo="imagem">🖼 Imagem</button></div>
+    <p class="pequeno" id="mesa-dica"></p>
+    <button class="bt" id="gm-ver">Ver a cena 3D só na minha tela</button>
+    <h2>Imagens (teatro da mente)</h2>
+    <p class="pequeno">Clique numa imagem para mostrar aos jogadores. Envie novas pelo botão ou arrastando o arquivo para cá.</p>
+    <label class="pequeno" for="img-legenda">Legenda (opcional)</label>
+    <input id="img-legenda" maxlength="120" placeholder="Ex.: A taverna do Portal Bocejante">
+    <button class="bt" id="img-enviar">Enviar imagem…</button>
+    <input type="file" id="img-arquivo" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+    <div id="solta-img" class="solta-img">Solte imagens aqui</div>
+    <div id="imgs-gm" class="imgs-gm"></div>
+    <h2>Mapa do mundo</h2>
+    <p class="pequeno">Segure o botão esquerdo parado num ponto do mapa para marcar um ping: a tela dos jogadores vai até ele. Réguas e rotas dos jogadores aparecem ao vivo.</p>
+    <button class="bt" id="rotas-limpar">Apagar todas as rotas</button>
+  </section>
+  <section class="aba" data-aba="cena" hidden>
 
   <h2>Sessão</h2>
   <img id="qr" alt="QR code para os jogadores entrarem">
@@ -108,6 +126,8 @@
     <div id="fichas-gm" class="fichas-gm"></div>
   </section>
 </aside>
+<div id="mesa-mundo" class="mesa-camada" hidden></div>
+<div id="mesa-imagem" class="mesa-camada" hidden></div>
 <button id="regua-mestre" class="regua-mestre" title="Régua (R): arraste no mapa para medir">📏 RÉGUA</button>
 <div id="ordem-gm"></div>
 <canvas id="c"></canvas>

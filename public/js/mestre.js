@@ -4,6 +4,7 @@ import { MONSTERS, PROPS, HEROES, Session, makeRenderer, G, sizeOf } from './com
 import { TERRAINS, BIOMES, generateBiome } from './terreno.js';
 import { fmtArea, SHAPES } from './area.js';
 import { RulerDraw, makeLabel, medir, toScreen } from './regua.js';
+import { MundoView, ImagemView, corDe } from './mundo.js';
 import { CLASSES, HEROI_CLASSE } from './dnd-dados.js';
 import { slotsMax, usosMax, USO_NOME, mod, fmtMod, cdMagia, circMax, magiaClerigo, magiasDominio } from './regras.js';
 import { M2U, fmtM, logText, TurnOrder, banner, toast, chime, makeRangeRing, setPortrait, warmPortraits } from './combate-ui.js';
@@ -107,6 +108,11 @@ const session = new Session({
     },
     combat: () => renderCombat(),
     fichas: () => renderFichas(),
+    mesa: () => aplicaMesa(),
+    rotas: () => mundo.onRotas(),
+    imagens: () => renderImagens(),
+    ping: (m) => mundo.onPing(m),
+    traco: (m) => { if (m.ctx === 'cena') tracoCena(m); else mundo.onTraco(m); },
     clog(e) { toast(logText(e)); },
     cfx(fx) { if (fx === 'start') banner('start', 'COMBATE!', 'Rodada 1'); if (fx === 'end') banner('end', 'FIM DO COMBATE', ''); },
     frozen(on) { $('congelar').classList.toggle('on', on); $('congelar').textContent = on ? 'Movimento pausado — clique para liberar' : 'Pausar movimento dos jogadores'; },
@@ -749,6 +755,7 @@ function frame() {
     if (Math.hypot(areaPan.x - view.cx, areaPan.z - view.cz) < 0.2) areaPan = null;
   }
   if ((areaTick -= dt) <= 0) { areaTick = 0.25; updateAreaCards(); }
+  updateTracosCena();
   if (rgA && reguaOn) { drawRegua(true); rgLabel.show(medir(rgA.x, rgA.z, rgB.x, rgB.z), toScreen(rgDraw.b, camera, canvas)); }
   updateCombatMarks(dt, performance.now() / 1000);
   const e = selected && session.ents.get(selected);
@@ -756,6 +763,7 @@ function frame() {
   placeChip(e);
   // com a visão do monstro aberta por cima, esta tela não precisa desenhar (sobra placa de vídeo para a visão)
   if (visao && visao.frame && visao.frame.classList.contains('on')) return;
+  if (document.body.classList.contains('mesa-cobre')) return;   // mapa do mundo ou imagem por cima
   renderer.render(scene, camera);
 }
 frame();
@@ -901,5 +909,78 @@ function renderFichas() {
     if (um.length) card.querySelector('.fg-u').textContent = um.join(' · ');
     if (prep) card.querySelector('.fg-p').textContent = prep;
     box.appendChild(card);
+  }
+}
+
+// ---------------------------------------------------------------- mesa: mapa do mundo, cena 3D ou imagem
+var gmVeCena = false;
+var mundo = window.__mundoGM = new MundoView($('mesa-mundo'), { role: 'gm', send: (m) => session.send(m), session: () => session, toast, me: () => ({ nome: 'Mestre', hero: '' }) });
+var imagemView = new ImagemView($('mesa-imagem'));
+function aplicaMesa() {
+  const m = session.mesa || { modo: 'cena' };
+  document.querySelectorAll('.mesa-modos button').forEach((b) => b.classList.toggle('sel', b.dataset.modo === m.modo));
+  const local = gmVeCena && m.modo !== 'cena';
+  if (m.modo === 'imagem' && m.imagem && !local) imagemView.show(m.imagem, m.legenda); else imagemView.hide();
+  if (m.modo === 'mundo' && !local) mundo.show(); else mundo.hide();
+  document.body.classList.toggle('mesa-cobre', m.modo !== 'cena' && !local);
+  $('gm-ver').hidden = m.modo === 'cena';
+  $('gm-ver').textContent = local ? 'Voltar a ver o que os jogadores veem' : 'Ver a cena 3D só na minha tela';
+  $('mesa-dica').textContent = { mundo: 'Os jogadores estão vendo o mapa de Faerûn.', cena: 'Os jogadores estão na cena 3D (eles ainda podem abrir o mapa do mundo pelo botão 🗺 MAPA).', imagem: 'Os jogadores estão vendo a imagem marcada abaixo.' }[m.modo];
+  renderImagens();
+}
+document.querySelectorAll('.mesa-modos button').forEach((b) => {
+  b.onclick = () => {
+    const m = b.dataset.modo;
+    if (m === 'imagem' && !(session.mesa && session.mesa.imagem)) { const first = (session.imagens || [])[0]; if (!first) { toast('Envie uma imagem primeiro.', 'neg'); return; } session.send({ t: 'mesa', modo: 'imagem', imagem: first.url, legenda: $('img-legenda').value }); return; }
+    gmVeCena = false; session.send({ t: 'mesa', modo: m });
+  };
+});
+$('gm-ver').onclick = () => { gmVeCena = !gmVeCena; aplicaMesa(); };
+$('rotas-limpar').onclick = () => { if (confirm('Apagar todas as rotas do mapa do mundo?')) session.send({ t: 'rotas_limpar' }); };
+function renderImagens() {
+  const box = $('imgs-gm'); if (!box) return; box.textContent = '';
+  const m = session.mesa || {};
+  for (const im of session.imagens || []) {
+    const d = document.createElement('div'); d.className = 'img-gm' + (m.modo === 'imagem' && m.imagem === im.url ? ' sel' : '');
+    const img = document.createElement('img'); img.src = im.url; img.alt = ''; img.loading = 'lazy';
+    const sp = document.createElement('span'); sp.textContent = im.nome;
+    const del = document.createElement('button'); del.textContent = '✕'; del.title = 'Apagar imagem';
+    del.onclick = (e) => { e.stopPropagation(); if (confirm('Apagar esta imagem?')) fetch('/api/imagens?f=' + encodeURIComponent(im.url.split('/').pop()), { method: 'DELETE' }); };
+    d.onclick = () => { gmVeCena = false; session.send({ t: 'mesa', modo: 'imagem', imagem: im.url, legenda: $('img-legenda').value }); };
+    d.append(img, sp, del); box.appendChild(d);
+  }
+}
+async function enviarImagens(files) {
+  for (const f of files) {
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type)) { toast(`${f.name}: só PNG, JPG, WEBP ou GIF.`, 'neg'); continue; }
+    const r = await fetch('/api/imagens?nome=' + encodeURIComponent(f.name), { method: 'POST', headers: { 'Content-Type': f.type }, body: f });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) toast(j.error || 'Não consegui enviar a imagem.', 'neg'); else toast(`Imagem enviada: ${f.name}`);
+  }
+}
+$('img-enviar').onclick = () => $('img-arquivo').click();
+$('img-arquivo').onchange = () => { enviarImagens([...$('img-arquivo').files]); $('img-arquivo').value = ''; };
+const solta = $('solta-img');
+for (const ev of ['dragenter', 'dragover']) solta.addEventListener(ev, (e) => { e.preventDefault(); solta.classList.add('on'); });
+for (const ev of ['dragleave', 'drop']) solta.addEventListener(ev, (e) => { e.preventDefault(); solta.classList.remove('on'); });
+solta.addEventListener('drop', (e) => enviarImagens([...e.dataTransfer.files]));
+aplicaMesa();
+
+// réguas dos jogadores na cena 3D (ao vivo)
+var tracosCena = new Map();
+function tracoCena(m) {
+  let t = tracosCena.get(m.id);
+  if (!m.pts || m.pts.length < 2) { if (t) { t.draw.dispose(); t.label.el.remove(); tracosCena.delete(m.id); } return; }
+  if (!t) { t = { draw: new RulerDraw(scene), label: makeLabel() }; tracosCena.set(m.id, t); }
+  t.draw.matDash.color.set(corDe(m.hero, false)); t.label.el.style.borderColor = corDe(m.hero, false);
+  t.a = { x: m.pts[0][0], z: m.pts[0][1] }; t.b = { x: m.pts[1][0], z: m.pts[1][1] }; t.por = m.por;
+  t.draw.set(t.a.x, t.a.z, t.b.x, t.b.z, 4.55, Math.max(0.1, view.size * 0.009));
+}
+function updateTracosCena() {
+  if (!tracosCena) return;
+  for (const t of tracosCena.values()) {
+    if (document.body.classList.contains('mesa-cobre')) { t.label.hide(); continue; }
+    const med = medir(t.a.x, t.a.z, t.b.x, t.b.z);
+    t.label.show({ ...med, txt: `${t.por}: ${med.txt}` }, toScreen(t.draw.b, camera, canvas));
   }
 }

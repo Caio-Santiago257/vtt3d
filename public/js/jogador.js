@@ -4,7 +4,8 @@ import { AreaTool, GRIMORIOS, PRESETS, SHAPES, fmtArea } from './area.js';
 import { areaCreatures, HEROES, MONSTERS, Session, makeRenderer, makeCharacter, sizeOf, ACT_CLIPS, animFor, updateAirMark, WALL_H } from './common.js';
 import { glowTexture } from './gfx.js';
 import { CelestialForm, hasRevelation } from './revelacao.js';
-import { ReguaTool } from './regua.js';
+import { ReguaTool, RulerDraw, makeLabel, medir, toScreen } from './regua.js';
+import { MundoView, ImagemView, corDe } from './mundo.js';
 import { FichaUI } from './ficha-ui.js';
 import { temFicha, grimorio, slotsLivres, efeitoEm, CIRC_NOME } from './regras.js';
 import { ACTIONS, SLOT_NOME, M2U, fmtM, logText, TurnOrder, banner, toast, chime, unlockAudio, makeRangeRing, setPortrait, warmPortraits } from './combate-ui.js';
@@ -271,6 +272,7 @@ function entrar() {
         session.myPos = pos;
         loadSelf(hero);
         updateFichaBtn();
+        aplicaMesa();
         $('entrada').hidden = true; $('hud').hidden = false;
         if (!mobile) $('dica').textContent = 'W A S D: andar · Arraste o mouse: olhar · E: interagir';
       },
@@ -291,6 +293,13 @@ function entrar() {
       players: () => updateRevBtn(),
       combat: onCombat,
       fichas() { ficha.onServer(); updateFichaBtn(); },
+      mesa: () => aplicaMesa(),
+      rotas: () => mundo.onRotas(),
+      ping(m) {
+        mundo.onPing(m);
+        if (m.leva && !mundo.visible) toast('O Mestre marcou um ponto no mapa do mundo', 'vez');
+      },
+      traco(m) { if (m.ctx === 'cena') tracoCena(m); else mundo.onTraco(m); },
       clog(e) {
         toast(logText(e), e.cid === myCid() ? 'vez' : '');
         if (e.cid === myCid() && selfChar && ACT_CLIPS[e.id]) selfChar.once(ACT_CLIPS[e.id]);
@@ -510,11 +519,62 @@ const areaTool = new AreaTool({
 let areaFrom = null;   // {slot, a} quando a magia veio do menu de combate
 
 // ---- régua: vai para a visão de cima e mede arrastando o dedo
+let reguaSend = 0;
 const regua = new ReguaTool({
   scene, camera, canvas,
   caster: () => ({ x: pos.x, z: pos.z, y: groundY(pos.x, pos.z), camYaw: yaw }),
-  onExit: () => { $('regua-hud').hidden = true; },
+  // o mestre e os outros jogadores veem a medição ao vivo
+  onMeasure: (a, b) => {
+    const now = performance.now(); if (now - reguaSend < 90) return; reguaSend = now;
+    session.send({ t: 'traco', ctx: 'cena', tipo: 'regua', pts: [[a.x, a.z], [b.x, b.z]] });
+  },
+  onExit: () => { $('regua-hud').hidden = true; session.send({ t: 'traco', ctx: 'cena', tipo: 'regua', pts: [] }); },
 });
+// réguas dos outros na cena 3D
+const tracosCena = new Map();
+function tracoCena(m) {
+  let t = tracosCena.get(m.id);
+  if (!m.pts || m.pts.length < 2) { if (t) { t.draw.dispose(); t.label.el.remove(); tracosCena.delete(m.id); } return; }
+  if (!t) { t = { draw: new RulerDraw(scene), label: makeLabel() }; t.label.el.classList.add('outro'); tracosCena.set(m.id, t); }
+  t.draw.matDash.color.set(corDe(m.hero, m.id === 'gm')); t.label.el.style.borderColor = corDe(m.hero, m.id === 'gm');
+  t.a = { x: m.pts[0][0], z: m.pts[0][1] }; t.b = { x: m.pts[1][0], z: m.pts[1][1] }; t.por = m.por;
+  t.draw.set(t.a.x, t.a.z, t.b.x, t.b.z, groundY(t.a.x, t.a.z) + 0.07, 0.16);
+}
+function updateTracosCena() {
+  for (const t of tracosCena.values()) {
+    const sc = toScreen(t.draw.b, camera, canvas), v = t.draw.b.clone().project(camera);
+    if (v.z > 1 || document.body.classList.contains('mesa-cobre')) { t.label.hide(); continue; }
+    const med = medir(t.a.x, t.a.z, t.b.x, t.b.z);
+    t.label.show({ ...med, txt: `${t.por}: ${med.txt}` }, sc);
+  }
+}
+
+// ---- mesa: o mestre escolhe se os jogadores veem a cena 3D, o mapa do mundo ou uma imagem (teatro da mente)
+const fichaNoMapa = document.createElement('button'); fichaNoMapa.className = 'mu-bt'; fichaNoMapa.innerHTML = '<i>📜</i><span>FICHA</span>';
+fichaNoMapa.onclick = () => (ficha.isOpen ? ficha.close() : ficha.open());
+const mundo = new MundoView($('mesa-mundo'), {
+  role: 'player', send: (m) => session && session.send(m), session: () => session, toast,
+  me: () => ({ nome: (myData() || {}).name || '', hero: (myData() || {}).hero || '' }), extras: [fichaNoMapa],
+});
+const imagem = new ImagemView($('mesa-imagem'));
+let mapaProprio = false;   // o jogador abriu o mapa do mundo por conta própria, com a mesa na cena 3D
+let ultimoModo = '';
+function aplicaMesa() {
+  if (!joined || POSSESS || !session) return;
+  const m = session.mesa || { modo: 'cena' };
+  if (m.modo !== ultimoModo) { if (ultimoModo && m.modo !== 'cena') toast(m.modo === 'mundo' ? 'O Mestre abriu o mapa do mundo' : 'O Mestre está mostrando uma imagem', 'vez'); ultimoModo = m.modo; mapaProprio = false; }
+  const verImg = m.modo === 'imagem' && m.imagem, verMundo = !verImg && (m.modo === 'mundo' || mapaProprio);
+  if (verImg) imagem.show(m.imagem, m.legenda); else imagem.hide();
+  if (verMundo) mundo.show(); else mundo.hide();
+  fichaNoMapa.hidden = !temFicha((myData() || {}).hero);
+  $('mesa-fechar').hidden = !(mapaProprio && m.modo === 'cena');
+  $('btn-mapa').hidden = m.modo !== 'cena';
+  const cobre = !!(verImg || verMundo);
+  document.body.classList.toggle('mesa-cobre', cobre);
+  if (cobre) { if (regua.busy) regua.finish(); if (areaTool.busy) areaTool.finish(false); closeArea(); }
+}
+$('btn-mapa').onclick = () => { mapaProprio = true; aplicaMesa(); };
+$('mesa-fechar').onclick = () => { mapaProprio = false; aplicaMesa(); };
 function openRegua() {
   if (areaTool.busy || regua.busy) return;
   closeArea(); closeSub(); ficha.close();
@@ -663,7 +723,8 @@ addEventListener('keydown', (e) => {
   if (areaTool.phase === 'tatico' && e.code === 'Enter') areaTool.finish(true);
   if (areaTool.phase === 'tatico' && e.code === 'Escape') areaTool.finish(false);
   if (regua.phase === 'tatico' && e.code === 'Escape') regua.finish();
-  if (!areaTool.busy && !regua.busy && joined && !POSSESS && e.code === 'KeyR' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !ficha.isOpen) openRegua();
+  if (joined && !POSSESS && e.code === 'KeyM' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && (session.mesa || {}).modo === 'cena') { mapaProprio = !mapaProprio; aplicaMesa(); }
+  if (!document.body.classList.contains('mesa-cobre') && !areaTool.busy && !regua.busy && joined && !POSSESS && e.code === 'KeyR' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !ficha.isOpen) openRegua();
 });
 // visão tática: neblina rala e câmera enxergando longe, para ver o mapa de cima
 let tactK = 0, baseFog = null, baseFar = null;
@@ -791,7 +852,8 @@ function frame() {
     if (keys.has('KeyA')) mx -= 1;
     if (keys.has('ArrowLeft')) yaw += dt * 2;
     if (keys.has('ArrowRight')) yaw -= dt * 2;
-    if (areaTool.busy || regua.busy || ficha.isOpen) { mx = my = 0; flyUp = flyDown = false; }   // posicionando a área: o personagem fica parado
+    const cobre = document.body.classList.contains('mesa-cobre');
+    if (areaTool.busy || regua.busy || ficha.isOpen || cobre) { mx = my = 0; flyUp = flyDown = false; }   // posicionando a área: o personagem fica parado
     const len = Math.hypot(mx, my);
     if (len > 1) { mx /= len; my /= len; }
     // voo: espaço / botão ▲ sobe; shift, C ou botão ▼ desce
@@ -890,10 +952,12 @@ function frame() {
     if (POSSESS) { const e = session.ents.get(POSSESS); if (e) { e.hidden = true; e.holder.position.set(pos.x, posY, pos.z); } }
     session.update(dt, pos);
     updateCombatHUD(dt, performance.now() / 1000);
+    updateTracosCena();
     sky.position.copy(camera.position);
     updateMotes(dt, performance.now() / 1000);
   }
-  renderer.render(scene, camera);
+  // com o mapa do mundo ou uma imagem cobrindo a tela, a cena 3D não precisa ser desenhada (poupa a bateria)
+  if (!document.body.classList.contains('mesa-cobre')) renderer.render(scene, camera);
 }
 frame();
-window.__dbg = { gl: renderer, area: areaTool, regua, ficha, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };
+window.__dbg = { gl: renderer, area: areaTool, regua, ficha, mundo, imagem, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };

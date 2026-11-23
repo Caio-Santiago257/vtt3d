@@ -1,0 +1,546 @@
+{
+ "nome": "Faerûn",
+ "img": "/assets/mundo/faerun.webp",
+ "mini": "/assets/mundo/faerun_mini.webp",
+ "w": 4763,
+ "h": 3185,
+ "milhasPorPx": 0.798,
+ "escala": {
+  "x0": 3644,
+  "x1": 4245.5,
+  "y": 3128,
+  "milhas": 480
+ },
+ "lugares": [
+  {
+   "id": "waterdeep",
+   "x": 694,
+   "y": 682,
+   "nome": "Águas Profundas (Waterdeep)",
+   "tipo": "capital",
+   "regiao": "Costa da Espada",
+   "texto": "A Cidade dos Esplendores: o maior porto e centro de comércio da Costa da Espada. É governada por Lordes mascarados, com Laeral Silverhand como Lorde Revelada. Sob a cidade se estende a Montanha Inferior (Undermountain), a masmorra mais famosa do Norte.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Waterdeep"
+  },
+  {
+   "id": "neverwinter",
+   "x": 491,
+   "y": 445,
+   "nome": "Inverno Eterno (Neverwinter)",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "A Joia do Norte, aquecida pelo rio que nasce do vulcão Monte Hotenow e por isso nunca congela. Foi reconstruída depois da erupção que a arrasou e hoje é governada pelo Lorde Protetor Dagult Neverember.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Neverwinter"
+  },
+  {
+   "id": "luskan",
+   "x": 411,
+   "y": 311,
+   "nome": "Luskan",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "Cidade portuária dura e sem lei, dominada por capitães piratas. Por muito tempo foi a sede da Irmandade Arcana e de sua Torre Central, até a torre cair.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Luskan"
+  },
+  {
+   "id": "daggerford",
+   "x": 824,
+   "y": 764,
+   "nome": "Vau da Adaga (Daggerford)",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "Vila fortificada num vau do Rio Delimbiyr, ao sul de Águas Profundas. Ponto de parada tradicional de caravanas que descem pela Estrada do Comércio.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Daggerford"
+  },
+  {
+   "id": "longsaddle",
+   "x": 663,
+   "y": 344,
+   "nome": "Sela Longa (Longsaddle)",
+   "tipo": "cidade",
+   "regiao": "O Norte",
+   "texto": "Vilarejo de criadores de cavalos governado pela família Harpell, magos excêntricos e famosos pelos experimentos que dão errado.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Longsaddle"
+  },
+  {
+   "id": "triboar",
+   "x": 746,
+   "y": 493,
+   "nome": "Triboar",
+   "tipo": "cidade",
+   "regiao": "O Norte",
+   "texto": "Cidade de cruzamento no meio do Norte, onde se encontram estradas e caravanas. Famosa pelos ferreiros e pelas feiras de cavalos.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Triboar"
+  },
+  {
+   "id": "secomber",
+   "x": 1005,
+   "y": 674,
+   "nome": "Secomber",
+   "tipo": "cidade",
+   "regiao": "O Norte",
+   "texto": "Vila tranquila de pescadores e agricultores no encontro do Delimbiyr com o Unicórnio, construída sobre as ruínas do antigo reino de Hastarl.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Secomber"
+  },
+  {
+   "id": "mirabar",
+   "x": 627,
+   "y": 160,
+   "nome": "Mirabar",
+   "tipo": "cidade",
+   "regiao": "O Norte",
+   "texto": "Cidade mineira rica em metais, onde humanos e anões trabalham lado a lado. Governada por um marquês e pelo Conselho dos Sábios.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Mirabar"
+  },
+  {
+   "id": "icewind",
+   "x": 283,
+   "y": 147,
+   "nome": "Vale do Vento Gélido (Icewind Dale)",
+   "tipo": "regiao",
+   "regiao": "O Norte",
+   "texto": "Tundra gelada além da Espinha do Mundo, onde ficam as Dez-Cidades em volta de três lagos. Terra de bárbaros, anões e ventos que nunca param.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Icewind_Dale"
+  },
+  {
+   "id": "mithral",
+   "x": 881,
+   "y": 139,
+   "nome": "Salão de Mithral (Mithral Hall)",
+   "tipo": "fortaleza",
+   "regiao": "Marcas Argênteas",
+   "texto": "Fortaleza anã do clã Battlehammer, escavada na montanha. Reconquistada de um dragão das sombras pelo rei Bruenor, amigo de Drizzt Do’Urden.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Mithral_Hall"
+  },
+  {
+   "id": "felbarr",
+   "x": 1151,
+   "y": 107,
+   "nome": "Cidadela Felbarr",
+   "tipo": "fortaleza",
+   "regiao": "Marcas Argênteas",
+   "texto": "Fortaleza anã nas Marcas Argênteas, retomada dos orcs depois de séculos. Guarda as minas e as passagens das montanhas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Citadel_Felbarr"
+  },
+  {
+   "id": "silverymoon",
+   "x": 1018,
+   "y": 216,
+   "nome": "Lua Argêntea (Silverymoon)",
+   "tipo": "capital",
+   "regiao": "Marcas Argênteas",
+   "texto": "A Gema do Norte: cidade de sábios, artistas e magia, protegida por uma muralha mística. Sede de uma grande universidade e lar da arquimaga Alustriel por muitos anos.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Silverymoon"
+  },
+  {
+   "id": "evereska",
+   "x": 1529,
+   "y": 709,
+   "nome": "Evereska",
+   "tipo": "cidade",
+   "regiao": "O Norte",
+   "texto": "Refúgio élfico escondido num vale entre colinas, guardado por mythals antigos. Poucos forasteiros recebem permissão para entrar.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Evereska"
+  },
+  {
+   "id": "anauroch",
+   "x": 1658,
+   "y": 292,
+   "nome": "Anauroch",
+   "tipo": "regiao",
+   "regiao": "O Norte",
+   "texto": "O Grande Deserto, que já foi o império de Netheril. Areia, geleiras e ruínas de cidades voadoras que caíram do céu.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Anauroch"
+  },
+  {
+   "id": "shade",
+   "x": 1853,
+   "y": 542,
+   "nome": "Cidade de Shade",
+   "tipo": "ruina",
+   "regiao": "Anauroch",
+   "texto": "A cidade voadora dos Shadovar, herdeiros sombrios de Netheril. Ela caiu sobre o Mar das Sombras, e ruínas e segredos ainda cercam o lugar.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Shade_(city)"
+  },
+  {
+   "id": "dragonspear",
+   "x": 1055,
+   "y": 873,
+   "nome": "Castelo Lança do Dragão (Dragonspear)",
+   "tipo": "fortaleza",
+   "regiao": "Costa da Espada",
+   "texto": "Fortaleza em ruínas no caminho entre Águas Profundas e Portal de Baldur, tomada várias vezes por demônios e por cultos de dragões.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Dragonspear_Castle"
+  },
+  {
+   "id": "baldur",
+   "x": 1036,
+   "y": 1155,
+   "nome": "Portal de Baldur (Baldur’s Gate)",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "Grande porto mercante na foz do Rio Chionthar, governado pelo Conselho dos Quatro e pelos duques. Cheio de guildas, contrabando e intrigas, dentro e fora das muralhas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Baldur%27s_Gate"
+  },
+  {
+   "id": "candlekeep",
+   "x": 1026,
+   "y": 1320,
+   "nome": "Forte da Vela (Candlekeep)",
+   "tipo": "local",
+   "regiao": "Costa da Espada",
+   "texto": "Biblioteca-fortaleza sobre um penhasco à beira-mar, a maior coleção de saber de Faerûn. Para entrar, o visitante precisa doar um livro que os monges ainda não tenham.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Candlekeep"
+  },
+  {
+   "id": "beregost",
+   "x": 1078,
+   "y": 1327,
+   "nome": "Beregost",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "Cidade de estalagens no Caminho da Costa, ao redor de um templo de Lathander. Parada clássica de viajantes entre Amn e Portal de Baldur.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Beregost"
+  },
+  {
+   "id": "nashkel",
+   "x": 1183,
+   "y": 1396,
+   "nome": "Nashkel",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "Vila mineira na fronteira com Amn, famosa pelas minas de ferro e pelo festival que reúne gente de toda a região.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Nashkel"
+  },
+  {
+   "id": "durlag",
+   "x": 1214,
+   "y": 1321,
+   "nome": "Torre de Durlag",
+   "tipo": "ruina",
+   "regiao": "Costa da Espada",
+   "texto": "Fortaleza construída pelo anão Durlag Trollkiller, que enlouqueceu depois de uma traição. Cheia de armadilhas e enigmas, atrai aventureiros que muitas vezes não voltam.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Durlag%27s_Tower"
+  },
+  {
+   "id": "elturel",
+   "x": 1294,
+   "y": 1113,
+   "nome": "Elturel",
+   "tipo": "cidade",
+   "regiao": "Elturgard",
+   "texto": "Cidade sagrada no alto de um penhasco sobre o Chionthar. Foi arrastada para Avernus, o primeiro círculo dos Nove Infernos, e depois trazida de volta.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Elturel"
+  },
+  {
+   "id": "scornubel",
+   "x": 1401,
+   "y": 1087,
+   "nome": "Scornubel",
+   "tipo": "cidade",
+   "regiao": "Costa da Espada",
+   "texto": "A Cidade das Caravanas, no encontro do Chionthar com a Estrada do Comércio. Todo tipo de mercadoria e mercenário passa por aqui.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Scornubel"
+  },
+  {
+   "id": "suzail",
+   "x": 1899,
+   "y": 1047,
+   "nome": "Suzail",
+   "tipo": "capital",
+   "regiao": "Cormyr",
+   "texto": "Capital do reino de Cormyr, à beira do Dragonmere. Sede da coroa Obarskyr e dos Dragões Púrpuras, os cavaleiros do reino.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Suzail"
+  },
+  {
+   "id": "arabel",
+   "x": 1953,
+   "y": 930,
+   "nome": "Arabel",
+   "tipo": "cidade",
+   "regiao": "Cormyr",
+   "texto": "Segunda cidade de Cormyr e grande centro de comércio do interior, perto da fronteira com o deserto e os Vales.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Arabel"
+  },
+  {
+   "id": "tilverton",
+   "x": 1987,
+   "y": 803,
+   "nome": "Tilverton",
+   "tipo": "ruina",
+   "regiao": "Cormyr",
+   "texto": "Cidade que guardava a passagem entre Cormyr e os Vales e foi destruída por uma explosão de magia sombria. Hoje é ruína e cratera.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Tilverton"
+  },
+  {
+   "id": "westgate",
+   "x": 2148,
+   "y": 1127,
+   "nome": "Portal Oeste (Westgate)",
+   "tipo": "cidade",
+   "regiao": "Costa do Dragão",
+   "texto": "Cidade portuária rica e corrupta, onde guildas de ladrões e famílias de mercadores mandam de verdade. Por trás dela age a Noite Mascarada.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Westgate"
+  },
+  {
+   "id": "selgaunt",
+   "x": 2393,
+   "y": 950,
+   "nome": "Selgaunt",
+   "tipo": "cidade",
+   "regiao": "Sembia",
+   "texto": "Cidade mais rica de Sembia, terra de mercadores onde o ouro manda mais que a nobreza.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Selgaunt"
+  },
+  {
+   "id": "shadowdale",
+   "x": 2135,
+   "y": 608,
+   "nome": "Vale das Sombras (Shadowdale)",
+   "tipo": "cidade",
+   "regiao": "Os Vales",
+   "texto": "O mais famoso dos Vales, pequeno e teimoso. Lar da Torre Torta e do lendário mago Elminster, sempre na mira de invasores.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Shadowdale"
+  },
+  {
+   "id": "mythdrannor",
+   "x": 2290,
+   "y": 580,
+   "nome": "Myth Drannor",
+   "tipo": "ruina",
+   "regiao": "Cormanthor",
+   "texto": "A antiga Cidade das Canções dos elfos, no coração da floresta de Cormanthor. Já foi capital de um reino glorioso e hoje é ruína mágica perigosa, cercada de lendas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Myth_Drannor"
+  },
+  {
+   "id": "zhentil",
+   "x": 2311,
+   "y": 436,
+   "nome": "Forte Zhentil (Zhentil Keep)",
+   "tipo": "fortaleza",
+   "regiao": "Mar da Lua",
+   "texto": "Bastião da Rede Negra, os Zhentarim, que espalham influência por mercenários, ouro e chantagem. Destruído e reconstruído mais de uma vez.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Zhentil_Keep"
+  },
+  {
+   "id": "hillsfar",
+   "x": 2381,
+   "y": 503,
+   "nome": "Hillsfar",
+   "tipo": "cidade",
+   "regiao": "Mar da Lua",
+   "texto": "Cidade-estado humana governada com punho de ferro pelos Grandes Guardas. Famosa pela arena de gladiadores e pela hostilidade aos não humanos.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Hillsfar"
+  },
+  {
+   "id": "phlan",
+   "x": 2388,
+   "y": 382,
+   "nome": "Phlan",
+   "tipo": "cidade",
+   "regiao": "Mar da Lua",
+   "texto": "Cidade portuária no Mar da Lua que já caiu e se reergueu várias vezes, sempre cobiçada por dragões, orcs e cultos.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Phlan"
+  },
+  {
+   "id": "mulmaster",
+   "x": 2647,
+   "y": 445,
+   "nome": "Mulmaster",
+   "tipo": "cidade",
+   "regiao": "Mar da Lua",
+   "texto": "A Cidade do Perigo: torres altas, nobreza decadente e o Manto, guarda de magos que mantém o povo sob controle.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Mulmaster"
+  },
+  {
+   "id": "heliogabalus",
+   "x": 2940,
+   "y": 321,
+   "nome": "Heliogabalus",
+   "tipo": "capital",
+   "regiao": "Damara",
+   "texto": "Capital de Damara, reino gelado no nordeste. Retomado do mago Zhengyi por Gareth Dragonsbane, o rei paladino.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Heliogabalus"
+  },
+  {
+   "id": "yellowrose",
+   "x": 2797,
+   "y": 481,
+   "nome": "Mosteiro da Rosa Amarela",
+   "tipo": "local",
+   "regiao": "Damara",
+   "texto": "Mosteiro de monges no alto das Montanhas da Terra-Espigão, conhecido pela sabedoria e pela disciplina. Acolhe viajantes perdidos na neve.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Monastery_of_the_Yellow_Rose"
+  },
+  {
+   "id": "rashemen",
+   "x": 3919,
+   "y": 467,
+   "nome": "Rashemen",
+   "tipo": "regiao",
+   "regiao": "Rashemen",
+   "texto": "Terra de bárbaros orgulhosos e das Bruxas de Rashemen, mascaradas e temidas. Os espíritos da natureza ali são fortes e respeitados.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Rashemen"
+  },
+  {
+   "id": "eltabbar",
+   "x": 3896,
+   "y": 846,
+   "nome": "Eltabbar",
+   "tipo": "capital",
+   "regiao": "Thay",
+   "texto": "Capital de Thay, reino governado pelos Magos Vermelhos e pelo lich Szass Tam. Magia de necromancia, escravos e exércitos de mortos-vivos.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Eltabbar"
+  },
+  {
+   "id": "velprintalar",
+   "x": 3215,
+   "y": 1012,
+   "nome": "Velprintalar",
+   "tipo": "capital",
+   "regiao": "Aglarond",
+   "texto": "Capital de Aglarond, reino de humanos e meio-elfos que há séculos resiste a Thay no leste do Mar das Estrelas Caídas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Velprintalar"
+  },
+  {
+   "id": "cimbar",
+   "x": 3175,
+   "y": 1365,
+   "nome": "Cimbar",
+   "tipo": "cidade",
+   "regiao": "Chessenta",
+   "texto": "Cidade de Chessenta, terra de cidades-estado rivais e guerreiras. Já foi a capital do reino e ainda é um dos maiores portos da Baía de Chessenta.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Cimbar"
+  },
+  {
+   "id": "unthalass",
+   "x": 3731,
+   "y": 1706,
+   "nome": "Unthalass",
+   "tipo": "cidade",
+   "regiao": "Unther",
+   "texto": "Antiga capital de Unther, reino de deuses-reis que governaram por milênios. Um lugar de templos colossais e tradições muito antigas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Unthalass"
+  },
+  {
+   "id": "skuld",
+   "x": 3854,
+   "y": 1546,
+   "nome": "Skuld",
+   "tipo": "capital",
+   "regiao": "Mulhorand",
+   "texto": "Capital de Mulhorand, terra de pirâmides e deuses encarnados à beira do Rio das Sombras. Lembra o Egito antigo do mundo real.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Skuld"
+  },
+  {
+   "id": "athkatla",
+   "x": 1111,
+   "y": 1529,
+   "nome": "Athkatla",
+   "tipo": "capital",
+   "regiao": "Amn",
+   "texto": "A Cidade das Moedas, capital de Amn, reino governado pelo Conselho dos Seis. Riqueza sem limites, magia proibida sem licença e guildas de ladrões nas sombras.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Athkatla"
+  },
+  {
+   "id": "castletethyr",
+   "x": 1284,
+   "y": 2010,
+   "nome": "Castelo Tethyr",
+   "tipo": "fortaleza",
+   "regiao": "Tethyr",
+   "texto": "Fortaleza que guarda a estrada costeira de Tethyr, reino reerguido depois de uma longa guerra civil pela rainha Zaranda.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Castle_Tethyr"
+  },
+  {
+   "id": "calimport",
+   "x": 1341,
+   "y": 2344,
+   "nome": "Calimporto (Calimport)",
+   "tipo": "capital",
+   "regiao": "Calimshan",
+   "texto": "Metrópole enorme e lotada do sul, capital de Calimshan. Paxás, gênios, mercados sem fim e guildas de ladrões poderosas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Calimport"
+  },
+  {
+   "id": "nyanzaru",
+   "x": 760,
+   "y": 2429,
+   "nome": "Porto Nyanzaru",
+   "tipo": "cidade",
+   "regiao": "Chult",
+   "texto": "Porto colorido na entrada da selva de Chult, cheio de corridas de dinossauros, mercadores e exploradores atrás de tesouros e de cidades perdidas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Port_Nyanzaru"
+  },
+  {
+   "id": "mezro",
+   "x": 833,
+   "y": 2520,
+   "nome": "Mezro",
+   "tipo": "ruina",
+   "regiao": "Chult",
+   "texto": "Cidade sagrada de Chult, ligada às lendas dos barae, paladinos escolhidos pelo deus Ubtao para protegê-la.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Mezro"
+  },
+  {
+   "id": "halarahh",
+   "x": 2502,
+   "y": 2968,
+   "nome": "Halarahh",
+   "tipo": "capital",
+   "regiao": "Halruaa",
+   "texto": "Capital de Halruaa, reino de magos isolado por montanhas. Navios voadores e magia por toda parte, mas pouca paciência com estrangeiros.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Halarahh"
+  },
+  {
+   "id": "beluir",
+   "x": 3954,
+   "y": 2496,
+   "nome": "Beluir",
+   "tipo": "cidade",
+   "regiao": "Luiren",
+   "texto": "Cidade de Luiren, a terra dos halflings no sul, de onde vieram muitos pequenos aventureiros. Pomares, festas e casas redondas.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Beluir"
+  },
+  {
+   "id": "maarlith",
+   "x": 3529,
+   "y": 2941,
+   "nome": "Maarlith",
+   "tipo": "cidade",
+   "regiao": "Dambrath",
+   "texto": "Cidade de Dambrath, reino do sul governado por meio-drows devotos de Loviatar. Cavaleiros de batalha e um culto cruel.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Maarlith"
+  },
+  {
+   "id": "callidyr",
+   "x": 495,
+   "y": 1272,
+   "nome": "Caer Callidyr",
+   "tipo": "cidade",
+   "regiao": "Ilhas Moonshae",
+   "texto": "Fortaleza da ilha de Alaron nas Moonshae, terra de reis ffolk e das florestas sagradas da Deusa Terra.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Caer_Callidyr"
+  },
+  {
+   "id": "corwell",
+   "x": 482,
+   "y": 1580,
+   "nome": "Caer Corwell",
+   "tipo": "capital",
+   "regiao": "Ilhas Moonshae",
+   "texto": "Castelo de Gwynneth nas Moonshae, sede do Grande Rei dos ffolk. Druidas, bosques sagrados e névoas do mar.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Caer_Corwell"
+  },
+  {
+   "id": "sambar",
+   "x": 438,
+   "y": 2203,
+   "nome": "Sambar",
+   "tipo": "capital",
+   "regiao": "Lantan",
+   "texto": "Capital de Lantan, ilha de inventores devotos de Gond. Engenhocas a vapor, pólvora e autômatos que ninguém mais tem.",
+   "url": "https://forgottenrealms.fandom.com/wiki/Sambar"
+  }
+ ]
+}

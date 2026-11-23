@@ -411,7 +411,7 @@ export class Session {
     this.world = null; this.map = null; this.mapVersion = 0;
     this.ents = new Map(); this.players = new Map();
     this.doorState = []; this.frozen = false; this.myId = 0; this.connected = false;
-    this.combat = { active: false, list: [], cur: null, round: 0 }; this.turnUsed = 0; this.kicked = false; this.fichas = {};
+    this.combat = { active: false, list: [], cur: null, round: 0 }; this.turnUsed = 0; this.kicked = false; this.fichas = {}; this.mesa = { modo: 'cena' }; this.rotas = []; this.imagens = [];
     this.lightPool = [];
     this.aoes = new Map(); this._hitRings = []; this._aoeTimer = 0;
     if (!topDown) {
@@ -477,6 +477,11 @@ export class Session {
       case 'deny': this.on.deny && this.on.deny(m.msg); break;
       case 'aoes': this.syncAoes(m.list); break;
       case 'fichas': this.fichas = m.fichas || {}; this.on.fichas && this.on.fichas(this.fichas); break;
+      case 'mesa': this.mesa = m; this.on.mesa && this.on.mesa(m); break;
+      case 'rotas': this.rotas = m.list || []; this.on.rotas && this.on.rotas(this.rotas); break;
+      case 'ping': this.on.ping && this.on.ping(m); break;
+      case 'traco': this.on.traco && this.on.traco(m); break;
+      case 'imagens': this.imagens = m.list || []; this.on.imagens && this.on.imagens(this.imagens); break;
       case 'spawn': if (this.map) this.map.spawn = m.spawn; this.on.spawn && this.on.spawn(m.spawn); break;
     }
   }

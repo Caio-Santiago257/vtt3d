@@ -555,6 +555,52 @@ Padrão de exportação: metros, pivô no chão, frente para +Z no jogo, materia
 
 Para o resultado ficar melhor, exporte o mapa sem os móveis e coloque os móveis 3D pela lista de objetos.
 
+## Mesa: mapa do mundo, cena 3D e imagem (teatro da mente)
+
+A aba **Mesa** do mestre escolhe o que aparece no celular dos jogadores:
+
+| Modo | O que os jogadores veem |
+|---|---|
+| 🗺 **Mapa do mundo** | o mapa de Faerûn, para olhar à vontade (é o modo padrão quando o servidor abre) |
+| ⚔ **Cena 3D** | o mapa de batalha 3D, como antes; o botão **🗺 MAPA** (ou a tecla M) abre o mapa do mundo só para quem tocou |
+| 🖼 **Imagem** | uma imagem em tela cheia, com legenda, para o teatro da mente |
+
+- **Tela do mestre:** a área do mapa mostra o mesmo que os jogadores veem. **Ver a cena 3D só na minha tela** deixa o mestre mexer na cena enquanto os jogadores olham o mapa ou a imagem.
+- **O modo fica salvo** em `data/mesa.json`.
+- **Bateria:** com o mapa ou a imagem cobrindo a tela, o celular para de desenhar a cena 3D.
+
+### Mapa de Faerûn
+
+- **Mover:** arraste com um dedo. Dois dedos ou a roda do mouse aproximam e afastam. **⌖ MAPA TODO** volta para o mapa inteiro.
+- **Escala:** a do próprio mapa, que vai de 0 a 480 milhas em 601,5 pixels (0,8 milha por pixel). No canto, uma barra de escala acompanha o zoom.
+- **📏 RÉGUA:** arraste de um ponto a outro. Aparecem a distância em milhas e em km e o tempo de viagem a pé, no ritmo normal (24 milhas por dia), rápido (30) e lento (18), como no Livro do Jogador 2024.
+  - De Águas Profundas a Portal de Baldur, em linha reta, dá 466 milhas (749 km), uns 19 dias a pé.
+- **🧭 ROTA:** toque ponto a ponto (partida, paradas, destino). A conta da viagem vai somando trecho por trecho.
+  - **SALVAR** pede um nome e guarda a rota para todos. **DESFAZER** tira o último ponto.
+  - **🗺 ROTAS** lista as rotas salvas, com autor, distância e tempo. 👁 leva até a rota, e ✕ apaga (quem fez a rota ou o mestre).
+  - O mestre tem **Apagar todas as rotas** na aba Mesa. As rotas ficam em `data/mesa.json`.
+- **Ao vivo:** quando alguém usa a régua ou desenha uma rota, todos veem na hora, na cor do personagem e com o nome.
+  - Cores: Guy dourado, Kaira lilás, Ghult'ok laranja, mestre azul-claro.
+  - A régua some 12 segundos depois de soltar.
+- **Ping:** segure o dedo (ou o botão esquerdo do mouse) parado num ponto por meio segundo. Aparecem ondas com o nome de quem marcou.
+  - **Ping do mestre:** a tela de todos os jogadores desliza até o ponto e aproxima.
+  - Quem está na cena 3D recebe um aviso.
+- **📍 LUGARES:** liga e desliga os pontos de lore de 53 lugares: as capitais, as cidades grandes da Costa da Espada e do Norte, os Vales e o Mar da Lua, além de ruínas e lugares famosos.
+  - Toque num ponto para ler um resumo. O link leva à página do lugar na Forgotten Realms Wiki, em inglês.
+  - Com o mapa inteiro aparecem só os nomes das capitais e regiões; aproximando, aparecem todos.
+  - A escolha fica guardada no celular.
+- **📜 FICHA:** abre a ficha sem sair do mapa.
+
+**Dados:** `fontes/mundo/gerar_faerun.py` gera `public/assets/mundo/faerun.json`, com a escala e os lugares. As posições foram conferidas uma a uma sobre a imagem. Os textos de lore foram escritos aqui, em resumo próprio, para a época da 5ª edição. O mapa original enviado fica em `fontes/recebidos/mundo/` e não vai para o GitHub. O jogo usa uma cópia em WEBP de 2,7 MB.
+
+### Imagens (teatro da mente)
+
+- **Enviar:** pelo botão **Enviar imagem…** ou arrastando os arquivos para a aba Mesa. Aceita PNG, JPG, WEBP ou GIF, até 40 MB. As imagens ficam em `data/imagens/`.
+- **Mostrar:** clique numa imagem e ela aparece em tela cheia para todos, com a legenda, se você escreveu uma. Os jogadores podem aproximar com os dedos.
+- **Apagar:** ✕ na miniatura.
+
+Código: `public/js/mundo.js` (mapa e imagem), mensagens `mesa`, `ping`, `traco`, `rota_add`, `rota_del` e `rotas_limpar` em `server.js`.
+
 ## Régua
 
 Mede a distância entre dois pontos do mapa, de quadrado a quadrado. Segue a regra do Livro do Jogador 2024: cada quadrado vale 1,5 m e a diagonal também conta 1 quadrado.
@@ -566,6 +612,8 @@ Mede a distância entre dois pontos do mapa, de quadrado a quadrado. Segue a reg
   - Dois dedos arrastam o mapa e aproximam ou afastam. No PC: botão direito arrasta, a roda dá zoom. **＋ / －** também funcionam.
   - **◀ VOLTAR** (ou Esc) volta para a visão de antes. Enquanto mede, o personagem fica parado.
 - **Mestre:** o botão **📏 RÉGUA**, no canto superior direito do mapa, ou a tecla R. Com a régua ligada, arraste com o botão esquerdo para medir. O direito continua arrastando o mapa. Esc desliga.
+
+- **Ao vivo:** o mestre e os outros jogadores veem a régua de quem está medindo na cena 3D, com o nome e a distância.
 
 Código: `public/js/regua.js`.
 

@@ -206,11 +206,38 @@ function lanAddresses() {
 }
 const playerUrl = (ip) => `http://${ip}:${PORT}/`;
 
+// ---------------------------------------------------------------- mesa: o que os jogadores veem
+// modo 'mundo' (mapa de Faerûn), 'cena' (mapa 3D de batalha) ou 'imagem' (teatro da mente: uma imagem que o mestre mostra).
+// Rotas de viagem desenhadas no mapa do mundo ficam salvas junto, em data/mesa.json. Imagens enviadas ficam em data/imagens/.
+const IMG_DIR = path.join(DATA, 'imagens');
+fs.mkdirSync(IMG_DIR, { recursive: true });
+const MESA_FILE = path.join(DATA, 'mesa.json');
+let mesa = { modo: 'mundo', imagem: null, legenda: '' };
+let rotas = [], nextRota = 1;
+try {
+  const j = JSON.parse(fs.readFileSync(MESA_FILE, 'utf8'));
+  if (['mundo', 'cena', 'imagem'].includes(j.modo)) mesa.modo = j.modo;
+  if (j.imagem && fs.existsSync(path.join(IMG_DIR, path.basename(j.imagem)))) { mesa.imagem = j.imagem; mesa.legenda = String(j.legenda || ''); }
+  else if (mesa.modo === 'imagem') mesa.modo = 'mundo';
+  rotas = Array.isArray(j.rotas) ? j.rotas : [];
+  nextRota = rotas.reduce((m, r) => Math.max(m, r.id + 1), 1);
+} catch {}
+function saveMesa() {
+  try { fs.writeFileSync(MESA_FILE, JSON.stringify({ ...mesa, rotas })); } catch (e) { console.error('Não consegui salvar a mesa:', e.message); }
+}
+const IMG_EXT = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif' };
+function listImagens() {
+  return fs.readdirSync(IMG_DIR).filter((f) => /\.(png|jpe?g|webp|gif)$/i.test(f))
+    .map((f) => ({ f, t: fs.statSync(path.join(IMG_DIR, f)).mtimeMs }))
+    .sort((a, b) => b.t - a.t).map(({ f }) => ({ url: '/imagens/' + f, nome: f.replace(/^[a-z0-9]+-/, '').replace(/\.[a-z]+$/i, '').replace(/_/g, ' ') }));
+}
+const ptList = (v, n) => (Array.isArray(v) ? v.slice(0, n).map((q) => [num(q && q[0], -1e5, 1e5), num(q && q[1], -1e5, 1e5)]) : []);
+
 // ---------------------------------------------------------------- HTTP
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.glb': 'model/gltf-binary', '.png': 'image/png', '.jpg': 'image/jpeg',
-  '.webp': 'image/webp', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8',
+  '.webp': 'image/webp', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8', '.gif': 'image/gif', '.jpeg': 'image/jpeg',
 };
 
 // Assets ficam guardados no navegador, mas ele confere a cada carga se o arquivo mudou (resposta 304 se não mudou).
@@ -316,6 +343,31 @@ const server = http.createServer(async (req, res) => {
       broadcast({ t: 'map', version: map.version, ents, doors });
       return sendJSON(res, { ok: true });
     }
+    // imagens do teatro da mente
+    if (p === '/api/imagens' && req.method === 'GET') return sendJSON(res, { imagens: listImagens() });
+    if (p === '/api/imagens' && req.method === 'POST') {
+      const ext = IMG_EXT[String(req.headers['content-type'] || '').split(';')[0].trim()];
+      if (!ext) return sendJSON(res, { error: 'Envie uma imagem PNG, JPG, WEBP ou GIF.' }, 400);
+      const chunks = []; let total = 0;
+      for await (const c of req) {
+        total += c.length;
+        if (total > 40 * 1024 * 1024) return sendJSON(res, { error: 'Imagem grande demais (limite de 40 MB).' }, 413);
+        chunks.push(c);
+      }
+      const nome = String(url.searchParams.get('nome') || 'imagem').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\.[a-z0-9]+$/i, '').replace(/[^A-Za-z0-9 _-]/g, '').trim().replace(/ +/g, '_').slice(0, 50) || 'imagem';
+      const f = Date.now().toString(36) + '-' + nome + ext;
+      fs.writeFileSync(path.join(IMG_DIR, f), Buffer.concat(chunks));
+      broadcastGM({ t: 'imagens', list: listImagens() });
+      return sendJSON(res, { ok: true, url: '/imagens/' + f });
+    }
+    if (p === '/api/imagens' && req.method === 'DELETE') {
+      const f = path.basename(String(url.searchParams.get('f') || ''));
+      if (f) fs.rmSync(path.join(IMG_DIR, f), { force: true });
+      if (mesa.imagem === '/imagens/' + f) { mesa = { modo: 'mundo', imagem: null, legenda: '' }; saveMesa(); broadcast({ t: 'mesa', ...mesa }); }
+      broadcastGM({ t: 'imagens', list: listImagens() });
+      return sendJSON(res, { ok: true });
+    }
+    if (p.startsWith('/imagens/')) return sendFile(res, path.join(IMG_DIR, path.basename(p)), true, req);
     // arquivos estáticos
     let rel = p === '/' ? '/jogador.html' : p === '/mestre' ? '/mestre.html' : p === '/galeria' ? '/galeria.html' : p;
     const file = path.normalize(path.join(PUBLIC, rel));
@@ -333,6 +385,10 @@ function send(ws, msg) { if (ws.readyState === 1) ws.send(JSON.stringify(msg)); 
 function broadcast(msg, except) {
   const s = JSON.stringify(msg);
   for (const c of wss.clients) if (c !== except && c.readyState === 1) c.send(s);
+}
+function broadcastGM(msg) {
+  const s = JSON.stringify(msg);
+  for (const c of wss.clients) if (c.role === 'gm' && c.readyState === 1) c.send(s);
 }
 const clamp = (v, a, b) => Math.min(b, Math.max(a, Number(v) || 0));
 
@@ -739,6 +795,9 @@ wss.on('connection', (ws) => {
       send(ws, { t: 'init', id: me ? me.id : 0, me, version: map.version, ents, doors, frozen, players: playerList(), aoes });
       send(ws, combatView(ws.role === 'gm'));
       send(ws, { t: 'fichas', fichas });
+      send(ws, { t: 'mesa', ...mesa });
+      send(ws, { t: 'rotas', list: rotas });
+      if (ws.role === 'gm') send(ws, { t: 'imagens', list: listImagens() });
       return;
     }
     if (!ws.role) return;
@@ -786,6 +845,42 @@ wss.on('connection', (ws) => {
         setRevelacao(me, !!m.on, false);
         break;
       }
+      // ---- mesa, mapa do mundo e teatro da mente
+      case 'mesa': {
+        if (ws.role !== 'gm') break;
+        const modo = ['mundo', 'cena', 'imagem'].includes(m.modo) ? m.modo : mesa.modo;
+        const img = typeof m.imagem === 'string' && m.imagem.startsWith('/imagens/') && fs.existsSync(path.join(IMG_DIR, path.basename(m.imagem))) ? m.imagem : mesa.imagem;
+        if (modo === 'imagem' && !img) break;
+        mesa = { modo, imagem: img, legenda: m.legenda !== undefined ? String(m.legenda).slice(0, 120) : mesa.legenda };
+        saveMesa(); broadcast({ t: 'mesa', ...mesa });
+        break;
+      }
+      case 'ping': {   // marca um ponto no mapa do mundo; o do mestre leva a tela dos jogadores até lá
+        const gm = ws.role === 'gm';
+        broadcast({ t: 'ping', x: num(m.x, -1e5, 1e5), y: num(m.y, -1e5, 1e5), por: me ? me.name : 'Mestre', hero: me ? me.hero : '', gm, leva: gm && !!m.leva }, ws);
+        break;
+      }
+      case 'traco': {   // régua ou rota sendo desenhada agora (ao vivo para todos); pts vazio apaga
+        const id = me ? 'p' + me.id : 'gm';
+        ws.traco = id;
+        broadcast({ t: 'traco', id, ctx: m.ctx === 'cena' ? 'cena' : 'mundo', tipo: m.tipo === 'rota' ? 'rota' : 'regua', pts: ptList(m.pts, 80), por: me ? me.name : 'Mestre', hero: me ? me.hero : '' }, ws);
+        break;
+      }
+      case 'rota_add': {
+        const pts = ptList(m.pts, 120);
+        if (pts.length < 2) break;
+        rotas.push({ id: nextRota++, nome: String(m.nome || 'Rota').slice(0, 60), pts, por: me ? me.name : 'Mestre', hero: me ? me.hero : '', dono: me ? 'p' + me.id : 'gm', em: Date.now() });
+        if (rotas.length > 60) rotas.shift();
+        saveMesa(); broadcast({ t: 'rotas', list: rotas });
+        break;
+      }
+      case 'rota_del': {
+        const r = rotas.find((x) => x.id === m.id);
+        if (!r || !(ws.role === 'gm' || (me && r.dono === 'p' + me.id))) break;
+        rotas = rotas.filter((x) => x !== r); saveMesa(); broadcast({ t: 'rotas', list: rotas });
+        break;
+      }
+      case 'rotas_limpar': if (ws.role === 'gm') { rotas = []; saveMesa(); broadcast({ t: 'rotas', list: rotas }); } break;
       case 'ficha': {
         // o jogador edita a ficha do próprio herói; o mestre pode editar qualquer uma
         const hero = ws.role === 'gm' ? String(m.hero || '') : me && me.hero;
@@ -907,7 +1002,7 @@ wss.on('connection', (ws) => {
       }
     }
   });
-  ws.on('close', () => { players.delete(ws); });
+  ws.on('close', () => { players.delete(ws); if (ws.traco) broadcast({ t: 'traco', id: ws.traco, pts: [] }); });
   ws.on('error', () => {});
 });
 
