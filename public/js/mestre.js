@@ -913,29 +913,38 @@ function renderFichas() {
 }
 
 // ---------------------------------------------------------------- mesa: mapa do mundo, cena 3D ou imagem
-var gmVeCena = false;
-var mundo = window.__mundoGM = new MundoView($('mesa-mundo'), { role: 'gm', send: (m) => session.send(m), session: () => session, toast, me: () => ({ nome: 'Mestre', hero: '' }) });
+var gmLocal = null;   // o mestre pode olhar outra coisa só na tela dele (null = vê o mesmo que os jogadores)
+var cenaNoMapa = document.createElement('button'); cenaNoMapa.className = 'mu-bt batalha'; cenaNoMapa.innerHTML = '<i>⚔</i><span>CENA 3D (SÓ EU)</span>';
+cenaNoMapa.title = 'Ver a cena 3D só na sua tela; os jogadores continuam no mapa';
+var mundo = window.__mundoGM = new MundoView($('mesa-mundo'), { role: 'gm', send: (m) => session.send(m), session: () => session, toast, me: () => ({ nome: 'Mestre', hero: '' }), extras: [cenaNoMapa] });
 var imagemView = new ImagemView($('mesa-imagem'));
+var ultimoModoGM = '';
 function aplicaMesa() {
   const m = session.mesa || { modo: 'cena' };
+  if (m.modo !== ultimoModoGM) { ultimoModoGM = m.modo; gmLocal = null; }
   document.querySelectorAll('.mesa-modos button').forEach((b) => b.classList.toggle('sel', b.dataset.modo === m.modo));
-  const local = gmVeCena && m.modo !== 'cena';
-  if (m.modo === 'imagem' && m.imagem && !local) imagemView.show(m.imagem, m.legenda); else imagemView.hide();
-  if (m.modo === 'mundo' && !local) mundo.show(); else mundo.hide();
-  document.body.classList.toggle('mesa-cobre', m.modo !== 'cena' && !local);
-  $('gm-ver').hidden = m.modo === 'cena';
-  $('gm-ver').textContent = local ? 'Voltar a ver o que os jogadores veem' : 'Ver a cena 3D só na minha tela';
-  $('mesa-dica').textContent = { mundo: 'Os jogadores estão vendo o mapa de Faerûn.', cena: 'Os jogadores estão na cena 3D (eles ainda podem abrir o mapa do mundo pelo botão 🗺 MAPA).', imagem: 'Os jogadores estão vendo a imagem marcada abaixo.' }[m.modo];
+  let modo = gmLocal || m.modo;
+  if (modo === 'imagem' && !m.imagem) modo = 'cena';
+  if (modo === 'imagem') imagemView.show(m.imagem, m.legenda); else imagemView.hide();
+  if (modo === 'mundo') mundo.show(); else mundo.hide();
+  document.body.classList.toggle('mesa-cobre', modo !== 'cena');
+  cenaNoMapa.querySelector('span').textContent = m.modo === 'mundo' ? 'CENA 3D (SÓ EU)' : 'VOLTAR À CENA';
+  $('mesa-voltar-gm').hidden = modo !== 'imagem';
+  $('gm-ver').textContent = gmLocal ? 'Voltar a ver o que os jogadores veem' : m.modo === 'cena' ? 'Ver o mapa do mundo só na minha tela' : 'Ver a cena 3D só na minha tela';
+  $('mesa-dica').textContent = { mundo: 'Os jogadores estão vendo o mapa de Faerûn. Cada um pode voltar para a batalha pelo botão ⚔ BATALHA.', cena: 'Os jogadores estão na cena 3D (cada um pode abrir o mapa do mundo pelo botão 🗺 MAPA).', imagem: 'Os jogadores estão vendo a imagem marcada abaixo.' }[m.modo];
   renderImagens();
 }
+function verGM(modo) { const base = (session.mesa || {}).modo || 'cena'; gmLocal = modo === base ? null : modo; aplicaMesa(); }
+cenaNoMapa.onclick = () => verGM('cena');
 document.querySelectorAll('.mesa-modos button').forEach((b) => {
   b.onclick = () => {
     const m = b.dataset.modo;
     if (m === 'imagem' && !(session.mesa && session.mesa.imagem)) { const first = (session.imagens || [])[0]; if (!first) { toast('Envie uma imagem primeiro.', 'neg'); return; } session.send({ t: 'mesa', modo: 'imagem', imagem: first.url, legenda: $('img-legenda').value }); return; }
-    gmVeCena = false; session.send({ t: 'mesa', modo: m });
+    gmLocal = null; session.send({ t: 'mesa', modo: m }); if (m === (session.mesa || {}).modo) aplicaMesa();
   };
 });
-$('gm-ver').onclick = () => { gmVeCena = !gmVeCena; aplicaMesa(); };
+$('gm-ver').onclick = () => { const base = (session.mesa || {}).modo || 'cena'; verGM(gmLocal ? base : base === 'cena' ? 'mundo' : 'cena'); };
+$('mesa-voltar-gm').onclick = () => verGM('cena');
 $('rotas-limpar').onclick = () => { if (confirm('Apagar todas as rotas do mapa do mundo?')) session.send({ t: 'rotas_limpar' }); };
 function renderImagens() {
   const box = $('imgs-gm'); if (!box) return; box.textContent = '';
@@ -946,7 +955,7 @@ function renderImagens() {
     const sp = document.createElement('span'); sp.textContent = im.nome;
     const del = document.createElement('button'); del.textContent = '✕'; del.title = 'Apagar imagem';
     del.onclick = (e) => { e.stopPropagation(); if (confirm('Apagar esta imagem?')) fetch('/api/imagens?f=' + encodeURIComponent(im.url.split('/').pop()), { method: 'DELETE' }); };
-    d.onclick = () => { gmVeCena = false; session.send({ t: 'mesa', modo: 'imagem', imagem: im.url, legenda: $('img-legenda').value }); };
+    d.onclick = () => { gmLocal = null; session.send({ t: 'mesa', modo: 'imagem', imagem: im.url, legenda: $('img-legenda').value }); };
     d.append(img, sp, del); box.appendChild(d);
   }
 }

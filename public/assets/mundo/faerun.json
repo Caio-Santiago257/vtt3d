@@ -2,6 +2,7 @@
  "nome": "Faerûn",
  "img": "/assets/mundo/faerun.webp",
  "mini": "/assets/mundo/faerun_mini.webp",
+ "meio": "/assets/mundo/faerun_meio.webp",
  "w": 4763,
  "h": 3185,
  "milhasPorPx": 0.798,

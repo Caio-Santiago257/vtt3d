@@ -24,16 +24,35 @@ const TIPO_ICONE = { capital: '★', cidade: '●', fortaleza: '■', ruina: '�
 const TIPO_NOME = { capital: 'Capital', cidade: 'Cidade', fortaleza: 'Fortaleza', ruina: 'Ruína', local: 'Lugar de interesse', regiao: 'Região' };
 
 // ---------------------------------------------------------------- arrastar e aproximar uma imagem
+// Desenha num canvas só o pedaço visível, com a versão da imagem que basta para o zoom atual:
+// afastado usa a pequena (1/4), no meio a de 1/2, e a grande só é baixada e decodificada quando alguém aproxima.
+// Assim o celular não precisa reescalar 15 megapixels a cada movimento.
 class PanZoom {
   constructor(root, w, h) {
     this.root = root; this.w = w; this.h = h; this.s = 1; this.tx = 0; this.ty = 0; this.anim = null;
-    this.palco = h_('div', 'pz-palco'); root.appendChild(this.palco);
-    this.img = document.createElement('img'); this.img.draggable = false; this.img.alt = ''; this.palco.appendChild(this.img);
+    this.cv = document.createElement('canvas'); this.cv.className = 'pz-canvas'; root.appendChild(this.cv);
+    this.cx = this.cv.getContext('2d', { alpha: false });
+    this.fontes = [];   // [{ url, f, bmp, loading }]  f = pixels da imagem por pixel da fonte
     this.listeners = [];
   }
-  setImage(url, w, h) { this.img.src = url; this.w = w; this.h = h; this.img.style.width = w + 'px'; this.img.style.height = h + 'px'; }
+  // fontes da maior redução para a menor; a primeira é carregada já
+  setSources(list, w, h) {
+    this.w = w; this.h = h;
+    for (const f of this.fontes) if (f.bmp && f.bmp.close) f.bmp.close();
+    this.fontes = list.map((q) => ({ ...q })); this.load(this.fontes[0]);
+  }
+  setImage(url, w, h) { this.setSources([{ url, f: 1 }], w, h); }
+  async load(fo) {
+    if (fo.bmp || fo.loading) return;
+    fo.loading = true;
+    try {
+      const blob = await (await fetch(fo.url)).blob();
+      fo.bmp = 'createImageBitmap' in window ? await createImageBitmap(blob) : await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = URL.createObjectURL(blob); });
+    } catch (e) { console.warn('imagem', fo.url, e); }
+    fo.loading = false; this.render(); this.onLoad && this.onLoad(fo);
+  }
   get box() { return this.root.getBoundingClientRect(); }
-  fitScale() { const b = this.box; return Math.min(b.width / this.w, b.height / this.h); }
+  fitScale() { const b = this.box; return Math.min(b.width / this.w, b.height / this.h) || 1; }
   fit() { const b = this.box, s = this.fitScale(); this.set(s, (b.width - this.w * s) / 2, (b.height - this.h * s) / 2); }
   set(s, tx, ty) {
     const b = this.box, fs = this.fitScale();
@@ -43,8 +62,36 @@ class PanZoom {
     this.tx = Math.min(b.width - mx, Math.max(mx - W, tx)); this.ty = Math.min(b.height - my, Math.max(my - H, ty));
     if (W < b.width) this.tx = Math.min(Math.max(this.tx, 0), b.width - W);
     if (H < b.height) this.ty = Math.min(Math.max(this.ty, 0), b.height - H);
-    this.palco.style.transform = `translate(${this.tx}px, ${this.ty}px) scale(${this.s})`;
+    this.render();
     for (const f of this.listeners) f();
+  }
+  render() {
+    if (this.raf) return;
+    this.raf = requestAnimationFrame(() => { this.raf = 0; this.paint(); });
+  }
+  paint() {
+    if (this.root.hidden) return;
+    const b = this.box, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = Math.round(b.width * dpr), H = Math.round(b.height * dpr);
+    if (this.cv.width !== W || this.cv.height !== H) { this.cv.width = W; this.cv.height = H; }
+    const cx = this.cx; cx.fillStyle = '#0d1a24'; cx.fillRect(0, 0, W, H);
+    // fonte ideal: a mais leve em que cada pixel dela ocupa no máximo ~1,3 pixel da tela
+    const k = this.s * dpr;
+    let want = this.fontes.length - 1;
+    for (let i = 0; i < this.fontes.length; i++) if (k * this.fontes[i].f <= 1.3) { want = i; break; }
+    if (!this.fontes[want]) return;
+    this.load(this.fontes[want]);
+    let fo = this.fontes[want];
+    if (!fo.bmp) fo = [...this.fontes].reverse().find((q) => q.bmp) || null;   // enquanto carrega, usa a que já tem
+    if (!fo) return;
+    // só o retângulo visível
+    const ix0 = Math.max(0, -this.tx / this.s), iy0 = Math.max(0, -this.ty / this.s);
+    const ix1 = Math.min(this.w, (b.width - this.tx) / this.s), iy1 = Math.min(this.h, (b.height - this.ty) / this.s);
+    if (ix1 <= ix0 || iy1 <= iy0) return;
+    const sw = fo.bmp.width / this.w, sh = fo.bmp.height / this.h;
+    cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = k * fo.f < 0.6 ? 'medium' : 'low';
+    cx.drawImage(fo.bmp, ix0 * sw, iy0 * sh, (ix1 - ix0) * sw, (iy1 - iy0) * sh,
+      (ix0 * this.s + this.tx) * dpr, (iy0 * this.s + this.ty) * dpr, (ix1 - ix0) * this.s * dpr, (iy1 - iy0) * this.s * dpr);
   }
   zoomAt(f, sx, sy) { const ix = (sx - this.tx) / this.s, iy = (sy - this.ty) / this.s, s = this.s * f; this.set(s, sx - ix * s, sy - iy * s); }
   toScreen(x, y) { return { x: x * this.s + this.tx, y: y * this.s + this.ty }; }
@@ -68,7 +115,7 @@ function h_(tag, cls) { const e = document.createElement(tag); e.className = cls
 function gestures(pz, el, tool) {
   const ptrs = new Map(); let pinch = null, one = null, lp = 0;
   el.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('.mu-ui')) return;
+    if (e.target.closest('.mu-ui, .mesa-voltar')) return;
     e.preventDefault();
     try { el.setPointerCapture(e.pointerId); } catch {}
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -135,12 +182,12 @@ export class MundoView {
     });
     addEventListener('resize', () => { if (this.visible) this.pz.set(this.pz.s, this.pz.tx, this.pz.ty); });
     fetch('/assets/mundo/faerun.json').then((r) => r.json()).then((d) => {
-      this.data = d; this.pz.setImage(d.img, d.w, d.h); this.buildMarkers();
+      this.data = d; this.pz.setSources([{ url: d.mini, f: 4 }, { url: d.meio, f: 2 }, { url: d.img, f: 1 }], d.w, d.h); this.buildMarkers();
       if (this.visible) this.pz.fit();
     });
   }
   get visible() { return !this.root.hidden; }
-  show() { const first = this.root.hidden; this.root.hidden = false; if (first && this.data) { if (!this.fitted) { this.fitted = true; this.pz.fit(); } else this.pz.set(this.pz.s, this.pz.tx, this.pz.ty); } }
+  show() { const first = this.root.hidden; this.root.hidden = false; if (first && this.data) { if (!this.fitted) { this.fitted = true; this.pz.fit(); } else this.pz.set(this.pz.s, this.pz.tx, this.pz.ty); } else if (first) this.pz.render(); }
   hide() { this.root.hidden = true; }
   mpp() { return this.data ? this.data.milhasPorPx : 0.798; }
 
@@ -329,7 +376,7 @@ export class MundoView {
       for (const l of this.data.lugares) {
         const q = S(l), off = q.x < -40 || q.y < -40 || q.x > b.width + 40 || q.y > b.height + 40;
         l.el.hidden = off; if (off) continue;
-        l.el.style.transform = `translate(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px)`;
+        l.el.style.transform = `translate3d(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px, 0)`;
         l.el.classList.toggle('nome', zoomed || l.tipo === 'capital' || l.tipo === 'regiao');
         l.el.classList.toggle('longe', !zoomed && l.tipo !== 'capital' && l.tipo !== 'regiao');
       }
@@ -367,7 +414,7 @@ export class ImagemView {
     if (url === this.url) return;
     this.url = url; this.root.classList.remove('pronta');
     const img = new Image();
-    img.onload = () => { this.pz.setImage(url, img.naturalWidth, img.naturalHeight); this.pz.fit(); requestAnimationFrame(() => this.root.classList.add('pronta')); };
+    img.onload = () => { this.pz.setImage(url, img.naturalWidth, img.naturalHeight); this.pz.fit(); this.pz.onLoad = () => this.root.classList.add('pronta'); };
     img.src = url;
   }
   hide() { this.root.hidden = true; }

@@ -123,7 +123,7 @@ places = []
 for (id_, x, y, nome, tipo, reg, txt, wiki) in L:
     places.append({'id': id_, 'x': x, 'y': y, 'nome': nome, 'tipo': tipo, 'regiao': reg, 'texto': txt, 'url': WIKI + wiki})
 data = {
-    'nome': 'Faerûn', 'img': '/assets/mundo/faerun.webp', 'mini': '/assets/mundo/faerun_mini.webp', 'w': 4763, 'h': 3185,
+    'nome': 'Faerûn', 'img': '/assets/mundo/faerun.webp', 'mini': '/assets/mundo/faerun_mini.webp', 'meio': '/assets/mundo/faerun_meio.webp', 'w': 4763, 'h': 3185,
     'milhasPorPx': round(480 / (4245.5 - 3644), 5),
     'escala': {'x0': 3644, 'x1': 4245.5, 'y': 3128, 'milhas': 480},
     'lugares': places,

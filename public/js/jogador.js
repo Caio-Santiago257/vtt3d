@@ -552,29 +552,34 @@ function updateTracosCena() {
 // ---- mesa: o mestre escolhe se os jogadores veem a cena 3D, o mapa do mundo ou uma imagem (teatro da mente)
 const fichaNoMapa = document.createElement('button'); fichaNoMapa.className = 'mu-bt'; fichaNoMapa.innerHTML = '<i>📜</i><span>FICHA</span>';
 fichaNoMapa.onclick = () => (ficha.isOpen ? ficha.close() : ficha.open());
+const batalhaNoMapa = document.createElement('button'); batalhaNoMapa.className = 'mu-bt batalha'; batalhaNoMapa.innerHTML = '<i>⚔</i><span>BATALHA</span>'; batalhaNoMapa.title = 'Voltar para o mapa de batalha 3D';
 const mundo = new MundoView($('mesa-mundo'), {
   role: 'player', send: (m) => session && session.send(m), session: () => session, toast,
-  me: () => ({ nome: (myData() || {}).name || '', hero: (myData() || {}).hero || '' }), extras: [fichaNoMapa],
+  me: () => ({ nome: (myData() || {}).name || '', hero: (myData() || {}).hero || '' }), extras: [batalhaNoMapa, fichaNoMapa],
 });
 const imagem = new ImagemView($('mesa-imagem'));
-let mapaProprio = false;   // o jogador abriu o mapa do mundo por conta própria, com a mesa na cena 3D
+// cada jogador pode trocar a própria tela: voltar à batalha 3D quando o mestre mostra o mapa ou uma imagem,
+// ou abrir o mapa do mundo quando a mesa está na cena. Quando o mestre muda o modo, todos voltam a acompanhar.
+let vistaLocal = null;   // null = acompanha a mesa; 'cena' ou 'mundo' = escolha do próprio jogador
 let ultimoModo = '';
 function aplicaMesa() {
   if (!joined || POSSESS || !session) return;
   const m = session.mesa || { modo: 'cena' };
-  if (m.modo !== ultimoModo) { if (ultimoModo && m.modo !== 'cena') toast(m.modo === 'mundo' ? 'O Mestre abriu o mapa do mundo' : 'O Mestre está mostrando uma imagem', 'vez'); ultimoModo = m.modo; mapaProprio = false; }
-  const verImg = m.modo === 'imagem' && m.imagem, verMundo = !verImg && (m.modo === 'mundo' || mapaProprio);
-  if (verImg) imagem.show(m.imagem, m.legenda); else imagem.hide();
-  if (verMundo) mundo.show(); else mundo.hide();
+  if (m.modo !== ultimoModo) { if (ultimoModo && m.modo !== 'cena') toast(m.modo === 'mundo' ? 'O Mestre abriu o mapa do mundo' : 'O Mestre está mostrando uma imagem', 'vez'); ultimoModo = m.modo; vistaLocal = null; }
+  let modo = vistaLocal || m.modo;
+  if (modo === 'imagem' && !m.imagem) modo = 'cena';
+  if (modo === 'imagem') imagem.show(m.imagem, m.legenda); else imagem.hide();
+  if (modo === 'mundo') mundo.show(); else mundo.hide();
   fichaNoMapa.hidden = !temFicha((myData() || {}).hero);
-  $('mesa-fechar').hidden = !(mapaProprio && m.modo === 'cena');
-  $('btn-mapa').hidden = m.modo !== 'cena';
-  const cobre = !!(verImg || verMundo);
+  $('btn-mapa').hidden = modo !== 'cena';
+  const cobre = modo !== 'cena';
   document.body.classList.toggle('mesa-cobre', cobre);
   if (cobre) { if (regua.busy) regua.finish(); if (areaTool.busy) areaTool.finish(false); closeArea(); }
 }
-$('btn-mapa').onclick = () => { mapaProprio = true; aplicaMesa(); };
-$('mesa-fechar').onclick = () => { mapaProprio = false; aplicaMesa(); };
+function verLocal(modo) { const base = (session.mesa || {}).modo || 'cena'; vistaLocal = modo === base ? null : modo; aplicaMesa(); }
+$('btn-mapa').onclick = () => verLocal('mundo');
+$('mesa-voltar').onclick = () => verLocal('cena');
+batalhaNoMapa.onclick = () => verLocal('cena');
 function openRegua() {
   if (areaTool.busy || regua.busy) return;
   closeArea(); closeSub(); ficha.close();
@@ -723,7 +728,7 @@ addEventListener('keydown', (e) => {
   if (areaTool.phase === 'tatico' && e.code === 'Enter') areaTool.finish(true);
   if (areaTool.phase === 'tatico' && e.code === 'Escape') areaTool.finish(false);
   if (regua.phase === 'tatico' && e.code === 'Escape') regua.finish();
-  if (joined && !POSSESS && e.code === 'KeyM' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && (session.mesa || {}).modo === 'cena') { mapaProprio = !mapaProprio; aplicaMesa(); }
+  if (joined && !POSSESS && e.code === 'KeyM' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && true) { verLocal(document.body.classList.contains('mesa-cobre') ? 'cena' : 'mundo'); }
   if (!document.body.classList.contains('mesa-cobre') && !areaTool.busy && !regua.busy && joined && !POSSESS && e.code === 'KeyR' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !ficha.isOpen) openRegua();
 });
 // visão tática: neblina rala e câmera enxergando longe, para ver o mapa de cima

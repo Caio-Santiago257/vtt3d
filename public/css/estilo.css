@@ -525,19 +525,17 @@ body.regua-on #c { cursor: crosshair; }
 .mesa-camada { position: fixed; inset: 0; z-index: 50; overflow: hidden; background: #0d1a24; touch-action: none; user-select: none; -webkit-user-select: none; }
 .mesa-camada[hidden] { display: none; }
 body.mestre .mesa-camada { left: 300px; z-index: 30; }
-.pz-palco { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
-.pz-palco img { display: block; pointer-events: none; image-rendering: auto; }
+.pz-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .mu-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .mu-rot { font: 13px 'Anton', sans-serif; letter-spacing: .03em; paint-order: stroke; stroke: rgba(0,0,0,.85); stroke-width: 3px; }
 .mu-lugares, .mu-pings { position: absolute; inset: 0; pointer-events: none; }
 .mu-lugares[hidden] { display: none; }
 .mu-lugar { position: absolute; left: 0; top: 0; margin: -13px 0 0 -13px; width: 26px; height: 26px; padding: 0; border: 0; background: none; pointer-events: auto; cursor: pointer; }
-.mu-lugar i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(20,16,10,.78); border: 2px solid #ffe27a; color: #ffe27a; font-style: normal; font-size: 12px; box-shadow: 0 0 10px rgba(255,226,122,.55); animation: mu-pulsa 2.6s ease-in-out infinite; }
+.mu-lugar i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(20,16,10,.78); border: 2px solid #ffe27a; color: #ffe27a; font-style: normal; font-size: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.6); }
 .mu-lugar.capital i { border-color: #fff; color: #fff; } .mu-lugar.ruina i { border-color: #ff9a7a; color: #ff9a7a; } .mu-lugar.regiao i { border-color: #9fe0c0; color: #9fe0c0; }
 .mu-lugar span { display: none; position: absolute; left: 30px; top: 3px; white-space: nowrap; padding: 1px 6px; background: rgba(20,16,10,.82); color: #fff3c4; font: 12px 'Anton', sans-serif; letter-spacing: .04em; }
 .mu-lugar.nome span { display: block; }
 .mundo[data-modo="regua"] .mu-lugar, .mundo[data-modo="rota"] .mu-lugar { pointer-events: none; opacity: .55; }
-@keyframes mu-pulsa { 50% { box-shadow: 0 0 2px rgba(255,226,122,.2); } }
 .mu-ping { position: absolute; left: 0; top: 0; width: 0; height: 0; }
 .mu-ping i { position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--c); animation: mu-ping 1.4s ease-out 3; }
 .mu-ping i:nth-child(2) { animation-delay: .25s; } .mu-ping i:nth-child(3) { animation-delay: .5s; }
@@ -578,7 +576,7 @@ body.mestre .mesa-camada { left: 300px; z-index: 30; }
 .mu-card p { margin: 0 0 8px; font-size: 14px; line-height: 1.45; }
 .mu-card a { color: #9fe0ff; font-size: 13px; }
 .imagem-mesa { background: #050507; }
-.imagem-mesa .pz-palco { opacity: 0; transition: opacity .8s; } .imagem-mesa.pronta .pz-palco { opacity: 1; }
+.imagem-mesa .pz-canvas { opacity: 0; transition: opacity .8s; } .imagem-mesa.pronta .pz-canvas { opacity: 1; }
 .im-legenda { position: absolute; inset: auto 0 max(16px, env(safe-area-inset-bottom)); margin: 0 auto; width: max-content; max-width: 90vw; height: max-content; padding: 6px 16px; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.3); font: 18px 'Anton', sans-serif; letter-spacing: .06em; text-align: center; }
 .im-legenda[hidden] { display: none; }
 .mesa-fechar { position: absolute; z-index: 3; left: 50%; top: max(10px, env(safe-area-inset-top)); transform: translateX(-50%); padding: 6px 14px; background: rgba(14,12,8,.85); border: 2px solid #fff; color: #fff; font: 13px 'Anton', sans-serif; letter-spacing: .08em; }
@@ -600,3 +598,9 @@ body.mesa-cobre #regua-mestre, body.mesa-cobre .regua-rotulo { display: none !im
 body.mesa-cobre .btns-esq { display: none !important; }
 #gm-ver[hidden] { display: none; }
 .mu-lugar.longe i { transform: scale(.6); opacity: .85; }
+
+.mesa-camada:not([hidden]) { animation: mesa-entra .25s ease-out; }
+@keyframes mesa-entra { from { opacity: 0; } }
+.mesa-voltar { position: absolute; z-index: 3; left: max(10px, env(safe-area-inset-left)); top: max(10px, env(safe-area-inset-top)); padding: 7px 14px; background: rgba(14,12,8,.85); border: 2px solid #ffe27a; color: #fff3c4; font: 14px 'Anton', sans-serif; letter-spacing: .08em; }
+.mesa-voltar[hidden] { display: none; }
+.mu-bt.batalha { border-color: #ff9a7a; color: #ffd9cc; }

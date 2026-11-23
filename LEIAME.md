@@ -562,12 +562,22 @@ A aba **Mesa** do mestre escolhe o que aparece no celular dos jogadores:
 | Modo | O que os jogadores veem |
 |---|---|
 | 🗺 **Mapa do mundo** | o mapa de Faerûn, para olhar à vontade (é o modo padrão quando o servidor abre) |
-| ⚔ **Cena 3D** | o mapa de batalha 3D, como antes; o botão **🗺 MAPA** (ou a tecla M) abre o mapa do mundo só para quem tocou |
+| ⚔ **Cena 3D** | o mapa de batalha 3D, como antes |
 | 🖼 **Imagem** | uma imagem em tela cheia, com legenda, para o teatro da mente |
 
-- **Tela do mestre:** a área do mapa mostra o mesmo que os jogadores veem. **Ver a cena 3D só na minha tela** deixa o mestre mexer na cena enquanto os jogadores olham o mapa ou a imagem.
+- **Cada jogador pode trocar a própria tela:**
+  - **⚔ BATALHA**, na barra do mapa, volta para o mapa de batalha 3D;
+  - **⚔ VOLTAR À BATALHA** sai da imagem;
+  - **🗺 MAPA**, no canto esquerdo da cena, abre o mapa do mundo;
+  - no PC, a tecla M alterna entre os dois.
+
+  Quando o mestre muda o modo, todos voltam a acompanhar a mesa.
+- **Tela do mestre:** a área do mapa mostra o mesmo que os jogadores veem. **⚔ CENA 3D (SÓ EU)**, na barra do mapa ou na imagem, e o botão da aba Mesa deixam o mestre olhar outra coisa só na tela dele.
 - **O modo fica salvo** em `data/mesa.json`.
-- **Bateria:** com o mapa ou a imagem cobrindo a tela, o celular para de desenhar a cena 3D.
+- **Desempenho:**
+  - Com o mapa ou a imagem cobrindo a tela, o celular para de desenhar a cena 3D.
+  - O mapa é desenhado num canvas, só a parte visível, e com a versão da imagem que basta para o zoom: 1/4 com o mapa inteiro, 1/2 no meio. A imagem grande só é baixada quando alguém aproxima bastante.
+  - Os marcadores de lore não ficam mais pulsando: com o mapa parado, o trabalho do processador caiu 7 vezes.
 
 ### Mapa de Faerûn
 
@@ -591,7 +601,7 @@ A aba **Mesa** do mestre escolhe o que aparece no celular dos jogadores:
   - A escolha fica guardada no celular.
 - **📜 FICHA:** abre a ficha sem sair do mapa.
 
-**Dados:** `fontes/mundo/gerar_faerun.py` gera `public/assets/mundo/faerun.json`, com a escala e os lugares. As posições foram conferidas uma a uma sobre a imagem. Os textos de lore foram escritos aqui, em resumo próprio, para a época da 5ª edição. O mapa original enviado fica em `fontes/recebidos/mundo/` e não vai para o GitHub. O jogo usa uma cópia em WEBP de 2,7 MB.
+**Dados:** `fontes/mundo/gerar_faerun.py` gera `public/assets/mundo/faerun.json`, com a escala e os lugares. As posições foram conferidas uma a uma sobre a imagem. Os textos de lore foram escritos aqui, em resumo próprio, para a época da 5ª edição. O mapa original enviado fica em `fontes/recebidos/mundo/` e não vai para o GitHub. O jogo usa três cópias em WEBP: 0,2 MB, 0,8 MB e 2,7 MB.
 
 ### Imagens (teatro da mente)
 
