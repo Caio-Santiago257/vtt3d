@@ -3,6 +3,9 @@ import * as THREE from 'three';
 import { MONSTERS, PROPS, HEROES, Session, makeRenderer, G, sizeOf } from './common.js';
 import { TERRAINS, BIOMES, generateBiome } from './terreno.js';
 import { fmtArea, SHAPES } from './area.js';
+import { RulerDraw, makeLabel, medir, toScreen } from './regua.js';
+import { CLASSES, HEROI_CLASSE } from './dnd-dados.js';
+import { slotsMax, usosMax, USO_NOME, mod, fmtMod, cdMagia, circMax, magiaClerigo, magiasDominio } from './regras.js';
 import { M2U, fmtM, logText, TurnOrder, banner, toast, chime, makeRangeRing, setPortrait, warmPortraits } from './combate-ui.js';
 
 const $ = (id) => document.getElementById(id);
@@ -103,6 +106,7 @@ const session = new Session({
       renderCombat();
     },
     combat: () => renderCombat(),
+    fichas: () => renderFichas(),
     clog(e) { toast(logText(e)); },
     cfx(fx) { if (fx === 'start') banner('start', 'COMBATE!', 'Rodada 1'); if (fx === 'end') banner('end', 'FIM DO COMBATE', ''); },
     frozen(on) { $('congelar').classList.toggle('on', on); $('congelar').textContent = on ? 'Movimento pausado — clique para liberar' : 'Pausar movimento dos jogadores'; },
@@ -368,6 +372,7 @@ canvas.addEventListener('pointerdown', (e) => {
   const p = worldAt(e);
   if (!p) return;
   if (e.button !== 0) { drag = { type: 'pan', x: e.clientX, y: e.clientY }; return; }
+  if (reguaOn) { drag = { type: 'regua' }; rgA = p; rgB = p; drawRegua(); return; }
   if (picking) {
     const got = pick(p);
     if (got && (got.type === 'player' || got.ref.data.kind === 'monster')) toggleMember(got);
@@ -421,6 +426,7 @@ canvas.addEventListener('pointermove', (e) => {
     return;
   }
   if (!drag) return;
+  if (drag.type === 'regua') { const p = worldAt(e); if (p) { rgB = p; drawRegua(); } return; }
   if (drag.type === 'pan') {
     const k = (view.size * 2) / innerHeight;
     view.cx -= (e.clientX - drag.x) * k; view.cz -= (e.clientY - drag.y) * k;
@@ -471,6 +477,8 @@ canvas.addEventListener('wheel', (e) => {
 }, { passive: false });
 addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'KeyR' && !e.ctrlKey && !e.metaKey) { setRegua(!reguaOn); return; }
+  if (e.code === 'Escape' && reguaOn) { setRegua(false); return; }
   if (e.code === 'KeyN' && session.combat.active) { session.send({ t: 'c_next' }); return; }
   if (e.code === 'Escape') { disarm(); select(null); settingSpawn = false; $('entrada-bt').classList.remove('sel'); }
   if (!selected) return;
@@ -741,6 +749,7 @@ function frame() {
     if (Math.hypot(areaPan.x - view.cx, areaPan.z - view.cz) < 0.2) areaPan = null;
   }
   if ((areaTick -= dt) <= 0) { areaTick = 0.25; updateAreaCards(); }
+  if (rgA && reguaOn) { drawRegua(true); rgLabel.show(medir(rgA.x, rgA.z, rgB.x, rgB.z), toScreen(rgDraw.b, camera, canvas)); }
   updateCombatMarks(dt, performance.now() / 1000);
   const e = selected && session.ents.get(selected);
   if (e) { ring.position.set(e.data.x, 4.3, e.data.z); ring.scale.setScalar(Math.max(1, e.radius * 1.2)); }
@@ -844,3 +853,53 @@ async function listarProntos() {
   } catch { box.textContent = 'Não consegui listar os mapas prontos.'; }
 }
 listarProntos();
+
+// ---------------------------------------------------------------- régua do mestre
+// Liga no botão (ou R) e arraste com o botão esquerdo; o botão direito continua arrastando o mapa.
+var reguaOn = false, rgA = null, rgB = null, rgDraw = new RulerDraw(scene), rgLabel = makeLabel();
+function drawRegua(onlyWidth) {
+  if (!rgA) return;
+  const w = Math.max(0.1, view.size * 0.011);
+  if (onlyWidth && rgDraw._w === w && rgDraw._k === `${rgA.x},${rgA.z},${rgB.x},${rgB.z}`) return;
+  rgDraw._w = w; rgDraw._k = `${rgA.x},${rgA.z},${rgB.x},${rgB.z}`;
+  rgDraw.set(rgA.x, rgA.z, rgB.x, rgB.z, 4.6, w);
+}
+function setRegua(on) {
+  reguaOn = on; $('regua-mestre').classList.toggle('on', on); document.body.classList.toggle('regua-on', on);
+  $('regua-mestre').textContent = on ? '📏 RÉGUA LIGADA · Esc sai' : '📏 RÉGUA';
+  if (on) { disarm(); select(null); } else { rgA = rgB = null; rgDraw.hide(); rgLabel.hide(); }
+}
+$('regua-mestre').onclick = () => setRegua(!reguaOn);
+
+// ---------------------------------------------------------------- fichas (só leitura)
+function renderFichas() {
+  const box = $('fichas-gm'); if (!box) return;
+  box.textContent = '';
+  const fs = session.fichas || {};
+  const ids = Object.keys(HEROI_CLASSE);
+  for (const id of ids) {
+    const f = fs[id], c = CLASSES[HEROI_CLASSE[id]];
+    const card = document.createElement('div'); card.className = 'fg-card'; card.dataset.classe = c.id;
+    const nome = id === 'Ghultok' ? "Ghult'ok" : id;
+    if (!f) { card.innerHTML = `<b>${nome}</b><div class="fg-m">${c.nome} · ficha ainda não preenchida</div>`; box.appendChild(card); continue; }
+    const sub = c.subs[f.sub];
+    const l = [`PV ${f.pv}/${f.pvMax}` + (f.pvTemp ? ` (+${f.pvTemp})` : ''), `CA ${f.ca}`, `Iniciativa ${fmtMod(mod(f.atr.des))}`, `Percepção passiva ${10 + mod(f.atr.sab) + (f.pericias.includes('percepcao') ? 2 + Math.floor((f.nivel - 1) / 4) : 0)}`];
+    if (c.atr) l.push(`CD ${cdMagia(f)}`);
+    const sm = slotsMax(f).map((m, i) => (m ? `${i + 1}º ${m - (f.slotsUsados[i] || 0)}/${m}` : '')).filter(Boolean);
+    const um = Object.entries(usosMax(f)).map(([k, m]) => `${USO_NOME[k]} ${m - ((f.usos || {})[k] || 0)}/${m}`);
+    let prep = '';
+    if (id === 'Guy') {
+      const cm = circMax(f);
+      const names = [...magiasDominio(f).map((m) => m.nome), ...f.preparadas.map(magiaClerigo).filter((m) => m && m.circ <= cm).map((m) => m.nome)];
+      prep = names.length ? 'Preparadas: ' + [...new Set(names)].join(', ') : 'Nenhuma magia preparada';
+    }
+    card.innerHTML = '<b></b><div class="fg-m"></div><div class="fg-l"></div>' + (sm.length ? '<div class="fg-m fg-s"></div>' : '') + (um.length ? '<div class="fg-m fg-u"></div>' : '') + (prep ? '<div class="fg-m fg-p"></div>' : '');
+    card.querySelector('b').textContent = nome;
+    card.querySelector('.fg-m').textContent = `${c.nome} nível ${f.nivel}` + (sub && f.nivel >= 3 ? ` · ${sub.nome}` : '');
+    const fl = card.querySelector('.fg-l'); for (const t of l) { const s = document.createElement('span'); s.textContent = t; fl.appendChild(s); }
+    if (sm.length) card.querySelector('.fg-s').textContent = 'Espaços: ' + sm.join(' · ');
+    if (um.length) card.querySelector('.fg-u').textContent = um.join(' · ');
+    if (prep) card.querySelector('.fg-p').textContent = prep;
+    box.appendChild(card);
+  }
+}

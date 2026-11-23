@@ -411,7 +411,7 @@ export class Session {
     this.world = null; this.map = null; this.mapVersion = 0;
     this.ents = new Map(); this.players = new Map();
     this.doorState = []; this.frozen = false; this.myId = 0; this.connected = false;
-    this.combat = { active: false, list: [], cur: null, round: 0 }; this.turnUsed = 0; this.kicked = false;
+    this.combat = { active: false, list: [], cur: null, round: 0 }; this.turnUsed = 0; this.kicked = false; this.fichas = {};
     this.lightPool = [];
     this.aoes = new Map(); this._hitRings = []; this._aoeTimer = 0;
     if (!topDown) {
@@ -476,6 +476,7 @@ export class Session {
       case 'oa': this.on.oa && this.on.oa(m); break;
       case 'deny': this.on.deny && this.on.deny(m.msg); break;
       case 'aoes': this.syncAoes(m.list); break;
+      case 'fichas': this.fichas = m.fichas || {}; this.on.fichas && this.on.fichas(this.fichas); break;
       case 'spawn': if (this.map) this.map.spawn = m.spawn; this.on.spawn && this.on.spawn(m.spawn); break;
     }
   }

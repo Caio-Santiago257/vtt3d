@@ -4,6 +4,9 @@ import { AreaTool, GRIMORIOS, PRESETS, SHAPES, fmtArea } from './area.js';
 import { areaCreatures, HEROES, MONSTERS, Session, makeRenderer, makeCharacter, sizeOf, ACT_CLIPS, animFor, updateAirMark, WALL_H } from './common.js';
 import { glowTexture } from './gfx.js';
 import { CelestialForm, hasRevelation } from './revelacao.js';
+import { ReguaTool } from './regua.js';
+import { FichaUI } from './ficha-ui.js';
+import { temFicha, grimorio, slotsLivres, efeitoEm, CIRC_NOME } from './regras.js';
 import { ACTIONS, SLOT_NOME, M2U, fmtM, logText, TurnOrder, banner, toast, chime, unlockAudio, makeRangeRing, setPortrait, warmPortraits } from './combate-ui.js';
 
 const $ = (id) => document.getElementById(id);
@@ -199,7 +202,7 @@ function release(e) {
 canvas.addEventListener('pointerup', release);
 canvas.addEventListener('pointercancel', release);
 addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT') return;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
   keys.add(e.code);
   if (e.code === 'KeyE' && joined) interact();
   if (e.code === 'Space' && joined) e.preventDefault(); // espaço é subir (voo), não rolar a página nem apertar botão
@@ -267,6 +270,7 @@ function entrar() {
         joined = true;
         session.myPos = pos;
         loadSelf(hero);
+        updateFichaBtn();
         $('entrada').hidden = true; $('hud').hidden = false;
         if (!mobile) $('dica').textContent = 'W A S D: andar · Arraste o mouse: olhar · E: interagir';
       },
@@ -286,6 +290,7 @@ function entrar() {
       atmos: atmosfera,
       players: () => updateRevBtn(),
       combat: onCombat,
+      fichas() { ficha.onServer(); updateFichaBtn(); },
       clog(e) {
         toast(logText(e), e.cid === myCid() ? 'vez' : '');
         if (e.cid === myCid() && selfChar && ACT_CLIPS[e.id]) selfChar.once(ACT_CLIPS[e.id]);
@@ -469,10 +474,12 @@ function openTargets(slot, a) {
   }
 }
 let castSpell = '';   // nome da magia escolhida no grimório (vai para o registro do combate)
+let castSlot = 0;     // espaço de magia que a magia escolhida vai gastar (0 = truque ou sem ficha)
 function declare(slot, a, target) {
   pending[slot] = true;
   session.send({ t: 'act', slot, id: a.id, target, as: myCid(), spell: castSpell || undefined });
-  castSpell = '';
+  if (castSlot) ficha.gastar(castSlot);
+  castSpell = ''; castSlot = 0;
   setTimeout(() => { if (pending[slot]) { pending[slot] = false; buildMenu(); } }, 1500); // se o servidor recusar, o botão volta
   closeSub(); buildMenu();
 }
@@ -494,13 +501,42 @@ const areaTool = new AreaTool({
     $('tatico').hidden = true;
     const by = POSSESS ? (session.ents.get(POSSESS) ? (meItem() || {}).name || 'Monstro' : 'Monstro') : undefined;
     session.send({ t: 'aoe', area: { ...a, y: groundY(a.ox, a.oz) }, por: by });
-    if (areaFrom) declare(areaFrom.slot, areaFrom.a, 0); else castSpell = '';
+    if (areaFrom) declare(areaFrom.slot, areaFrom.a, 0); else { if (castSlot) ficha.gastar(castSlot); castSpell = ''; castSlot = 0; }
     toast(`${a.nome || SHAPES[a.forma].nome}: área enviada ao mestre` + (hit.length ? ` · ${hit.length} na área` : ''));
     areaFrom = null;
   },
-  onCancel: () => { castSpell = ''; $('tatico').hidden = true; if (areaFrom) { const f = areaFrom; areaFrom = null; buildMenu(); openSub(f.slot); } },
+  onCancel: () => { castSpell = ''; castSlot = 0; $('tatico').hidden = true; if (areaFrom) { const f = areaFrom; areaFrom = null; buildMenu(); openSub(f.slot); } },
 });
 let areaFrom = null;   // {slot, a} quando a magia veio do menu de combate
+
+// ---- régua: vai para a visão de cima e mede arrastando o dedo
+const regua = new ReguaTool({
+  scene, camera, canvas,
+  caster: () => ({ x: pos.x, z: pos.z, y: groundY(pos.x, pos.z), camYaw: yaw }),
+  onExit: () => { $('regua-hud').hidden = true; },
+});
+function openRegua() {
+  if (areaTool.busy || regua.busy) return;
+  closeArea(); closeSub(); ficha.close();
+  moveTouch = null; lookTouch = null; move.x = move.y = 0; stick.hidden = true; flyUp = flyDown = false;
+  $('regua-hud').hidden = false;
+  regua.start();
+}
+$('btn-regua').onclick = openRegua;
+$('rg-sair').onclick = () => regua.finish();
+$('rg-mais').onclick = () => regua.zoomBy(1 / 1.25);
+$('rg-menos').onclick = () => regua.zoomBy(1.25);
+
+// ---- ficha do personagem (Guy, Kaira, Ghult'ok)
+const ficha = new FichaUI({
+  session: () => session, hero: () => (myData() || {}).hero || hero, inFight: () => inFight(), toast,
+  nome: () => (myData() || {}).name || hero,
+});
+function updateFichaBtn() {
+  const d = myData(), ok = !POSSESS && !!d && temFicha(d.hero);
+  $('btn-ficha').hidden = !ok;
+}
+$('btn-ficha').onclick = () => (ficha.isOpen ? ficha.close() : ficha.open());
 const custom = { forma: 'esfera', tam: 6, alcance: 18, larg: 1.5 };
 const m2txt = (v) => (v ? String(v).replace('.', ',') + ' m' : 'Pessoal');
 function areaPanel(title) {
@@ -519,33 +555,64 @@ function openArea(from) {
     b.onclick = fn; return b;
   };
   const sec = (t) => { const p = document.createElement('div'); p.className = 'ae-sec'; p.textContent = t; body.appendChild(p); const g = document.createElement('div'); g.className = 'ae-lista'; body.appendChild(g); return g; };
+  const temF = !POSSESS && myData() && temFicha(myData().hero);
   if (areaFrom) {
-    const g = sec('SEM ÁREA');
-    g.appendChild(opt('◇', 'Alvo único', 'Escolher uma criatura (sem área)', () => { closeArea(); const f = areaFrom; areaFrom = null; openTargets(f.slot, f.a); }, 'unico'));
+    const g = sec(temF ? 'ITEM MÁGICO OU OUTRA FONTE · SEM ÁREA' : 'SEM ÁREA');
+    g.appendChild(opt('◇', temF ? 'Item mágico (alvo único)' : 'Alvo único', temF ? 'Poção, varinha, pergaminho… (não gasta espaço)' : 'Escolher uma criatura (sem área)', () => { closeArea(); const f = areaFrom; areaFrom = null; castSlot = 0; openTargets(f.slot, f.a); }, 'unico'));
   }
-  // grimório do personagem (a Kaira é feiticeira): magias até o 3º círculo
-  const book = !POSSESS && myData() && GRIMORIOS[myData().hero];
+  // grimório do personagem: com ficha, só o que ele pode conjurar (Guy: truques, preparadas e de domínio;
+  // Kaira: até o círculo que o nível permite). Sem ficha (outros heróis), o grimório fixo de antes.
+  const fx = !POSSESS && myData() && temFicha(myData().hero) ? ficha.f : null;
+  const book = fx ? grimorio(fx) : !POSSESS && myData() && GRIMORIOS[myData().hero];
   if (book) {
-    const CIRC = ['TRUQUES', '1º CÍRCULO', '2º CÍRCULO', '3º CÍRCULO'];
     const tempo = areaFrom ? (areaFrom.slot === 'bonus' ? 'bonus' : 'action') : null;
-    for (let c = 0; c <= 3; c++) {
-      const list = book.filter((p) => p.circ === c && (!tempo || p.tempo === tempo) && (p.forma || areaFrom));
+    const quem = (myData().name || myData().hero).toUpperCase();
+    if (fx && fx.hero === 'Guy' && !book.some((p) => p.circ > 0)) body.appendChild(Object.assign(document.createElement('p'), { className: 'ae-aviso', textContent: 'Nenhuma magia preparada. Abra a FICHA ▸ MAGIAS fora de combate para preparar.' }));
+    for (let c = 0; c <= 9; c++) {
+      // em combate, as de 1 minuto ou mais não cabem num turno; a área fora de combate só mostra as de área
+      const list = book.filter((p) => p.circ === c && (!tempo || p.tempo === tempo) && (p.forma || areaFrom) && (!areaFrom || ['action', 'bonus', 'reaction'].includes(p.tempo)));
       if (!list.length) continue;
-      const g = sec(`FEITIÇOS DA KAIRA · ${CIRC[c]}`);
+      const g = sec(`${fx && fx.hero === 'Guy' ? 'MAGIAS PREPARADAS' : 'FEITIÇOS'} DE ${quem} · ${c ? CIRC_NOME[c].toUpperCase() : 'TRUQUES'}`);
       for (const p of list) {
-        const desc = (p.forma ? fmtArea(p) : p.alvo ? `alvo · alcance ${m2txt(p.alvo)}` : 'alvo · toque') + ' · ' + p.efeito;
-        const b = opt(p.forma ? SHAPES[p.forma].icone : '◇', p.nome, desc, () => {
-          if (p.forma) { castSpell = p.nome; beginArea(p); return; }
+        const livre = fx && c > 0 ? [...Array(10 - c)].some((_, i) => slotsLivres(fx, c + i) > 0) : true;
+        const ef = fx ? efeitoEm(p, c, fx.nivel) : p.efeito;
+        const desc = (p.forma ? fmtArea(p) : p.alvo ? `alvo · alcance ${m2txt(p.alvo)}` : p.pessoal ? 'pessoal' : 'alvo · toque') + (ef ? ' · ' + ef : '') + (p.dominio ? ' · domínio' : '') + (p.conc ? ' · concentração' : '');
+        const go = (slotLv) => {
+          castSlot = slotLv || 0;
+          if (p.forma) { castSpell = p.nome; beginArea({ ...p, cor: p.cor || 0xffe9a0 }); return; }
           closeArea(); const f = areaFrom; areaFrom = null; castSpell = p.nome; openTargets(f.slot, f.a);
-        }, p.forma ? '' : 'unico');
+        };
+        const b = opt(p.forma ? SHAPES[p.forma].icone : '◇', p.nome, livre ? desc : 'SEM ESPAÇOS DE MAGIA · ' + desc, () => {
+          if (!livre) { toast(`Sem espaços de magia do ${c}º círculo ou maior. Descanse para recuperar.`, 'neg'); return; }
+          if (fx && c > 0) pickSlot(p, fx, go); else go(0);
+        }, (p.forma ? '' : 'unico') + (livre ? '' : ' sem-espaco'));
         b.title = p.en; g.appendChild(b);
       }
     }
   }
-  const g1 = sec(book ? 'OUTRAS MAGIAS PRONTAS' : 'MAGIAS PRONTAS');
-  for (const p of PRESETS) g1.appendChild(opt(SHAPES[p.forma].icone, p.nome, fmtArea(p), () => { castSpell = p.nome; beginArea(p); }));
-  const g2 = sec('OUTRA MAGIA');
+  // quem tem ficha só conjura o próprio grimório; a área livre fica para item mágico ou outra fonte
+  if (!fx) {
+    const g1 = sec(book ? 'OUTRAS MAGIAS PRONTAS' : 'MAGIAS PRONTAS');
+    for (const p of PRESETS) g1.appendChild(opt(SHAPES[p.forma].icone, p.nome, fmtArea(p), () => { castSpell = p.nome; castSlot = 0; beginArea(p); }));
+  }
+  const g2 = sec(fx ? 'ITEM MÁGICO OU OUTRA FONTE' : 'OUTRA MAGIA');
   g2.appendChild(opt('✎', 'Escolher forma e tamanho', 'Esfera, cone, cubo, cilindro, linha ou emanação', () => openCustom()));
+}
+// magia de 1º círculo ou mais: escolhe o espaço (o menor livre já vem marcado; maior = mais dano ou cura)
+function pickSlot(p, fx, go) {
+  const opts = [];
+  for (let lv = p.circ; lv <= 9; lv++) if (slotsLivres(fx, lv) > 0) opts.push(lv);
+  if (opts.length === 1) { go(opts[0]); return; }
+  const body = areaPanel(`${p.nome.toUpperCase()} ▸ ESPAÇO DE MAGIA`);
+  const g = document.createElement('div'); g.className = 'ae-lista'; body.appendChild(g);
+  for (const lv of opts) {
+    const b = document.createElement('button'); b.className = 'ae-op';
+    b.innerHTML = '<i></i><span><b></b><small></small></span>';
+    b.querySelector('i').textContent = lv; b.querySelector('b').textContent = `${lv}º círculo` + (lv > p.circ ? ' (elevado)' : '');
+    b.querySelector('small').textContent = `${slotsLivres(fx, lv)} livre(s)` + (efeitoEm(p, lv, fx.nivel) ? ' · ' + efeitoEm(p, lv, fx.nivel) : '');
+    b.onclick = () => go(lv);
+    g.appendChild(b);
+  }
 }
 function openCustom() {
   const body = areaPanel('ÁREA ▸ FORMA E TAMANHO');
@@ -574,7 +641,7 @@ function openCustom() {
   if (custom.forma === 'linha') stepper('Largura', 'larg', 1.5, 1.5, 9, (v) => m2txt(v));
   if (s.placed) stepper('Alcance (0 = sai de você)', 'alcance', 1.5, 0, 150);
   const go = document.createElement('button'); go.className = 'ae-ir'; go.textContent = 'POSICIONAR NO MAPA ▸';
-  go.onclick = () => beginArea({ nome: '', ...custom, alcance: s.placed ? custom.alcance : 0 });
+  go.onclick = () => { castSlot = 0; beginArea({ nome: '', ...custom, alcance: s.placed ? custom.alcance : 0 }); };
   body.appendChild(go);
 }
 function beginArea(p) {
@@ -595,6 +662,8 @@ $('btn-area').onclick = () => openArea(null);
 addEventListener('keydown', (e) => {
   if (areaTool.phase === 'tatico' && e.code === 'Enter') areaTool.finish(true);
   if (areaTool.phase === 'tatico' && e.code === 'Escape') areaTool.finish(false);
+  if (regua.phase === 'tatico' && e.code === 'Escape') regua.finish();
+  if (!areaTool.busy && !regua.busy && joined && !POSSESS && e.code === 'KeyR' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !ficha.isOpen) openRegua();
 });
 // visão tática: neblina rala e câmera enxergando longe, para ver o mapa de cima
 let tactK = 0, baseFog = null, baseFar = null;
@@ -722,13 +791,13 @@ function frame() {
     if (keys.has('KeyA')) mx -= 1;
     if (keys.has('ArrowLeft')) yaw += dt * 2;
     if (keys.has('ArrowRight')) yaw -= dt * 2;
-    if (areaTool.busy) { mx = my = 0; flyUp = flyDown = false; }   // posicionando a área: o personagem fica parado
+    if (areaTool.busy || regua.busy || ficha.isOpen) { mx = my = 0; flyUp = flyDown = false; }   // posicionando a área: o personagem fica parado
     const len = Math.hypot(mx, my);
     if (len > 1) { mx /= len; my /= len; }
     // voo: espaço / botão ▲ sobe; shift, C ou botão ▼ desce
     const canFly = flySpeed() > 0;
     if (!canFly && posY > 0) posY = 0;
-    const vy = canFly && !areaTool.busy ? ((keys.has('Space') || flyUp ? 1 : 0) - (keys.has('ShiftLeft') || keys.has('ShiftRight') || keys.has('KeyC') || flyDown ? 1 : 0)) : 0;
+    const vy = canFly && !areaTool.busy && !regua.busy ? ((keys.has('Space') || flyUp ? 1 : 0) - (keys.has('ShiftLeft') || keys.has('ShiftRight') || keys.has('KeyC') || flyDown ? 1 : 0)) : 0;
     const climbs = (vy > 0 && posY < MAX_ALT) || (vy < 0 && posY > 0);
     const wants = (len > 0.08 || climbs) && (!session.frozen || !!POSSESS);
     // em combate só se anda no próprio turno, e até acabar o deslocamento
@@ -782,7 +851,7 @@ function frame() {
       const fwd = SIZE > 1 ? SIZE * 1.3 : 0; // a cabeça do dragão fica bem à frente do centro
       camera.position.set(pos.x - Math.sin(yaw) * fwd, EYE + standY + posY + bob - sink, pos.z - Math.cos(yaw) * fwd); camera.rotation.set(pitch, yaw, 0); selfHolder.visible = false;
     }
-    const tact = areaTool.apply(dt);
+    const tact = areaTool.apply(dt) || regua.apply(dt);
     if (tact) selfHolder.visible = true;
     tacticalView(dt, tact);
     // o personagem vira na direção em que anda
@@ -797,7 +866,7 @@ function frame() {
     }
     updateAirMark(selfAir, scene, pos.x, pos.z, posY, false, SIZE, standY);
     updateFlyPad(canFly);
-    const showArea = !inFight() && !areaTool.busy;   // fora de combate: botão para medir/lançar área; em combate vem pelo menu de magia
+    const showArea = !inFight() && !areaTool.busy && !regua.busy;   // fora de combate: botão para medir/lançar área; em combate vem pelo menu de magia
     if ($('btn-area').hidden === showArea) $('btn-area').hidden = !showArea;
     // em 3ª pessoa a tocha vai junto da câmera (luz de quem olha), para não estourar o personagem de perto
     if (SIZE > 1) torch.position.set(pos.x * 0.7 + camera.position.x * 0.3, 9 + standY + posY, pos.z * 0.7 + camera.position.z * 0.3);
@@ -827,4 +896,4 @@ function frame() {
   renderer.render(scene, camera);
 }
 frame();
-window.__dbg = { gl: renderer, area: areaTool, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };
+window.__dbg = { gl: renderer, area: areaTool, regua, ficha, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };

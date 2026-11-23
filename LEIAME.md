@@ -555,6 +555,67 @@ Padrão de exportação: metros, pivô no chão, frente para +Z no jogo, materia
 
 Para o resultado ficar melhor, exporte o mapa sem os móveis e coloque os móveis 3D pela lista de objetos.
 
+## Régua
+
+Mede a distância entre dois pontos do mapa, de quadrado a quadrado. Segue a regra do Livro do Jogador 2024: cada quadrado vale 1,5 m e a diagonal também conta 1 quadrado.
+
+- **Jogador:** o botão **📏 RÉGUA**, no canto esquerdo, ou a tecla R no PC. Funciona dentro e fora de combate.
+  - A câmera sobe num arco até a visão de cima, com a mesma transição da área de magia.
+  - Toque num ponto e arraste o dedo: a linha tracejada vai sendo desenhada, e o rótulo na ponta mostra os metros, os quadrados e a distância em linha reta quando ela for diferente.
+  - Os dois quadrados das pontas ficam destacados. A linha fica na tela até você medir de novo.
+  - Dois dedos arrastam o mapa e aproximam ou afastam. No PC: botão direito arrasta, a roda dá zoom. **＋ / －** também funcionam.
+  - **◀ VOLTAR** (ou Esc) volta para a visão de antes. Enquanto mede, o personagem fica parado.
+- **Mestre:** o botão **📏 RÉGUA**, no canto superior direito do mapa, ou a tecla R. Com a régua ligada, arraste com o botão esquerdo para medir. O direito continua arrastando o mapa. Esc desliga.
+
+Código: `public/js/regua.js`.
+
+## Ficha do personagem
+
+Guy (clérigo), Kaira (feiticeira) e Ghult'ok (bárbaro) têm ficha. Quem joga com eles vê o botão **📜 FICHA** no canto esquerdo.
+
+- **Onde fica salva:** no computador do mestre, na pasta `fichas` do projeto (`fichas/Guy.json`, `fichas/Kaira.json`, `fichas/Ghultok.json`). Salva sozinha a cada mudança, enquanto o servidor está aberto. A pasta não vai para o GitHub.
+- **Aba FICHA:** o jogador preenche nível e atributos. O resto sai das regras da classe (Livro do Jogador 2024, dados do 5eTools):
+  - modificadores, bônus de proficiência e salvaguardas da classe (marcadas com ●);
+  - subclasse a partir do nível 3: domínio do clérigo, origem da feiticeira ou caminho do bárbaro. No Guy, também a Ordem Divina;
+  - PV máximos sugeridos pelo dado de vida (pode mudar), CA, deslocamento, iniciativa, percepção passiva, CD e ataque de magia, dano de fúria;
+  - perícias: toque para marcar proficiência; as opções da classe têm ★;
+  - características de classe nível a nível, com as já liberadas acesas;
+  - anotações livres.
+- **Aba RECURSOS:**
+  - pontos de vida, com botões de dano e cura e PV temporários;
+  - espaços de magia por círculo (toque para gastar ou recuperar);
+  - usos de Canalizar Divindade, Fúria, Feitiçaria Inata e pontos de feitiçaria;
+  - **descanso curto:** recupera 1 uso de Canalizar Divindade e de Fúria;
+  - **descanso longo:** tudo volta, inclusive os PV e os espaços. Toque duas vezes para confirmar.
+- **Mestre:** a aba **Fichas** mostra o resumo de cada um: nível, PV, CA, espaços livres, usos e as magias preparadas do Guy.
+
+### Magias preparadas do Guy
+
+O clérigo pode preparar qualquer magia da lista de clérigo, até o círculo que o nível permite. A quantidade segue a tabela do clérigo 2024.
+
+| Nível | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Magias preparadas | 4 | 5 | 6 | 7 | 9 | 10 | 11 | 12 | 14 | 15 |
+| Círculo máximo | 1º | 1º | 2º | 2º | 3º | 3º | 4º | 4º | 5º | 5º |
+
+Os truques são 3 até o nível 3, 4 do 4 ao 9 e 5 a partir do 10, com +1 pela Ordem Divina Taumaturgo.
+
+- **Preparar:** na aba **MAGIAS**, fora de combate, toque nas magias. O contador mostra quantas cabem, e a ficha recusa passar do limite.
+- **Domínio:** a partir do nível 3, as magias do domínio ficam sempre preparadas e não contam no limite.
+- **Cada magia mostra:** efeito, tempo de conjuração, alcance ou área, e as marcas de concentração e ritual. O **ⓘ** abre a página da magia no 5e.tools, em inglês.
+- **Em combate:** a lista fica travada. No menu **MAGIA** aparecem só os truques, as preparadas e as de domínio. Não aparecem as magias prontas genéricas nem as de 1 minuto ou mais.
+  - **Espaços:** magias de 1º círculo ou mais gastam um espaço. Com mais de um círculo livre, o jogo pergunta qual usar e mostra o dano ou a cura no círculo elevado.
+  - **Sem espaço:** a magia aparece apagada.
+  - **Truques:** o dano sobe com o nível do personagem.
+- **Item mágico:** a opção **Item mágico (alvo único)** e a área livre continuam no menu, para poções, varinhas e pergaminhos. Elas não gastam espaço.
+- **Fora de combate:** o botão **◎ ÁREA DE MAGIA** mostra as magias de área preparadas, e confirmar também gasta o espaço.
+
+**Kaira:** não prepara, mas o grimório dela agora segue a ficha. Em combate aparecem só os círculos que o nível permite, e cada magia gasta um espaço, do mesmo jeito. O grimório da Kaira no jogo continua indo até o 3º círculo.
+
+**De onde vêm os dados:** `fontes/dados/gerar_dnd.py` lê os arquivos do 5eTools guardados em `fontes/dados/5etools/` e gera `public/js/dnd-dados.js`. São 139 magias: as 117 da lista de clérigo mais as dos quatro domínios. Os nomes em português foram traduzidos aqui. O nome original aparece ao parar o mouse em cima.
+
+Código: `public/js/regras.js` (contas), `public/js/ficha-ui.js` (painel), mensagem `ficha` em `server.js`.
+
 ## O que ainda não existe
 
 - As paredes só têm um visual (pedra). Os monstros são o dragão negro adulto e quatro esqueletos.
@@ -564,7 +625,8 @@ Para o resultado ficar melhor, exporte o mapa sem os móveis e coloque os móvei
 - Olhar girando o celular (giroscópio).
 - Teto, escadas e andares.
 - Senha para a tela do mestre: qualquer pessoa na rede que abrir `/mestre` controla a cena.
-- Pontos de vida, condições e rolagem de dados no app.
+- Condições e rolagem de dados no app. Os pontos de vida da ficha não aparecem nos tokens do mapa.
+- Ficha para os outros heróis (Cavaleiro, Mago…): só Guy, Kaira e Ghult'ok têm classe definida.
 - O alcance no chão é em linha reta: não desvia de paredes nem desconta terreno difícil antes de você andar.
 - A ordem de combate não é salva: se o servidor for reiniciado no meio da luta, monte a ordem de novo.
 

@@ -344,6 +344,44 @@ const AOE_FORMAS = new Set(['esfera', 'cilindro', 'cubo', 'cone', 'linha', 'eman
 const AOE_MS = Number(process.env.AOE_MS) || 15000;
 let aoes = [], nextAoe = 1;
 const num = (v, lo, hi, d = 0) => { const n = Number(v); return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : d; };
+
+// ---------------------------------------------------------------- fichas dos personagens
+// Uma ficha por herói (Guy, Kaira, Ghult'ok), salva em fichas/<herói>.json na pasta do projeto.
+// Quem joga com o herói edita; todos recebem as fichas (o mestre vê na aba Fichas).
+const FICHAS_DIR = path.join(__dirname, 'fichas');
+fs.mkdirSync(FICHAS_DIR, { recursive: true });
+const FICHA_HEROIS = new Set(['Guy', 'Kaira', 'Ghultok']);
+const fichas = {};
+for (const h of FICHA_HEROIS) {
+  try { fichas[h] = JSON.parse(fs.readFileSync(path.join(FICHAS_DIR, h + '.json'), 'utf8')); } catch {}
+}
+const strList = (v, n, len = 40) => (Array.isArray(v) ? v.slice(0, n).map((x) => String(x).slice(0, len)) : []);
+function normFicha(hero, f) {
+  f = f && typeof f === 'object' ? f : {};
+  const atr = {};
+  for (const k of ['for', 'des', 'con', 'int', 'sab', 'car']) atr[k] = Math.round(num(f.atr && f.atr[k], 1, 30, 10));
+  const usos = {};
+  for (const k of ['canalizar', 'furias', 'pontos', 'inata', 'intervencao']) usos[k] = Math.round(num(f.usos && f.usos[k], 0, 99, 0));
+  return {
+    hero, nivel: Math.round(num(f.nivel, 1, 20, 1)), atr,
+    sub: String(f.sub || '').slice(0, 20), ordem: f.ordem === 'taumaturgo' ? 'taumaturgo' : 'protetor',
+    pericias: strList(f.pericias, 18, 20), salvExtra: strList(f.salvExtra, 6, 4),
+    pvMax: Math.round(num(f.pvMax, 0, 999, 0)), pv: Math.round(num(f.pv, -999, 999, 0)), pvTemp: Math.round(num(f.pvTemp, 0, 999, 0)),
+    ca: Math.round(num(f.ca, 0, 40, 10)), deslocamento: num(f.deslocamento, 0, 60, 9),
+    truques: strList(f.truques, 12), preparadas: strList(f.preparadas, 40),
+    slotsUsados: Array.from({ length: 9 }, (_, i) => Math.round(num(f.slotsUsados && f.slotsUsados[i], 0, 9, 0))),
+    usos, notas: String(f.notas || '').slice(0, 4000), salvoEm: Date.now(),
+  };
+}
+let fichaTimer = {};
+function saveFicha(hero) {
+  clearTimeout(fichaTimer[hero]);
+  fichaTimer[hero] = setTimeout(() => {
+    const file = path.join(FICHAS_DIR, hero + '.json'), tmp = file + '.tmp';
+    try { fs.writeFileSync(tmp, JSON.stringify(fichas[hero], null, 2)); fs.renameSync(tmp, file); }
+    catch (e) { console.error('Não consegui salvar a ficha de ' + hero + ':', e.message); }
+  }, 300);
+}
 const sendAoes = () => broadcast({ t: 'aoes', list: aoes });
 setInterval(() => {
   const now = Date.now(), n = aoes.length;
@@ -700,6 +738,7 @@ wss.on('connection', (ws) => {
       }
       send(ws, { t: 'init', id: me ? me.id : 0, me, version: map.version, ents, doors, frozen, players: playerList(), aoes });
       send(ws, combatView(ws.role === 'gm'));
+      send(ws, { t: 'fichas', fichas });
       return;
     }
     if (!ws.role) return;
@@ -745,6 +784,15 @@ wss.on('connection', (ws) => {
         const inC = combat.active && combat.list.some((x) => x.kind === 'player' && x.ref === me.id);
         if (m.on && inC) { send(ws, { t: 'deny', msg: 'Em combate, a Revelação Celestial é a sua ação bônus (menu AÇÃO BÔNUS).' }); break; }
         setRevelacao(me, !!m.on, false);
+        break;
+      }
+      case 'ficha': {
+        // o jogador edita a ficha do próprio herói; o mestre pode editar qualquer uma
+        const hero = ws.role === 'gm' ? String(m.hero || '') : me && me.hero;
+        if (!FICHA_HEROIS.has(hero)) break;
+        fichas[hero] = normFicha(hero, m.ficha);
+        saveFicha(hero);
+        broadcast({ t: 'fichas', fichas });
         break;
       }
       case 'act': {

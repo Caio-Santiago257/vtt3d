@@ -15,6 +15,7 @@
     <button data-aba="construir">Construir</button>
     <button data-aba="pecas">Peças</button>
     <button data-aba="combate">Combate</button>
+    <button data-aba="fichas">Fichas</button>
   </nav>
   <section class="aba" data-aba="cena">
 
@@ -101,7 +102,13 @@
     <h2>Registro</h2>
     <div id="cb-log"><p class="pequeno">As ações dos jogadores aparecem aqui.</p></div>
   </section>
+  <section class="aba" data-aba="fichas" hidden>
+    <h2>Fichas dos personagens</h2>
+    <p class="pequeno">Os jogadores preenchem pela tela deles (botão FICHA). Ficam salvas na pasta <b>fichas</b> do projeto.</p>
+    <div id="fichas-gm" class="fichas-gm"></div>
+  </section>
 </aside>
+<button id="regua-mestre" class="regua-mestre" title="Régua (R): arraste no mapa para medir">📏 RÉGUA</button>
 <div id="ordem-gm"></div>
 <canvas id="c"></canvas>
 <div id="status">Conectando…</div>
