@@ -19,6 +19,111 @@ function decodeHeights(b64) {
   return out;
 }
 
+// ---------------------------------------------------------------- tempo compartilhado dos materiais que ondulam
+const ondaTempo = { value: 0 };
+// estandartes e bandeiras: a ponta solta ondula ao vento (eixo 'v': pendurado pelo alto; 'u': preso no mastro)
+function ondula(m, amp, eixo) {
+  const prev = m.onBeforeCompile;
+  m.onBeforeCompile = (sh, r) => {
+    prev && prev(sh, r);
+    sh.uniforms.uOndaT = ondaTempo;
+    sh.vertexShader = 'uniform float uOndaT;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      {
+        #ifdef USE_UV
+        float wq = ${eixo === 'u' ? 'uv.x' : '(1.0 - uv.y)'};
+        #else
+        float wq = 0.5;
+        #endif
+        float ph = uOndaT * 2.3 + position.x * 1.7 + position.y * 1.3 + position.z * 1.1;
+        transformed += objectNormal * (sin(ph) * 0.7 + sin(ph * 2.1 + 1.3) * 0.3) * ${amp.toFixed(3)} * wq;
+      }`);
+  };
+  const k0 = m.customProgramCacheKey; m.customProgramCacheKey = function () { return k0.call(this) + 'onda' + amp + eixo; };
+}
+// folhas: balançam de leve (mais no alto)
+function balancaFolha(m, amp) {
+  const prev = m.onBeforeCompile;
+  m.onBeforeCompile = (sh, r) => {
+    prev && prev(sh, r);
+    sh.uniforms.uOndaT = ondaTempo;
+    sh.vertexShader = 'uniform float uOndaT;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      {
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        float ph = uOndaT * 1.6 + wp.x * 0.35 + wp.z * 0.27;
+        transformed.x += sin(ph) * ${amp.toFixed(3)};
+        transformed.z += cos(ph * 0.8) * ${amp.toFixed(3)} * 0.7;
+      }`);
+  };
+  const k0 = m.customProgramCacheKey; m.customProgramCacheKey = function () { return k0.call(this) + 'folha' + amp; };
+}
+function softDot() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.45, 'rgba(255,255,255,0.45)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+// V: { gaivotas: {n, c:[x,z], r:[min,max], y:[min,max]}, fumaca: [[x,y,z,'chamine'|'vapor'|'nevoa'], ...] }
+function makeVida(V, { cx, cz }) {
+  const group = new THREE.Group(); group.name = 'vida';
+  const birds = [];
+  // gaivota: corpo e duas asas (triângulos); as asas batem e às vezes planam
+  const G0 = V.gaivotas || { n: 0 };
+  const bodyGeo = new THREE.BufferGeometry();
+  bodyGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.45, -0.09, 0, -0.35, 0.09, 0, -0.35, 0, 0.1, -0.2, 0, 0, 0.45, 0, 0.1, -0.2], 3));
+  bodyGeo.computeVertexNormals();
+  const wingGeo = new THREE.BufferGeometry();
+  wingGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.2, 0, 0, -0.18, 0.75, 0.02, -0.05, 0.75, 0.02, -0.05, 0, 0, -0.18, 1.25, -0.04, -0.25], 3));
+  wingGeo.computeVertexNormals();
+  const bmat = new THREE.MeshBasicMaterial({ color: 0xf4f4f0, side: THREE.DoubleSide }), tip = new THREE.MeshBasicMaterial({ color: 0x9aa0a8, side: THREE.DoubleSide });
+  for (let i = 0; i < (G0.n || 0); i++) {
+    const b = new THREE.Group();
+    b.add(new THREE.Mesh(bodyGeo, bmat));
+    const wl = new THREE.Mesh(wingGeo, tip), wr = new THREE.Mesh(wingGeo, tip); wr.scale.x = -1;
+    b.add(wl, wr); b.scale.setScalar(1.1 + Math.random() * 0.5);
+    birds.push({ b, wl, wr, r: G0.r[0] + Math.random() * (G0.r[1] - G0.r[0]), y: G0.y[0] + Math.random() * (G0.y[1] - G0.y[0]), w: (0.05 + Math.random() * 0.06) * (Math.random() < 0.5 ? -1 : 1), a: Math.random() * 6.28, ph: Math.random() * 10 });
+    group.add(b);
+  }
+  // fumaça e névoa: bolinhas que sobem, crescem e somem
+  const puffs = [], tex = softDot();
+  const CF = { chamine: [0xbdbdbd, 0.42, 0.9, 1.6, 5.5], vapor: [0x9fe8b0, 0.35, 0.6, 1.2, 3.0], nevoa: [0xffffff, 0.3, 1.5, 3.2, 2.6] };
+  for (const [x, y, z, tipo] of V.fumaca || []) {
+    const [cor, op, s0, s1, life] = CF[tipo] || CF.chamine;
+    const nP = tipo === 'nevoa' ? 10 : 8;
+    for (let k = 0; k < nP; k++) {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: cor, transparent: true, depthWrite: false, opacity: 0, fog: true }));
+      sp.renderOrder = 3; group.add(sp);
+      puffs.push({ sp, x, y, z, tipo, op, s0, s1, life, t: (k / nP) * life, dx: (Math.random() - 0.5) * 0.6, dz: (Math.random() - 0.5) * 0.6 });
+    }
+  }
+  let noite = false;
+  return {
+    group,
+    setHora(h) { noite = h === 'noite'; for (const b of birds) b.b.visible = !noite; },   // gaivotas dormem à noite
+    update(dt, t) {
+      for (const g of birds) {
+        if (!g.b.visible) continue;
+        g.a += g.w * dt;
+        const x = cx + Math.cos(g.a) * g.r, z = cz + Math.sin(g.a) * g.r, y = g.y + Math.sin(t * 0.5 + g.ph) * 2.5;
+        g.b.position.set(x, y, z);
+        const sg = Math.sign(g.w), tx = -Math.sin(g.a) * sg, tz = Math.cos(g.a) * sg;   // direção do voo (tangente ao círculo)
+        g.b.rotation.set(0, Math.atan2(tx, tz), sg * 0.3, 'YXZ');                         // inclina para dentro da curva
+        const plana = Math.sin(t * 0.3 + g.ph) > 0.3;
+        const f = plana ? 0.15 : Math.sin(t * 9 + g.ph) * 0.55;
+        g.wl.rotation.z = f; g.wr.rotation.z = -f;
+      }
+      for (const p of puffs) {
+        p.t += dt; if (p.t > p.life) p.t -= p.life;
+        const k = p.t / p.life;
+        const up = p.tipo === 'nevoa' ? 1.2 : 3.2;
+        p.sp.position.set(p.x + p.dx * k * 3 + k * 0.8, p.y + k * up * (p.tipo === 'nevoa' ? 1 : 1.4), p.z + p.dz * k * 3);
+        const s = p.s0 + (p.s1 - p.s0) * k; p.sp.scale.set(s, s, s);
+        p.sp.material.opacity = p.op * Math.sin(Math.PI * k) * (noite && p.tipo === 'chamine' ? 0.5 : 1);
+      }
+    },
+  };
+}
+
 export async function buildCenario(map, { topDown = false } = {}) {
   const base = `/assets/maps/${map.cenario}/`;
   const D = await (await fetch(base + 'dados.json')).json();
@@ -203,9 +308,13 @@ diffuseColor.rgb *= col;`);
     const ex = src.userData || {};
     let m;
     if (ex.glow) {
-      m = new THREE.MeshBasicMaterial({ color: src.color.clone() });
+      m = new THREE.MeshBasicMaterial({ color: ex.tex ? new THREE.Color(1, 1, 1) : src.color.clone(), map: ex.tex ? T[ex.tex] : null });
       // brilho > 1: à noite a janela acesa passa de 1 e a passada da noite não escurece (luz própria)
-      if (ex.brilho) glowMats.push({ m, base: src.color.clone(), brilho: ex.brilho });
+      if (ex.brilho) glowMats.push({ m, base: m.color.clone(), brilho: ex.brilho, dia: ex.tex ? T[ex.tex] : null, noite: ex.tex_noite ? T[ex.tex_noite] : null });
+    } else if (ex.recorte) {
+      // folhas e flores: cartões com recorte (sem ordenar transparência)
+      m = toonSoft({ map: T[ex.tex], alphaTest: 0.45, side: THREE.DoubleSide, color: src.color.clone() });
+      if (ex.vento) balancaFolha(m, ex.vento);
     } else if (ex.cascata) {
       // água que corre: a textura desliza ao longo da faixa
       const t = T[ex.tex].clone(); t.needsUpdate = true; flowTex.push({ t, v: ex.cascata });
@@ -213,17 +322,21 @@ diffuseColor.rgb *= col;`);
     } else if (ex.glass) m = new THREE.MeshPhongMaterial({ color: src.color.clone(), map: ex.tex ? T[ex.tex] : null, transparent: true, opacity: ex.opacity || 0.35, depthWrite: false, side: THREE.DoubleSide, shininess: 90, specular: 0x667766 });
     else {
       m = toonSoft({ color: ex.tex ? 0xffffff : src.color.clone(), map: ex.tex ? T[ex.tex] : null, normalMap: ex.normal ? T[ex.normal] : null });
-      addRimSpec(m, { rim: ex.rim || 0 });
+      if (ex.tex && ex.cor) m.color.setRGB(...ex.cor);   // textura tingida
+      addRimSpec(m, { rim: ex.rim || 0, spec: ex.spec || 0, specSize: ex.spec ? 0.86 : 0.9 });
       if (ex.dupla) m.side = THREE.DoubleSide;
+      if (ex.onda) ondula(m, ex.onda, ex.onda_eixo || 'v');
     }
     mats.set(src, m); return m;
   };
-  const glowMats = [], flowTex = [], spinners = [], telhados = [];
+  const glowMats = [], flowTex = [], spinners = [], telhados = [], bobbers = [], pendulos = [];
   if (gltf) {
     gltf.scene.traverse((o) => {
       const ud = o.userData || {};
       // TELHADO_*: telhados, andar de cima e cúpula (somem na visão de cima); gira_eixo: peças que giram
       if (/^TELHADO/.test(o.name) || ud.telhado) { telhados.push(o); if (topDown) o.visible = false; }
+      if (ud.balanca) bobbers.push({ o, y0: o.position.y, rz: o.rotation.z, rx: o.rotation.x, a: ud.balanca, f: 0.7 + Math.random() * 0.3 });
+      if (ud.pendulo) pendulos.push({ o, rz: o.rotation.z, a: ud.pendulo });
       if (ud.gira_eixo) spinners.push({ o, ax: new THREE.Vector3(ud.gira_eixo === 'x' ? 1 : 0, ud.gira_eixo === 'y' ? 1 : 0, ud.gira_eixo === 'z' ? 1 : 0), v: ud.gira_vel || 0.3 });
       if (!o.isMesh) return;
       o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material);
@@ -265,6 +378,12 @@ diffuseColor.rgb *= col;`);
     group.add(backdrop);
   }
 
+  // ---- vida do mapa: gaivotas voando em volta, fumaça das chaminés, névoa da cascata
+  let vida = null;
+  if (D.vida && !topDown) {
+    try { vida = makeVida(await (await fetch(base + D.vida)).json(), { cx: W / 2, cz: Hh / 2 }); group.add(vida.group); } catch (e) { vida = null; }
+  }
+
   // ---- dados de jogo
   const segments = D.colisao.map(([x1, z1, x2, z2, top]) => ({ x1, z1, x2, z2, top }));
   let cells = (map.terrain && map.terrain.cells) || '';
@@ -281,6 +400,10 @@ diffuseColor.rgb *= col;`);
       tWater += dt; kitWind.value = tWater; T.agua_n.offset.set(-tWater * 0.006, tWater * 0.009);
       for (const f of flowTex) f.t.offset.y = (f.t.offset.y - dt * f.v) % 1;
       for (const s of spinners) s.o.rotateOnAxis(s.ax, s.v * dt);
+      ondaTempo.value = tWater;
+      for (const b of bobbers) { b.o.position.y = b.y0 + Math.sin(tWater * b.f) * b.a; b.o.rotation.z = b.rz + Math.sin(tWater * b.f * 0.8 + 1) * b.a * 0.35; b.o.rotation.x = b.rx + Math.sin(tWater * b.f * 0.6 + 2) * b.a * 0.25; }
+      for (const p of pendulos) p.o.rotation.z = p.rz + Math.sin(tWater * 2.6) * p.a;
+      if (vida) vida.update(dt, tWater);
     },
     dispose() {
       geo.dispose(); tmat.dispose();
@@ -294,7 +417,11 @@ diffuseColor.rgb *= col;`);
   // horário: troca o céu e acende as janelas à noite
   const setHora = (h) => {
     if (backdrop.userData.setHora) backdrop.userData.setHora(h);
-    for (const g of glowMats) g.m.color.copy(g.base).multiplyScalar(h === 'noite' ? g.brilho : 0.85);
+    for (const g of glowMats) {
+      g.m.color.copy(g.base).multiplyScalar(h === 'noite' ? g.brilho : g.dia ? 1 : 0.85);
+      if (g.noite) { const want = h === 'noite' ? g.noite : g.dia; if (g.m.map !== want) { g.m.map = want; g.m.needsUpdate = true; } }
+    }
+    if (vida) vida.setHora(h);
   };
   // telhados: o jogador os esconde na visão tática (olhando de cima)
   const setTelhados = (v) => { for (const o of telhados) o.visible = v && !topDown; };

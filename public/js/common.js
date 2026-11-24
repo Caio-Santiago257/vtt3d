@@ -705,7 +705,9 @@ export class Session {
   // segmentos que bloqueiam a luz: paredes mais altas que uma pessoa e portas fechadas
   lightBlockers() {
     const w = this.world; if (!w) return [];
-    const segs = w.segments.filter((s) => s.top === undefined || s.top > 900 || s.top > 1.6);
+    // a altura do trecho é absoluta: compara com o chão (mapas com relevo); grades e muretas baixas não cortam a luz
+    const alto = (s) => s.top - (w.groundAt ? w.groundAt((s.x1 + s.x2) / 2, (s.z1 + s.z2) / 2) : 0) > 2.4;
+    const segs = w.segments.filter((s) => s.top === undefined || s.top > 900 || alto(s));
     for (const d of w.doors || []) if (d.angle < 0.6) segs.push(d);
     return segs;
   }
@@ -813,7 +815,7 @@ export class Session {
         for (const o of this.world.terrain.obstacles) push(o.x, o.z, radius + o.r);
       }
       for (const e of this.ents.values()) {
-        if (e.data.id === skip) continue;
+        if (e.data.id === skip || e.data.kind === 'luz') continue;   // fontes de luz não bloqueiam a passagem
         const ey = e.data.y || 0, top = ey + (e.size > 1 ? e.size * 2 : 2.4) * (e.data.scale || 1);
         if (y > top || ey > y + 2.4) continue; // passa por cima (ou por baixo) de quem não está na mesma altura
         push(e.data.x, e.data.z, radius + e.radius * 0.8);

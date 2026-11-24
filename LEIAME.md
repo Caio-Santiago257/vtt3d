@@ -153,49 +153,81 @@ Na aba **Cena**, em **Mapas prontos**, o botão **Observatório de Letarion** ca
 O mapa tem **48 × 48 quadrados (72 × 72 m)**. O platô fica a **30 m de altura** sobre o mar. Tudo foi feito do zero a partir das 7 referências que você mandou.
 
 - **Subida:** uma escadaria de pedra dá a volta na montanha, do píer até o arco de entrada.
-  - Tem meio-fio e corrimão de madeira com corda do lado do penhasco.
-  - Do lado de dentro fica o barranco de rocha.
-- **Queda d'água:**
-  - a água sai da fonte do pátio, corre por um canal de pedra e cai pela encosta;
-  - lá embaixo ela enche uma bacia ao lado da escadaria, onde gira uma roda d'água;
-  - depois passa sob uma pontezinha de tábuas e cai de novo até o mar.
-- **Píer:** deque de tábuas sobre estacas, um barco a remo, barris e uma fogueira.
+  - Tem meio-fio e postes de madeira com corda do lado do penhasco.
+  - Há arbustos no pé do barranco.
+- **Queda d'água e roda d'água:**
+  - a água sai da fonte de três taças do pátio e corre por um canal de pedra;
+  - ela cai de uma bica de pedra pela encosta, em camadas que deslizam em velocidades diferentes, com fios soltos dos lados;
+  - lá embaixo enche uma bacia de pedra ao lado da escadaria, com espuma girando e névoa subindo;
+  - a água passa por baixo de uma ponte de tábuas com corrimão;
+  - depois segue por uma calha de madeira sobre cavaletes e cai **por cima** da roda d'água de baldes, que gira apoiada em dois pilares de pedra;
+  - por fim desce até o mar.
+- **Píer:** deque de tábuas sobre estacas, barco a remo que balança na água, barris, caixotes, sacos e um rolo de corda.
 - **Prédios:**
-  - paredes de pedra com janelas acesas e andar de cima em enxaimel;
-  - telhados de telha, chaminés e uma torre alta sobre a biblioteca;
-  - a cúpula de cobre, com a fresta aberta e o grande telescópio saindo por ela.
+  - paredes de pedra com soco, cornija e cunhais;
+  - janelas de vitral em losangos, que de dia são vidro escuro e à noite acendem;
+  - portas de madeira abertas, com ferragens;
+  - andar de cima em enxaimel, com mísulas e floreiras nas janelas;
+  - telhados de telha com cumeeira e chaminés que soltam fumaça;
+  - torre com bandeira ao vento;
+  - cúpula de cobre com pátina verde, nervuras e a fresta aberta. Por dentro, o forro é pintado como um mapa do céu.
 - **Cômodos:**
-  - **pátio:** fonte, estátua de um sábio com astrolábio, bancos, canteiros e relógio de sol;
-  - **recepção:** balcão curvo com um gato branco, poltronas, estantes, tapete, quadro das fases da lua e livro de visitas;
-  - **biblioteca:** estantes cheias, o grande livro aberto no atril, globo, mesa de leitura, escada de mão e pilhas de livros;
-  - **sala do observatório (cúpula):** plataforma com degraus e corrimão de latão, o telescópio apontado para o céu, planetas pendurados que giram, esfera armilar que gira, cartas estelares nas paredes e mesas de mapas;
-  - **laboratório:** bancada de frascos coloridos, prateleiras de poções, caldeirão e uma lente grande;
-  - **varanda:** sobre o penhasco, com uma luneta e vista para o mar.
+  - **pátio:** fonte, estátua do sábio com astrolábio e cajado, duas árvores, canteiros de flores, arbustos, bancos, relógio de sol, barris e caixotes. O arco de entrada tem estandartes, e a recepção tem uma placa pendurada;
+  - **recepção:** balcão curvo com o gato branco, livro de registro e sineta. Tem também:
+    - estantes, poltronas e baú;
+    - relógio de pêndulo (o pêndulo balança);
+    - lustre de velas, quadro das fases da lua e pintura do observatório;
+    - mapa das Ilhas Moonshae e estandartes;
+  - **biblioteca:** 11 estantes **cheias de livros em 3D**, cada um com lombada própria. Há livros tombados, pilhas deitadas e enfeites nas prateleiras. Tem também:
+    - o grande livro aberto no atril;
+    - lareira com tapeçaria acima e poltronas;
+    - globo que gira, mesa de leitura com tinteiro e velas;
+    - cesto de pergaminhos, escada de mão e lustre;
+  - **sala do observatório:**
+    - plataforma com escada, cantoneiras de latão e corrimão (a escada é larga e dá para subir até o telescópio);
+    - telescópio com engrenagem e buscadora;
+    - planetas pendurados e esfera armilar, que giram;
+    - estantes curvas com livros, cartas estelares, mesas de mapas e de instrumentos;
+    - globo que gira, tapete redondo de estrelas e baú;
+  - **laboratório:**
+    - bancada e prateleiras com frascos de vidro (redondos, altos e em pera) cujo líquido brilha à noite;
+    - alambique e caldeirão com caldo verde girando e vapor;
+    - ervas secando penduradas, cristais, barril, sacos e caixotes;
+  - **varanda:** luneta, mesinha com bule e xícaras, cadeira, banco e vasos de flores.
+- **Vida:** gaivotas voam em volta do pico de dia (à noite somem).
+  - Fumaça sobe das chaminés, e névoa sobe da cascata e do mar.
+  - Os estandartes e a bandeira ondulam, e as folhas balançam.
 - **Céu:** muda com o horário que o mestre escolhe.
   - **Manhã:** céu azul com nuvens.
   - **Tarde:** pôr do sol atrás das ilhas, com o reflexo dourado no mar.
-  - **Noite:** céu muito estrelado, com a Via Láctea e a Lua a nordeste, perto de onde o telescópio aponta. As vilas das ilhas aparecem acesas ao longe, e a Lua deixa um caminho prateado no mar. À noite, as janelas acendem.
-- **Em volta:** mar aberto até o horizonte, com as Ilhas Moonshae a oeste e a costa de Faerûn bem longe a leste. Rochedos saem da água em volta da montanha.
-- **Luz dinâmica:** o mapa já vem com **32 fontes de luz**, que o mestre pode apagar, acender ou mover:
-  - lanternas ao longo da escadaria, fogueira e lanterna no píer;
+  - **Noite:** céu muito estrelado, com a Via Láctea e a Lua a nordeste, perto de onde o telescópio aponta. As vilas das ilhas aparecem acesas ao longe, e a Lua deixa um caminho prateado no mar.
+- **Em volta:** mar aberto até o horizonte, com as Ilhas Moonshae a oeste e a costa de Faerûn bem longe a leste.
+- **Luz dinâmica:** o mapa já vem com **35 fontes de luz**, que o mestre pode apagar, acender ou mover:
+  - lanternas na escadaria, fogueira no píer;
   - braseiros, postes e tochas no pátio;
   - candelabros, velas e orbes nos cômodos;
-  - cristais na cúpula, fogo-fátuo no laboratório e lanterna na varanda.
+  - fogo na lareira, cristais na cúpula e fogo-fátuo no laboratório.
 
-  À noite, sob o céu aberto, há um luar fraco. Dentro dos cômodos, quem ilumina são as velas e os orbes.
+  À noite, sob o céu aberto, há um luar fraco.
 - **Telhados:** somem na vista de cima do mestre e na visão tática do jogador (régua e áreas de magia), para dar para ver os personagens lá dentro.
 - **Regras:**
-  - paredes, parapeito, corrimãos, móveis grandes e a bacia bloqueiam a passagem;
-  - as portas ficam abertas.
+  - paredes, mureta, corrimãos, móveis grandes e a bacia bloqueiam a passagem;
+  - as portas ficam abertas;
+  - as fontes de luz não bloqueiam a passagem (em nenhum mapa).
 
-**Feito no Blender:** toda a arquitetura, a escadaria, a cascata, a roda d'água, o píer, o barco e os 80 móveis e enfeites foram modelados por script no Blender (`fontes/blender/letarion_cenario.py`). O script lê a planta gerada em `fontes/mapas/letarion_plano.json`.
+**Feito no Blender:** toda a arquitetura, a escadaria, a cascata, a roda d'água, o píer, o barco, as árvores, mais de 2 mil livros e mais de 100 móveis e enfeites foram modelados por script no Blender (`fontes/blender/letarion_cenario.py`). O script lê a planta gerada em `fontes/mapas/letarion_plano.json`.
 
-- O GLB tem 2,8 MB e cerca de 35 mil triângulos, em poucos objetos:
+- O GLB tem 6,5 MB e cerca de 86 mil triângulos, em poucos objetos:
   - o estático;
   - os telhados;
   - as peças que giram;
+  - o barco e os pêndulos;
   - a água que corre.
-- As texturas (pedra, reboco, telha, cobre, tábuas, lajes, lombadas de livros, cartas estelares, tapetes, água) foram pintadas por código em `fontes/mapas/letarion_texturas.py`.
+
+  Cada material é desenhado de uma vez só.
+- As texturas foram pintadas por código em `fontes/mapas/letarion_texturas.py`. São cerca de 50, quase todas de 1024 px, e emendam sem costura.
+  - As das paredes e do chão (pedra, reboco, madeiras, tábuas, lajes, telha, cobre) têm relevo (normal map) e sombra das juntas.
+  - Há ainda: latão, ferro, couro, tecidos, estandarte e tapeçaria, o atlas de 48 lombadas de livros, globo, mapa, pergaminho, quadros, cartas estelares, tapetes, vitral de dia e de noite, casca de árvore, folhagens e água.
 - Os três céus foram pintados por código em `fontes/mapas/letarion_ceu.py`: panoramas de 4096 × 2048 numa esfera em volta do mapa.
 
 **Gerar de novo** (depois de mudar a planta, as texturas ou os modelos):
@@ -203,19 +235,25 @@ O mapa tem **48 × 48 quadrados (72 × 72 m)**. O platô fica a **30 m de altura
 ```
 python3 fontes/mapas/letarion_texturas.py   # texturas
 python3 fontes/mapas/letarion_gerar.py      # relevo, escadaria, colisão, luzes, mistura, planta e mapa pronto
-python3 fontes/blender/letarion_cenario.py  # modelos no Blender (GLB) e letarion.blend
+python3 fontes/blender/letarion_cenario.py  # modelos no Blender (GLB), vida.json e letarion.blend
 python3 fontes/mapas/letarion_ceu.py        # céus de manhã, tarde e noite
 ```
 
 Para abrir no seu Blender, abra o `fontes/blender/letarion_cenario.py` no editor de texto do Blender e rode. Ele monta tudo na coleção `COL_Letarion` e exporta o GLB de novo.
 
-O motor de mapas (`public/js/cenario.js`) ganhou recursos novos, que outros mapas prontos também podem usar:
+O motor de mapas (`public/js/cenario.js`) ganhou recursos que outros mapas prontos também podem usar. Cada um é ligado por uma propriedade no material ou no objeto do GLB:
 
 - céu em esfera que troca com o horário, com mar aberto até o horizonte;
-- objetos `TELHADO_*`, que somem na vista de cima;
-- peças que giram (`gira_eixo`);
-- água que corre (`cascata`);
-- janelas com luz própria (`brilho`).
+- `TELHADO_*`: some na vista de cima;
+- `gira_eixo`: peça que gira;
+- `balanca`: barco que balança;
+- `pendulo`: pêndulo;
+- `cascata`: água que corre;
+- `brilho`, com `tex_noite`: janelas de luz própria, que trocam de textura à noite;
+- `recorte`, com `vento`: folhagem recortada que balança;
+- `onda`: tecido que ondula;
+- `spec`: brilho de metal;
+- `vida.json`: gaivotas, fumaça e névoa.
 
 ## Retratos da ordem de iniciativa
 

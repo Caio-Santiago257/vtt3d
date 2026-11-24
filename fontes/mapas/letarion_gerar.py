@@ -73,7 +73,7 @@ ROOMS = {
 # portas: (x1, z1, x2, z2) do vão
 DOORS = [(46.4, 56.0, 49.6, 56.0), (46.4, 46.6, 49.6, 46.6), (40.0, 49.3, 40.0, 52.3), (56.0, 48.0, 56.0, 51.0), (66.0, 47.5, 66.0, 50.5)]
 PLATAFORMA = dict(c=(48.0, 35.8), r=2.7, h=2.6)        # plataforma do telescópio
-RAMPA = (46.9, 38.4, 49.1, 43.4)                       # rampa de degraus até a plataforma (sobe para o norte)
+RAMPA = (46.2, 38.2, 49.8, 43.6)                       # rampa de degraus até a plataforma (sobe para o norte)
 FONTE = (62.0, 61.0)                                   # fonte que alimenta a queda d'água
 TH_CASCATA = math.radians(28)
 
@@ -178,7 +178,7 @@ def collision():
         segs += wall_rect(*ROOMS[k], DOORS)
     # plataforma do telescópio: borda (menos onde chega a rampa)
     pc = PLATAFORMA['c']
-    segs += [s + [PH + PLATAFORMA['h'] + 1.1] for s in ring(pc[0], pc[1], PLATAFORMA['r'] + 0.05, 24, gaps=[(math.radians(68), math.radians(112))])]
+    segs += [s + [PH + PLATAFORMA['h'] + 1.1] for s in ring(pc[0], pc[1], PLATAFORMA['r'] + 0.05, 24, gaps=[(math.radians(46), math.radians(134))])]
     a, b, c2, dd = RAMPA
     segs += [[a, b, a, dd, PH + 1], [c2, b, c2, dd, PH + 1]]
     # bordas do mapa
@@ -193,60 +193,83 @@ def collision():
 def furniture():
     F = []
     add = lambda t, x, z, ry=0, r=0, **kw: F.append(dict(t=t, x=x, z=z, ry=ry, r=r, **kw))
+    caixa = lambda x0, z0, x1, z1: F.append(dict(t='_obst', x=(x0 + x1) / 2, z=(z0 + z1) / 2, r=0, caixa=(x0, z0, x1, z1)))
     dcx, dcz = DOME['c']
-    # cúpula do observatório
+    # ---- cúpula do observatório
     add('telescopio', 48.0, 35.8, 35, 0)                       # na plataforma, apontado pela fresta para nordeste
     add('orrery', 42.6, 33.5, 0, 0)                            # planetas pendurados
     add('armilar', 54.2, 34.6, 20, 1.3)
-    add('mesa_mapas', 41.6, 40.2, 70, 1.4); add('cadeira', 40.6, 41.6, 250, 0.5)
-    add('mesa_globo', 55.0, 40.8, -60, 1.0); add('globo', 55.0, 40.8, 0, 0)
+    add('mesa_mapas', 41.6, 40.2, 70, 1.4); add('cadeira', 40.4, 41.8, 250, 0.5)
+    add('mesa_globo', 55.0, 40.8, -60, 1.0); add('globo', 55.0, 40.8, 0, 0); add('cadeira', 54.6, 42.6, 200, 0.5)
     for k, a in enumerate([200, 235, 305, 340]):
-        rr = DOME['r'] - 0.75; add('estante_curva', dcx + rr * math.cos(math.radians(a)), dcz + rr * math.sin(math.radians(a)), -a + 90, 0)
+        rr = DOME['r'] - 0.75; add('estante_curva', dcx + rr * math.cos(math.radians(a)), dcz + rr * math.sin(math.radians(a)), -a - 90, 0)
     for k, a in enumerate([160, 215, 270, 325, 20]):
-        rr = DOME['r'] - 0.35; add('carta_estelar', dcx + rr * math.cos(math.radians(a)), dcz + rr * math.sin(math.radians(a)), -a + 90, 0, seed=k)
-    for x, z, ry in [(44.5, 42.5, 30), (51.5, 43.0, -20), (45.8, 33.0, 80), (52.6, 39.6, 10), (50.5, 31.0, 140)]: add('pergaminhos', x, z, ry)
-    add('tapete', 48.0, 42.6, 0, 0, w=6, d=3.2, cor='azul')
+        rr = DOME['r'] - 0.38; add('carta_estelar', dcx + rr * math.cos(math.radians(a)), dcz + rr * math.sin(math.radians(a)), -a - 90, 0, seed=k)
+    for x, z, ry in [(44.2, 44.6, 30), (52.2, 44.4, -20), (45.6, 32.6, 80), (50.8, 31.2, 140)]: add('pergaminhos', x, z, ry)
+    add('tapete_redondo', 48.0, 44.9, 0, 0)
     add('luneta', 44.0, 31.2, 210, 0.6)
-    # recepção
-    add('balcao', 48.0, 50.3, 0, 0); F.append(dict(t='_obst', x=48.0, z=50.3, r=0, caixa=(45.2, 49.7, 50.8, 51.1)))
+    add('mesa_instrumentos', 43.6, 43.4, 60, 1.0)
+    add('bau', 52.8, 43.4, -30, 0.7)
+    # ---- recepção
+    add('balcao', 48.0, 50.3, 0, 0); caixa(45.2, 49.7, 50.8, 51.1)
     add('gato', 46.3, 50.3, 160, 0)
-    add('livro_aberto', 49.8, 50.3, 10, 0)
+    add('livro_aberto', 49.8, 50.3, 10, 0); add('sino', 50.4, 50.2, 0, 0)
     add('tapete', 48.0, 53.4, 0, 0, w=7, d=3.6, cor='vermelho')
     for x in (41.0, 55.0):
-        add('estante', x, 47.4, 90 if x < 48 else -90, 0); add('vaso_planta', x, 55.0, 0, 0.6)
+        add('estante', x, 47.4, 0, 0)
+    add('vaso_planta', 41.0, 55.2, 0, 0.6); add('vaso_planta', 53.6, 55.3, 0, 0.6)
     add('poltrona', 42.4, 52.6, 60, 0.7); add('poltrona', 53.6, 52.6, -60, 0.7); add('banquinho', 44.2, 54.0, 0, 0.4)
-    add('mesinha', 48.0, 47.6, 0, 0.6); add('ampulheta', 48.0, 47.6, 0, 0)
-    add('cabideiro', 54.8, 55.2, 0, 0.3)
-    add('quadro_lua', 44.0, 46.8, 0, 0); add('quadro_lua', 52.0, 46.8, 0, 0, seed=2)
-    # biblioteca
+    add('mesinha', 43.0, 54.6, 0, 0.6); add('ampulheta', 43.0, 54.6, 0, 0)
+    add('cabideiro', 40.9, 53.2, 0, 0.3)
+    add('relogio', 55.5, 53.9, -90, 0.6)
+    add('quadro', 44.0, 46.95, 0, 0, tex='quadro'); add('quadro', 52.0, 46.95, 0, 0, tex='pintura')
+    add('mapa_parede', 43.0, 55.65, 180, 0); add('estandarte_parede', 40.35, 54.0, 90, 0); add('estandarte_parede', 55.65, 52.0, -90, 0)
+    add('bau', 52.4, 47.45, 0, 0.7)
+    add('lustre', 48.0, 52.8, 0, 0)
+    # ---- biblioteca
     for z in (43.0, 45.6, 48.2, 50.8, 53.5): add('estante', 29.4, z, 90, 0)
     for x in (31.4, 34.0, 36.6): add('estante', x, 42.4, 0, 0)
     for x in (31.4, 34.0, 36.6): add('estante', x, 54.6, 180, 0)
     add('atril_livro', 34.6, 48.6, 90, 1.0)                    # o grande livro aberto (referência 4)
-    add('mesa_leitura', 34.6, 51.4, 0, 1.2); add('cadeira', 34.6, 52.8, 180, 0.5)
-    add('globo_pe', 37.8, 44.8, 0, 0.6); add('escada_mao', 30.6, 46.8, 90, 0)
-    for x, z in [(31.8, 50.2), (37.6, 53.2), (32.6, 44.6)]: add('pilha_livros', x, z, rng.uniform(0, 360))
-    add('tapete', 34.6, 49.6, 90, 0, w=5, d=3.0, cor='verde')
-    # laboratório de alquimia
-    add('bancada', 61.0, 44.7, 0, 0); F.append(dict(t='_obst', x=61, z=44.7, r=0, caixa=(57.8, 44.1, 64.2, 45.6)))
-    add('caldeirao', 63.6, 51.4, 0, 0.9)
-    add('prateleira_frascos', 65.4, 47.0, -90, 0); add('prateleira_frascos', 57.2, 53.4, 180, 0)
-    add('mesa_lente', 59.0, 50.6, 30, 1.0)
-    add('caixotes', 64.6, 53.0, 20, 0.8)
-    # varanda
-    add('luneta', 70.6, 46.6, -60, 0.6); add('banco', 69.4, 52.0, 90, 0.5)
-    # pátio de entrada
+    add('mesa_leitura', 34.4, 51.6, 0, 1.2); add('cadeira', 34.4, 52.9, 180, 0.5); add('cadeira', 32.6, 51.6, 90, 0.5)
+    add('lareira', 39.55, 45.4, -90, 0); caixa(38.6, 43.9, 40.0, 46.9)
+    add('tapecaria', 39.6, 45.4, -90, 0)
+    add('poltrona', 36.9, 44.4, 115, 0.7); add('poltrona', 36.9, 46.6, 65, 0.7); add('mesinha', 37.4, 45.5, 0, 0.5)
+    add('globo_pe', 37.6, 53.0, 0, 0.6); add('escada_mao', 30.6, 46.8, 90, 0)
+    add('cesto_pergaminhos', 31.6, 49.8, 0, 0.5)
+    for x, z in [(37.9, 49.0), (32.4, 44.4), (30.7, 52.2)]: add('pilha_livros', x, z, (x * 37) % 360)
+    add('tapete', 34.6, 49.4, 90, 0, w=5, d=3.0, cor='verde')
+    add('lustre', 34.6, 49.4, 0, 0)
+    # ---- laboratório de alquimia
+    add('bancada', 61.0, 44.7, 0, 0); caixa(57.8, 44.1, 64.2, 45.6)
+    add('caldeirao', 63.4, 51.6, 0, 0.9)
+    add('prateleira_frascos', 65.45, 45.9, -90, 0); add('prateleira_frascos', 58.6, 53.5, 180, 0)
+    add('alambique', 59.4, 50.2, 30, 1.1)
+    add('barril', 65.1, 53.1, 0, 0.6); add('sacos', 61.4, 53.3, 0, 0.6); add('caixotes', 57.1, 46.0, 20, 0.6)
+    add('ervas', 61.0, 49.2, 0, 0); add('ervas', 61.0, 51.8, 0, 0)
+    add('cristais', 64.0, 44.6, 0, 0)
+    # ---- varanda
+    add('luneta', 70.6, 46.6, -60, 0.6); add('banco', 69.4, 52.2, 90, 0.5)
+    add('mesinha_cha', 68.4, 49.4, 0, 0.6); add('cadeira', 69.5, 49.4, -90, 0.5)
+    add('vaso_flores', 71.9, 45.6, 0, 0.4); add('vaso_flores', 71.9, 52.4, 0, 0.4)
+    # ---- pátio de entrada
     add('arco', 46.0, 66.4, 0, 0)
     add('banco', 39.0, 60.0, 90, 0.6); add('banco', 57.0, 60.0, -90, 0.6)
     add('estatua', 41.0, 63.4, 30, 0.9)
-    add('canteiro', 38.0, 57.2, 0, 0.8); add('canteiro', 58.0, 57.2, 0, 0.8)
-    add('fonte', FONTE[0], FONTE[1], 0, 1.4)
+    add('canteiro', 38.0, 57.4, 0, 0.8); add('canteiro', 58.0, 57.4, 0, 0.8)
+    add('fonte', FONTE[0], FONTE[1], 0, 1.6)
     add('relogio_sol', 52.6, 62.0, 0, 0.7)
-    # base da escadaria e píer
+    add('arvore', 37.0, 61.6, 0, 0.9); add('arvore', 55.6, 64.4, 140, 0.9)
+    add('barris', 44.0, 57.3, 0, 0.7); add('caixotes', 52.0, 57.3, -10, 0.6)
+    add('placa', 51.3, 56.0, 0, 0)
+    for a in (120, 150, 200, 230, 250, 290, 330, 50, 70):
+        rr = RP - 1.4; add('arbusto', C[0] + rr * math.cos(math.radians(a)), C[1] + rr * math.sin(math.radians(a)), a, 0.6)
+    # ---- base da escadaria e píer
     sx, sz, _ = PATH[0]
     add('pier', sx, sz + 5.0, 0, 0)
     add('barco', sx + 3.6, sz + 7.2, 10, 0)
     add('barris', sx - 2.3, sz + 1.6, 0, 0)
+    add('caixotes', sx + 0.6, sz + 3.0, 15, 0); add('sacos', sx - 0.9, sz + 6.2, 0, 0); add('rolo_corda', sx + 1.0, sz + 8.0, 0, 0)
     return F
 
 FONTES_LUZ = []
@@ -268,13 +291,13 @@ def lights(F):
     add('poste', 37.6, 64.6); add('poste', 58.4, 64.6)
     add('tocha', 45.2, 56.25, 0); add('tocha', 50.8, 56.25, 0)
     # recepção
-    add('orbe', 48.0, 51.8); add('candelabro', 41.2, 49.6); add('candelabro', 54.8, 49.6); add('velas', 47.0, 47.7)
+    add('orbe', 48.0, 52.8); add('candelabro', 41.6, 48.4); add('candelabro', 54.4, 48.4); add('velas', 47.0, 50.3)
     # biblioteca
-    add('orbe', 34.6, 46.4); add('velas', 34.0, 51.4); add('candelabro', 38.6, 50.8)
+    add('orbe', 34.6, 46.4); add('velas', 34.4, 51.6); add('fogueira', 39.0, 45.4)
     # cúpula
-    add('cristal', 44.2, 36.0); add('cristal', 52.6, 33.0); add('velas', 41.6, 40.2); add('orbe', 48.0, 41.6); add('velas', 55.2, 41.4)
+    add('cristal', 44.2, 36.0); add('cristal', 52.6, 33.0); add('velas', 41.6, 40.2); add('orbe', 51.6, 43.6); add('velas', 55.2, 41.4); add('velas', 46.7, 34.6); add('candelabro', 44.4, 38.2); add('candelabro', 51.6, 38.2)
     # laboratório
-    add('braseiro', 63.6, 51.4); add('velas', 61.0, 44.8); add('fatuo', 59.4, 47.0)
+    add('braseiro', 63.4, 51.6); add('velas', 61.0, 44.8); add('fatuo', 59.4, 47.0)
     # varanda
     add('lanterna', 71.4, 52.2, 90)
     return L
@@ -337,8 +360,9 @@ def main():
         fundo=dict(chao=[0.05, 0.14, 0.22], chao_y=-0.05),   # sem cilindro: o céu (esfera) já traz o horizonte
         ceu=dict(dia='ceu_dia.webp', noite='ceu_noite.webp', tarde='ceu_tarde.webp', raio=600, y=PH, luar=0.06),
         # texturas que os materiais do GLB pedem (o jogo carrega só estas)
-        tex_glb=['pedra.jpg', 'pedra_n.png', 'lajes.jpg', 'reboco.jpg', 'madeira.jpg', 'tabuas.jpg', 'telha.jpg', 'cobre.jpg', 'livros.jpg',
-                 'carta_a.jpg', 'carta_b.jpg', 'quadro.jpg', 'tapete_vermelho.jpg', 'tapete_azul.jpg', 'tapete_verde.jpg', 'cascata.png', 'espuma.png'],
+        tex_glb=sorted(f for f in os.listdir(os.path.join(ROOT, 'public', 'assets', 'maps', 'letarion', 'tex'))
+                       if f not in ('terra.jpg', 'grama.jpg', 'musgo.jpg', 'calcada.jpg', 'rocha.jpg', 'agua_n.png', 'capim.png', 'flores.png', 'folhas_verdes.png', 'livros.jpg')),
+        vida='vida.json',
         colisao=segs, obstaculos=obst, vegetacao=[], bioma='montanha', spawn=spawn,
     )
     with open(os.path.join(OUT, 'dados.json'), 'w') as f: json.dump(dados, f, separators=(',', ':'))
