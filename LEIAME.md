@@ -146,6 +146,77 @@ Os arquivos ficam em `public/assets/maps/estrada/`. O motor de mapas (`public/js
 - se usa um kit instanciado ou um GLB inteiro;
 - como é o fundo.
 
+## Mapas prontos: Observatório de Letarion
+
+Na aba **Cena**, em **Mapas prontos**, o botão **Observatório de Letarion** carrega um observatório no alto de um pico sobre o mar, perto das Ilhas Moonshae. Ele vem sem monstros. Os jogadores chegam de barco: entram no píer, ao pé da montanha.
+
+O mapa tem **48 × 48 quadrados (72 × 72 m)**. O platô fica a **30 m de altura** sobre o mar. Tudo foi feito do zero a partir das 7 referências que você mandou.
+
+- **Subida:** uma escadaria de pedra dá a volta na montanha, do píer até o arco de entrada.
+  - Tem meio-fio e corrimão de madeira com corda do lado do penhasco.
+  - Do lado de dentro fica o barranco de rocha.
+- **Queda d'água:**
+  - a água sai da fonte do pátio, corre por um canal de pedra e cai pela encosta;
+  - lá embaixo ela enche uma bacia ao lado da escadaria, onde gira uma roda d'água;
+  - depois passa sob uma pontezinha de tábuas e cai de novo até o mar.
+- **Píer:** deque de tábuas sobre estacas, um barco a remo, barris e uma fogueira.
+- **Prédios:**
+  - paredes de pedra com janelas acesas e andar de cima em enxaimel;
+  - telhados de telha, chaminés e uma torre alta sobre a biblioteca;
+  - a cúpula de cobre, com a fresta aberta e o grande telescópio saindo por ela.
+- **Cômodos:**
+  - **pátio:** fonte, estátua de um sábio com astrolábio, bancos, canteiros e relógio de sol;
+  - **recepção:** balcão curvo com um gato branco, poltronas, estantes, tapete, quadro das fases da lua e livro de visitas;
+  - **biblioteca:** estantes cheias, o grande livro aberto no atril, globo, mesa de leitura, escada de mão e pilhas de livros;
+  - **sala do observatório (cúpula):** plataforma com degraus e corrimão de latão, o telescópio apontado para o céu, planetas pendurados que giram, esfera armilar que gira, cartas estelares nas paredes e mesas de mapas;
+  - **laboratório:** bancada de frascos coloridos, prateleiras de poções, caldeirão e uma lente grande;
+  - **varanda:** sobre o penhasco, com uma luneta e vista para o mar.
+- **Céu:** muda com o horário que o mestre escolhe.
+  - **Manhã:** céu azul com nuvens.
+  - **Tarde:** pôr do sol atrás das ilhas, com o reflexo dourado no mar.
+  - **Noite:** céu muito estrelado, com a Via Láctea e a Lua a nordeste, perto de onde o telescópio aponta. As vilas das ilhas aparecem acesas ao longe, e a Lua deixa um caminho prateado no mar. À noite, as janelas acendem.
+- **Em volta:** mar aberto até o horizonte, com as Ilhas Moonshae a oeste e a costa de Faerûn bem longe a leste. Rochedos saem da água em volta da montanha.
+- **Luz dinâmica:** o mapa já vem com **32 fontes de luz**, que o mestre pode apagar, acender ou mover:
+  - lanternas ao longo da escadaria, fogueira e lanterna no píer;
+  - braseiros, postes e tochas no pátio;
+  - candelabros, velas e orbes nos cômodos;
+  - cristais na cúpula, fogo-fátuo no laboratório e lanterna na varanda.
+
+  À noite, sob o céu aberto, há um luar fraco. Dentro dos cômodos, quem ilumina são as velas e os orbes.
+- **Telhados:** somem na vista de cima do mestre e na visão tática do jogador (régua e áreas de magia), para dar para ver os personagens lá dentro.
+- **Regras:**
+  - paredes, parapeito, corrimãos, móveis grandes e a bacia bloqueiam a passagem;
+  - as portas ficam abertas.
+
+**Feito no Blender:** toda a arquitetura, a escadaria, a cascata, a roda d'água, o píer, o barco e os 80 móveis e enfeites foram modelados por script no Blender (`fontes/blender/letarion_cenario.py`). O script lê a planta gerada em `fontes/mapas/letarion_plano.json`.
+
+- O GLB tem 2,8 MB e cerca de 35 mil triângulos, em poucos objetos:
+  - o estático;
+  - os telhados;
+  - as peças que giram;
+  - a água que corre.
+- As texturas (pedra, reboco, telha, cobre, tábuas, lajes, lombadas de livros, cartas estelares, tapetes, água) foram pintadas por código em `fontes/mapas/letarion_texturas.py`.
+- Os três céus foram pintados por código em `fontes/mapas/letarion_ceu.py`: panoramas de 4096 × 2048 numa esfera em volta do mapa.
+
+**Gerar de novo** (depois de mudar a planta, as texturas ou os modelos):
+
+```
+python3 fontes/mapas/letarion_texturas.py   # texturas
+python3 fontes/mapas/letarion_gerar.py      # relevo, escadaria, colisão, luzes, mistura, planta e mapa pronto
+python3 fontes/blender/letarion_cenario.py  # modelos no Blender (GLB) e letarion.blend
+python3 fontes/mapas/letarion_ceu.py        # céus de manhã, tarde e noite
+```
+
+Para abrir no seu Blender, abra o `fontes/blender/letarion_cenario.py` no editor de texto do Blender e rode. Ele monta tudo na coleção `COL_Letarion` e exporta o GLB de novo.
+
+O motor de mapas (`public/js/cenario.js`) ganhou recursos novos, que outros mapas prontos também podem usar:
+
+- céu em esfera que troca com o horário, com mar aberto até o horizonte;
+- objetos `TELHADO_*`, que somem na vista de cima;
+- peças que giram (`gira_eixo`);
+- água que corre (`cascata`);
+- janelas com luz própria (`brilho`).
+
 ## Retratos da ordem de iniciativa
 
 - **Arte desenhada:** a Kaira, nas três versões do modelo, o Ghult'ok, o Guy, o Kobold, o Dragão do Véu Corrompido e os quatro tipos de esqueleto usam a arte desenhada no lugar da foto do modelo 3D.

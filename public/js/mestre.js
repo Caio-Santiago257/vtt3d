@@ -773,7 +773,7 @@ function frame() {
   if (visao && visao.frame && visao.frame.classList.contains('on')) return;
   if (document.body.classList.contains('mesa-cobre')) return;   // mapa do mundo ou imagem por cima
   // o mestre vê o horário escolhido; à noite, o que está no escuro fica só meio apagado (ele precisa enxergar o mapa)
-  if (session.world) nightGM.render(scene, camera, horaGM(), lightmapGM, { amb: previaNoite ? 0.03 : 0.33 });
+  if (session.world) nightGM.render(scene, camera, horaGM(), lightmapGM, { amb: previaNoite ? Math.max(0.03, session.world.luar || 0) : 0.33, ceu: !!session.world.ceuAberto });
   else renderer.render(scene, camera);
 }
 frame();
@@ -1023,6 +1023,7 @@ $('previa-noite').onclick = () => { previaNoite = !previaNoite; $('previa-noite'
 aplicaHora();
 function atualizaLuzGM(dt) {
   const w = session.world; if (!w) return;
+  if (w.setHora && w._horaAplicada !== horaGM()) { w._horaAplicada = horaGM(); w.setHora(horaGM()); }   // janelas acesas à noite
   lightmapGM.setBounds(0, 0, w.bounds.w, w.bounds.h);
   if ((segT -= dt) <= 0) { segT = 0.4; lightmapGM.setSegments(session.lightBlockers()); }
   if ((luzT -= dt) > 0) return;

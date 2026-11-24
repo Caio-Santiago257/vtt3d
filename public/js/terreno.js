@@ -927,3 +927,6 @@ BIOMES.push({ id: 'estrada', nome: 'Estrada na mata', fog: 0xb7c6c4, zenith: 0x4
 // bioma do covil: pântano enevoado, névoa mais rala que o pântano comum (o mapa é grande)
 BIOMES.push({ id: 'covil', nome: 'Covil (pântano)', fog: 0x4c5a49, zenith: 0x1d2622, density: 0.016, sky: 0xb9c9a8, ground: 0x2c3a26, hemi: 1.15, sun: 0.75, sunColor: 0xd8e8b8, torch: 4, far: 0x3f4c38, water: 0x5f8a44,
   part: { color: 0xd2ff6a, size: 0.14, n: 140, vy: 0.0, glow: true } });
+// bioma do pico (Letarion): ar limpo de montanha, mar até o horizonte; à noite a névoa quase some para o céu estrelado aparecer
+BIOMES.push({ id: 'montanha', nome: 'Pico sobre o mar', fog: 0xa9c3d8, zenith: 0x3f78c4, density: 0.0024, sky: 0xeef4ff, ground: 0x4e5a4a, hemi: 1.2, sun: 2.4, sunColor: 0xfff0d8, torch: 0, far: 0x22405a, water: 0x1d4a6a,
+  fogNoite: 0x060b18, densNoite: 0.0035, part: { color: 0xffffff, size: 0.05, n: 40, vy: -0.02, glow: false } });

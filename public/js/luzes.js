@@ -330,19 +330,21 @@ export class NightPass {
       uniforms: {
         tColor: { value: this.rt.texture }, tDepth: { value: this.rt.depthTexture }, tLuz: { value: null }, tDV: { value: null },
         uInvProj: { value: new THREE.Matrix4() }, uCamWorld: { value: new THREE.Matrix4() }, uCam: { value: new THREE.Vector3() },
-        uMapa: { value: new THREE.Vector4(0, 0, 1, 1) }, uHora: { value: 0 }, uAmb: { value: 0.025 }, uDV: { value: 0 }, uT: luzTempo,
+        uMapa: { value: new THREE.Vector4(0, 0, 1, 1) }, uHora: { value: 0 }, uAmb: { value: 0.025 }, uDV: { value: 0 }, uCeu: { value: 0 }, uT: luzTempo,
       },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
       fragmentShader: `
         uniform sampler2D tColor, tDepth, tLuz, tDV;
         uniform mat4 uInvProj, uCamWorld; uniform vec3 uCam; uniform vec4 uMapa;
-        uniform float uHora, uAmb, uDV, uT;
+        uniform float uHora, uAmb, uDV, uCeu, uT;
         varying vec2 vUv;
         vec3 sat(vec3 c, float s){ float l = dot(c, vec3(0.2126, 0.7152, 0.0722)); return mix(vec3(l), c, s); }
         void main(){
           vec3 col = texture2D(tColor, vUv).rgb;
-          if (uHora > 1.5) {   // noite
-            float d = texture2D(tDepth, vUv).x;
+          float d = texture2D(tDepth, vUv).x;
+          if (uHora > 1.5 && uCeu > 0.5 && d >= 0.99999) {
+            // céu aberto: o céu estrelado fica como está
+          } else if (uHora > 1.5) {   // noite
             vec4 vp = uInvProj * vec4(vUv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0); vp /= vp.w;
             vec3 wp = (uCamWorld * vp).xyz;
             // lê a luz um pouco para o lado de quem olha: a face da parede virada para a luz acende, a de trás não
@@ -367,7 +369,9 @@ export class NightPass {
               vec3 cinza = vec3(g) * 0.6 * vec3(0.92, 0.96, 1.0);
               res = mix(res, max(res, mix(cinza, aceso, fd)), dv);
             }
-            col = res;
+            // luz própria (janelas acesas, cristais): o que passa de 1 não escurece
+            float emis = smoothstep(1.05, 1.5, max(col.r, max(col.g, col.b)));
+            col = mix(res, min(col, vec3(1.6)), emis);
           } else if (uHora > 0.5) {   // tarde: luz dourada e sombras mais quentes
             float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
             col = sat(col, 1.1) * mix(vec3(0.95, 0.74, 0.62), vec3(1.12, 0.92, 0.72), smoothstep(0.0, 0.6, l));
@@ -384,7 +388,7 @@ export class NightPass {
   }
   setSize(w, h) { this.rt.setSize(w, h); }
   // hora: 'manha' | 'tarde' | 'noite'; lm: LightMap; opts: { amb, dv }
-  render(scene, camera, hora, lm, { amb = 0.025, dv = false } = {}) {
+  render(scene, camera, hora, lm, { amb = 0.025, dv = false, ceu = false } = {}) {
     const r = this.renderer, s = r.getDrawingBufferSize(new THREE.Vector2());
     if (this.rt.width !== s.x || this.rt.height !== s.y) this.rt.setSize(s.x, s.y);
     r.setRenderTarget(this.rt); r.render(scene, camera); r.setRenderTarget(null);
@@ -393,7 +397,7 @@ export class NightPass {
     camera.updateMatrixWorld();
     u.uInvProj.value.copy(camera.projectionMatrixInverse); u.uCamWorld.value.copy(camera.matrixWorld); u.uCam.value.setFromMatrixPosition(camera.matrixWorld);
     if (lm) { u.tLuz.value = lm.tex; u.tDV.value = lm.dvTex; u.uMapa.value.set(lm.bounds.x, lm.bounds.z, lm.bounds.w, lm.bounds.h); }
-    u.uAmb.value = amb; u.uDV.value = dv ? 1 : 0;
+    u.uAmb.value = amb; u.uDV.value = dv ? 1 : 0; u.uCeu.value = ceu ? 1 : 0;
     r.render(this.scene, this.cam);
   }
 }

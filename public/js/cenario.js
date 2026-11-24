@@ -58,12 +58,13 @@ export async function buildCenario(map, { topDown = false } = {}) {
   const role = { lama: TX.lama || 'lama.jpg', musgo: TX.musgo || 'musgo.jpg', caverna: TX.caverna || 'caverna.jpg', piso: TX.piso || 'piso.jpg', rocha: TX.rocha || 'rocha.jpg' };
   const loadRole = (r) => texLoader.loadAsync(base + 'tex/' + role[r]).then((t) => { t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; T['@' + r] = t; T[role[r].replace(/\.(jpg|png)$/, '')] = t; return t; });
   const FD = D.fundo || {};
-  const extra = D.kit ? [] : [...['tijolo.jpg', 'ossuario.jpg', 'madeira.jpg', 'metal.jpg', 'ouro.jpg', 'agua.jpg'].map((f) => load(f)),
+  const CEU = D.ceu || null;
+  const extra = D.tex_glb ? D.tex_glb.map((f) => load(f, { srgb: !/_n\./.test(f) })) : D.kit ? [] : [...['tijolo.jpg', 'ossuario.jpg', 'madeira.jpg', 'metal.jpg', 'ouro.jpg', 'agua.jpg'].map((f) => load(f)),
     ...['tijolo_n.png', 'piso_n.png', 'rocha_n.png', 'ossuario_n.png'].map((f) => load(f, { srgb: false }))];
   const [splatA, splatB] = await Promise.all([splat('mistura_a.png'), splat('mistura_b.png'),
     ...['lama', 'musgo', 'caverna', 'piso', 'rocha'].map(loadRole), ...extra,
-    load('agua_n.png', { srgb: false }), load(FD.img || 'fundo.jpg')]);
-  T.fundo = T[(FD.img || 'fundo.jpg').replace(/\.(jpg|png|webp)$/, '')];
+    load('agua_n.png', { srgb: false }), ...(CEU ? [] : [load(FD.img || 'fundo.jpg')])]);
+  T.fundo = CEU ? null : T[(FD.img || 'fundo.jpg').replace(/\.(jpg|png|webp)$/, '')];
   const ESC = TX.escalas || [7, 6, 6, 8], LIMO = TX.limo || [0.13, 0.22, 0.08], SOMBRA = TX.sombra ?? 0.35, MOLHADO = TX.molhado !== false;
 
   // ---- terreno: grade de alturas, mistura de 5 texturas; encostas íngremes viram rocha (projeção nos 3 eixos)
@@ -165,6 +166,24 @@ diffuseColor.rgb *= col;`);
       specular: topDown ? 0x2a3328 : (pocas ? 0x9fb4c8 : 0x8fa88a), emissive: pocas ? 0x050a12 : 0x0b140d }); // vista de cima: menos brilho, para ler o fundo
     const water = new THREE.Mesh(wg, wmat); water.renderOrder = 1; water.name = 'cenario_agua';
     group.add(water);
+    if (D.ceu && !topDown && !pocas) {
+      // mar aberto: a mesma água continua do fim do relevo até perto do céu (um anel com o quadrado do relevo vazado)
+      const R = (D.ceu.raio || 360) * 0.985, mx = (map.w * G) / 2, mz = (map.h * G) / 2;
+      const sh = new THREE.Shape(); sh.absarc(mx, mz, R, 0, Math.PI * 2, false);
+      const hole = new THREE.Path(); hole.moveTo(x0, x0); hole.lineTo(x0, x0 + span); hole.lineTo(x0 + span, x0 + span); hole.lineTo(x0 + span, x0); hole.lineTo(x0, x0);
+      sh.holes.push(hole);
+      const sg = new THREE.ShapeGeometry(sh, 64), sp = sg.attributes.position, cnt = sp.count;
+      const P2 = new Float32Array(cnt * 3), C2 = new Float32Array(cnt * 4), U2 = new Float32Array(cnt * 2);
+      for (let i = 0; i < cnt; i++) {
+        const x = sp.getX(i), z = sp.getY(i);
+        P2.set([x, D.agua.rio, z], i * 3); C2.set([AF[0], AF[1], AF[2], 0.95], i * 4); U2.set([x / 7, z / 7], i * 2);
+      }
+      const og = new THREE.BufferGeometry();
+      og.setAttribute('position', new THREE.BufferAttribute(P2, 3)); og.setAttribute('color', new THREE.BufferAttribute(C2, 4)); og.setAttribute('uv', new THREE.BufferAttribute(U2, 2));
+      const idx = Array.from(sg.index.array); for (let i = 0; i < idx.length; i += 3) { const t = idx[i + 1]; idx[i + 1] = idx[i + 2]; idx[i + 2] = t; }   // de frente para cima
+      og.setIndex(idx); og.computeVertexNormals(); sg.dispose();
+      const oceano = new THREE.Mesh(og, wmat); oceano.renderOrder = 1; oceano.name = 'cenario_oceano'; group.add(oceano);
+    }
     group.userData.water = water;
   }
 
@@ -183,16 +202,29 @@ diffuseColor.rgb *= col;`);
     if (mats.has(src)) return mats.get(src);
     const ex = src.userData || {};
     let m;
-    if (ex.glow) m = new THREE.MeshBasicMaterial({ color: src.color.clone() });
-    else if (ex.glass) m = new THREE.MeshPhongMaterial({ color: src.color.clone(), transparent: true, opacity: ex.opacity || 0.35, depthWrite: false, side: THREE.DoubleSide, shininess: 90, specular: 0x667766 });
+    if (ex.glow) {
+      m = new THREE.MeshBasicMaterial({ color: src.color.clone() });
+      // brilho > 1: à noite a janela acesa passa de 1 e a passada da noite não escurece (luz própria)
+      if (ex.brilho) glowMats.push({ m, base: src.color.clone(), brilho: ex.brilho });
+    } else if (ex.cascata) {
+      // água que corre: a textura desliza ao longo da faixa
+      const t = T[ex.tex].clone(); t.needsUpdate = true; flowTex.push({ t, v: ex.cascata });
+      m = new THREE.MeshBasicMaterial({ map: t, color: 0xf2fbff, transparent: true, opacity: Math.min(1, (ex.opacity || 0.85) * 1.1), depthWrite: false, side: THREE.DoubleSide });
+    } else if (ex.glass) m = new THREE.MeshPhongMaterial({ color: src.color.clone(), map: ex.tex ? T[ex.tex] : null, transparent: true, opacity: ex.opacity || 0.35, depthWrite: false, side: THREE.DoubleSide, shininess: 90, specular: 0x667766 });
     else {
       m = toonSoft({ color: ex.tex ? 0xffffff : src.color.clone(), map: ex.tex ? T[ex.tex] : null, normalMap: ex.normal ? T[ex.normal] : null });
       addRimSpec(m, { rim: ex.rim || 0 });
+      if (ex.dupla) m.side = THREE.DoubleSide;
     }
     mats.set(src, m); return m;
   };
+  const glowMats = [], flowTex = [], spinners = [], telhados = [];
   if (gltf) {
     gltf.scene.traverse((o) => {
+      const ud = o.userData || {};
+      // TELHADO_*: telhados, andar de cima e cúpula (somem na visão de cima); gira_eixo: peças que giram
+      if (/^TELHADO/.test(o.name) || ud.telhado) { telhados.push(o); if (topDown) o.visible = false; }
+      if (ud.gira_eixo) spinners.push({ o, ax: new THREE.Vector3(ud.gira_eixo === 'x' ? 1 : 0, ud.gira_eixo === 'y' ? 1 : 0, ud.gira_eixo === 'z' ? 1 : 0), v: ud.gira_vel || 0.3 });
       if (!o.isMesh) return;
       o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material);
       if (o.isInstancedMesh) o.computeBoundingSphere();
@@ -202,7 +234,24 @@ diffuseColor.rgb *= col;`);
 
   // ---- fundo: pântano distante num cilindro em volta de tudo, e um chão longe da cor da névoa
   const backdrop = new THREE.Group();
-  if (!topDown) {
+  if (!topDown && CEU) {
+    // céu aberto: esfera com o panorama do horário (estrelas à noite), o mar distante já pintado nele
+    const ceuTex = {};
+    const loadCeu = (h) => ceuTex[h] || (ceuTex[h] = texLoader.loadAsync(base + CEU[h]).then((t) => { t.colorSpace = THREE.SRGBColorSpace; return t; }));
+    const ceuMat = new THREE.MeshBasicMaterial({ map: await loadCeu('dia'), side: THREE.BackSide, fog: false, depthWrite: false });
+    const sph = new THREE.Mesh(new THREE.SphereGeometry(CEU.raio || 360, 96, 48), ceuMat);
+    sph.scale.x = -1;   // vista de dentro: desespelha o panorama
+    sph.position.set(W / 2, CEU.y ?? 0, Hh / 2); sph.renderOrder = -1; sph.frustumCulled = false; sph.name = 'ceu';
+    const AFc = (D.agua && D.agua.fundo) || FD.chao || [0.02, 0.05, 0.1];
+    const far = new THREE.Mesh(new THREE.CircleGeometry((CEU.raio || 360) * 0.985, 64), new THREE.MeshBasicMaterial({ color: new THREE.Color(...AFc) }));
+    far.rotation.x = -Math.PI / 2; far.position.set(W / 2, (D.agua.rio ?? 0) - 0.6, Hh / 2);
+    backdrop.add(sph, far); group.add(backdrop);
+    let pedida = 'dia';
+    backdrop.userData.setHora = (h) => {
+      const k = h === 'noite' ? 'noite' : h === 'tarde' ? 'tarde' : 'dia'; pedida = k;
+      loadCeu(k).then((t) => { if (pedida === k) { ceuMat.map = t; ceuMat.needsUpdate = true; } }).catch(() => {});
+    };
+  } else if (!topDown) {
     // cilindro alto: a imagem ocupa só a faixa de baixo (130 unidades); acima, a cor do céu da própria imagem continua
     // até bem alto, para a borda do cilindro não aparecer contra o céu
     const RAD = FD.raio || 230, BASE = FD.base ?? -35, IMG = FD.faixa || 130, CH = Math.max(420, IMG * 2.6);
@@ -228,14 +277,27 @@ diffuseColor.rgb *= col;`);
     charAt, costAt: (x, z) => (DIFF.has(charAt(x, z)) ? 2 : 1), isDifficult: (x, z) => DIFF.has(charAt(x, z)), slowAt: (x, z) => SLOW[charAt(x, z)] || 1,
     // o mestre pode repintar o custo dos quadrados; o visual do cenário continua o mesmo
     set(c) { if (typeof c === 'string' && c.length === cells.length) cells = c; },
-    update(dt) { tWater += dt; kitWind.value = tWater; T.agua_n.offset.set(-tWater * 0.006, tWater * 0.009); },
+    update(dt) {
+      tWater += dt; kitWind.value = tWater; T.agua_n.offset.set(-tWater * 0.006, tWater * 0.009);
+      for (const f of flowTex) f.t.offset.y = (f.t.offset.y - dt * f.v) % 1;
+      for (const s of spinners) s.o.rotateOnAxis(s.ax, s.v * dt);
+    },
     dispose() {
       geo.dispose(); tmat.dispose();
-      for (const t of new Set(Object.values(T))) t.dispose(); splatA.dispose(); splatB.dispose();
+      for (const t of new Set(Object.values(T))) if (t) t.dispose();
+      for (const f of flowTex) f.t.dispose(); splatA.dispose(); splatB.dispose();
       for (const m of mats.values()) m.dispose();
       group.traverse((o) => { if (o.userData && o.userData.dispose) o.userData.dispose(); if (o.geometry) o.geometry.dispose(); });
     },
     group: new THREE.Group(),
   };
-  return { group, segments, doors: [], terrain, cenario: map.cenario, groundAt, standAt, waterAt, backdrop, bounds: { w: W, h: Hh } };
+  // horário: troca o céu e acende as janelas à noite
+  const setHora = (h) => {
+    if (backdrop.userData.setHora) backdrop.userData.setHora(h);
+    for (const g of glowMats) g.m.color.copy(g.base).multiplyScalar(h === 'noite' ? g.brilho : 0.85);
+  };
+  // telhados: o jogador os esconde na visão tática (olhando de cima)
+  const setTelhados = (v) => { for (const o of telhados) o.visible = v && !topDown; };
+  return { group, segments, doors: [], terrain, cenario: map.cenario, groundAt, standAt, waterAt, backdrop, bounds: { w: W, h: Hh },
+    setHora, setTelhados, temTelhados: telhados.length > 0, luar: CEU ? CEU.luar || 0 : 0, ceuAberto: !!CEU };
 }

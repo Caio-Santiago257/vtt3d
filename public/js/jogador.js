@@ -97,8 +97,8 @@ const horaAtual = () => (session && session.mesa && session.mesa.hora) || 'manha
 function comHora(b, hora) {
   if (hora === 'tarde') return { ...b, fog: mixHex(b.fog, 0xf0a060, 0.55), zenith: mixHex(b.zenith, 0x5a4f9e, 0.55), sky: mixHex(b.sky, 0xffc08a, 0.55),
     ground: mixHex(b.ground, 0x5a3a40, 0.3), sunColor: 0xffa055, sun: b.sun * 0.95, hemi: b.hemi * 0.85, far: mixHex(b.far, 0xc0703a, 0.35) };
-  if (hora === 'noite') return { ...b, fog: 0x03050a, zenith: 0x010207, sky: 0xaab4d4, ground: 0x34343e, hemi: 1.05, sun: 0.35, sunColor: 0x9fb0ff, torch: 0,
-    density: Math.max(b.density, 0.02), part: { ...b.part, n: Math.min(b.part.n, 60) } };
+  if (hora === 'noite') return { ...b, fog: b.fogNoite ?? 0x03050a, zenith: 0x010207, sky: 0xaab4d4, ground: 0x34343e, hemi: 1.05, sun: 0.35, sunColor: 0x9fb0ff, torch: 0,
+    density: b.densNoite ?? Math.max(b.density, 0.02), part: { ...b.part, n: Math.min(b.part.n, 60) } };
   return b;
 }
 function atmosfera(b0) {
@@ -106,6 +106,7 @@ function atmosfera(b0) {
   camera.far = 700; camera.updateProjectionMatrix();   // o fundo panorâmico de cada bioma fica a 300 unidades
   lastBiome = b0;
   paintSky(b.fog, b.zenith);
+  const w = session && session.world; if (w && w.setHora) w.setHora(horaAtual());   // céu do mapa e janelas acesas
   pCfg = b.part; pGeo.setDrawRange(0, b.part.n);
   pMat.color.setHex(b.part.color); pMat.size = b.part.size * 2.2; pMat.blending = b.part.glow ? THREE.AdditiveBlending : THREE.NormalBlending; pMat.needsUpdate = true;
   scene.background.setHex(b.fog); scene.fog.color.setHex(b.fog); scene.fog.density = b.density;
@@ -784,6 +785,7 @@ function tacticalView(dt, on) {
   if (!on && tactK === 0) { baseFog = scene.fog ? scene.fog.density : null; baseFar = camera.far; return; }
   tactK = Math.max(0, Math.min(1, tactK + (on ? dt : -dt) * 1.6));
   if (scene.fog && baseFog !== null) scene.fog.density = baseFog * (1 - 0.92 * tactK);
+  const wt = session && session.world; if (wt && wt.temTelhados) wt.setTelhados(tactK < 0.35);   // de cima, sem telhados
   const far = baseFar + 500 * tactK; if (Math.abs(camera.far - far) > 0.5) { camera.far = far; camera.updateProjectionMatrix(); }
 }
 
@@ -1013,7 +1015,7 @@ function frame() {
   // com o mapa do mundo ou uma imagem cobrindo a tela, a cena 3D não precisa ser desenhada (poupa a bateria)
   if (!document.body.classList.contains('mesa-cobre')) {
     const hora = horaAtual();
-    if (session && session.world) night.render(scene, camera, hora, lightmap, { amb: 0.022, dv: hora === 'noite' && visaoNoEscuro() > 0 });
+    if (session && session.world) night.render(scene, camera, hora, lightmap, { amb: Math.max(0.022, session.world.luar || 0), ceu: !!session.world.ceuAberto, dv: hora === 'noite' && visaoNoEscuro() > 0 });
     else renderer.render(scene, camera);
   }
 }
