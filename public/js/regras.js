@@ -27,7 +27,8 @@ const INICIAL = {
 export function novaFicha(hero) {
   const b = INICIAL[hero] || INICIAL.Guy;
   const f = { hero, nivel: 1, atr: { ...b.atr }, sub: b.sub, ordem: 'protetor', pericias: [...b.pericias], salvExtra: [], pvTemp: 0, ca: b.ca,
-    deslocamento: hero === 'Guy' ? 7.5 : 9, truques: [], preparadas: [], slotsUsados: [0, 0, 0, 0, 0, 0, 0, 0, 0], usos: {}, notas: '' };
+    deslocamento: hero === 'Guy' ? 7.5 : 9, truques: [], preparadas: [], slotsUsados: [0, 0, 0, 0, 0, 0, 0, 0, 0], usos: {}, notas: '',
+    visaoEscuro: { Guy: 0, Kaira: 18, Ghultok: 36 }[hero] || 0, itens: { tochas: 5, velas: 2, oleo: 2, lanterna: hero === 'Guy' } };
   f.pvMax = pvSugerido(f); f.pv = f.pvMax;
   if (hero === 'Guy') { f.truques = ['Sacred Flame', 'Guidance', 'Thaumaturgy']; f.preparadas = ['Bless', 'Cure Wounds', 'Healing Word', 'Guiding Bolt']; }
   return f;

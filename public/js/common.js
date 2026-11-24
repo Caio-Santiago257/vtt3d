@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { Terrain, biomeById } from './terreno.js';
+import { makeLightToken, LUZES, LUZ_PESSOAL, M2U as LM2U } from './luzes.js';
 import { toon, toonSoft, toonAnime, addRimSpec, addOutline, glowTexture, wind } from './gfx.js';
 
 export const G = 2;            // unidades de mundo por quadrado do grid
@@ -540,20 +541,24 @@ export class Session {
         disc.rotation.x = -Math.PI / 2; disc.position.y = 4.1; disc.renderOrder = 3; e.holder.add(disc);
       }
       if (data.kind === 'monster') makeCharacter(data.model).then((c) => { e.char = c; done(c.obj); }).catch(console.error);
+      else if (data.kind === 'luz') done(makeLightToken(data.model, { top: this.topDown }));
       else makeProp(data.model).then(done).catch(console.error);
     }
     const fresh = !e.seen; e.seen = true;
     Object.assign(e.data, data);
     const size = data.kind === 'monster' ? sizeOf(data.model) : 1;
     e.size = size;
-    e.radius = (data.kind === 'monster' ? (size > 1 ? size * 0.85 : 0.6) : propRadius(data.model)) * data.scale;
+    e.radius = (data.kind === 'monster' ? (size > 1 ? size * 0.85 : 0.6) : data.kind === 'luz' ? 0.2 : propRadius(data.model)) * data.scale;
     // monstro andando (visão do monstro) desliza até a posição; o resto vai direto
     if (fresh || !data.mv || this.topDown) { e.holder.position.set(data.x, this.baseAt(data.x, data.z, data.kind === 'monster' ? sizeOf(data.model) : 1) + (this.topDown ? 0 : data.y || 0), data.z); e.holder.rotation.y = data.ry; }
     e.holder.scale.setScalar(data.scale);
+    // fonte de luz apagada: some a chama e o brilho (a peça continua)
+    if (data.kind === 'luz') e.holder.traverse((o) => { if (o.isSprite || (o.material && (o.material.blending === THREE.AdditiveBlending || o.material.isShaderMaterial))) o.visible = data.aceso !== false; });
   }
   removeEnt(id) {
     const e = this.ents.get(id);
     if (!e) return;
+    e.holder.traverse((o) => o.userData.dispose && o.userData.dispose());
     e.holder.removeFromParent(); if (e.air) e.air.removeFromParent(); this.ents.delete(id);
   }
 
@@ -647,6 +652,7 @@ export class Session {
       }
     }
     this.updateAoes(dt);
+    this.updateHeldLights();
     if (this.world) {
       this.world.terrain.update(dt);
       for (const d of this.world.doors) {
@@ -661,7 +667,7 @@ export class Session {
         this._lightTimer -= dt;
         if (this._lightTimer <= 0) {
           this._lightTimer = 0.4;
-          const near = this.world.lights
+          const near = this.world.lights.concat(this.dynPool || [])
             .map((l) => ({ l, d: (l.x - focus.x) ** 2 + (l.z - focus.z) ** 2 }))
             .sort((a, b) => a.d - b.d).slice(0, this.lightPool.length);
           this.lightPool.forEach((pl, i) => {
@@ -677,6 +683,52 @@ export class Session {
     }
   }
 
+  // ---- iluminação: todas as fontes de luz da cena, em unidades do mundo
+  // (luzes do mapa importado, fontes que o mestre espalhou e a luz que cada personagem carrega)
+  // self: { id, x, z, y, luz } para usar a posição local do próprio jogador, que é mais nova que a do servidor
+  allLights(self) {
+    const out = [], w = this.world; if (!w) return out;
+    (w.lights || []).forEach((l, i) => out.push({ key: 'm' + i, x: l.x, z: l.z, y: l.y, plena: l.range * 0.5, penumbra: l.range * 0.5, cor: l.color, fogo: 1 }));
+    for (const e of this.ents.values()) {
+      if (e.data.kind !== 'luz' || e.data.aceso === false) continue;
+      const L = LUZES[e.data.model]; if (!L) continue;
+      out.push({ key: 'e' + e.data.id, x: e.data.x, z: e.data.z, y: e.holder.position.y + 2, plena: L.plena * LM2U, penumbra: L.penumbra * LM2U, cor: new THREE.Color(L.cor), fogo: L.fogo });
+    }
+    for (const p of this.players.values()) {
+      const me = self && p.data.id === self.id, tipo = me ? self.luz : p.data.luz;
+      const L = LUZ_PESSOAL[tipo]; if (!L || (!me && p.data.off)) continue;
+      const x = me ? self.x : p.holder.position.x, z = me ? self.z : p.holder.position.z;
+      out.push({ key: 'p' + p.data.id, x, z, y: (me ? self.y : p.holder.position.y) + 1.6, plena: L.plena * LM2U, penumbra: L.penumbra * LM2U, cor: new THREE.Color(L.cor), fogo: L.fogo });
+    }
+    return out;
+  }
+  // segmentos que bloqueiam a luz: paredes mais altas que uma pessoa e portas fechadas
+  lightBlockers() {
+    const w = this.world; if (!w) return [];
+    const segs = w.segments.filter((s) => s.top === undefined || s.top > 900 || s.top > 1.6);
+    for (const d of w.doors || []) if (d.angle < 0.6) segs.push(d);
+    return segs;
+  }
+  // tocha, lanterna ou luz mágica na mão de quem carrega
+  updateHeldLights() {
+    for (const p of this.players.values()) {
+      const tipo = p.data.off ? '' : p.data.luz || '';
+      if (p.luzTipo === tipo || !p.char) continue;
+      if (p.luzObj) { p.luzObj.traverse((o) => o.userData.dispose && o.userData.dispose()); p.luzObj.removeFromParent(); p.luzObj = null; }
+      p.luzTipo = tipo;
+      const L = LUZ_PESSOAL[tipo]; if (!L) continue;
+      const sock = p.char.obj.getObjectByName('socket_hand_l');
+      const o = makeLightToken(L.peca); p.luzObj = o;
+      if (sock) { sock.add(o); o.userData.upright = true; } else { o.position.set(0.35, 1.0, 0.15); p.holder.add(o); }
+    }
+    // a luz na mão fica de pé mesmo com o braço balançando
+    for (const p of this.players.values()) {
+      const o = p.luzObj; if (!o || !o.userData.upright || !o.parent) continue;
+      const q = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3();
+      o.parent.matrixWorld.decompose(ps, q, sc);
+      o.quaternion.copy(q.invert()); o.scale.set(1 / sc.x, 1 / sc.y, 1 / sc.z);
+    }
+  }
   // ---- colisão: empurra um círculo para fora de paredes, portas fechadas, objetos e monstros
   // altura de quem está de pé (no chão, ou boiando em água funda); 0 em mapas planos
   // ---- áreas de magia vindas do servidor: aparecem com um brilho, piscam a borda e somem devagar

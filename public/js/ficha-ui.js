@@ -3,6 +3,7 @@
 // Cada mudança vai para o servidor, que salva em fichas/<herói>.json na pasta do projeto.
 import { CLASSES, HEROI_CLASSE, MAGIAS_CLERIGO } from './dnd-dados.js';
 import { GRIMORIO_FEITICEIRO } from './area.js';
+import { LUZ_PESSOAL, VISAO_ESCURO } from './luzes.js';
 import {
   ATRS, ATR_CURTO, PERICIAS, CIRC_NOME, classeDe, mod, fmtMod, prof, novaFicha, pvSugerido, slotsMax, circMax, cdMagia, ataqueMagia,
   truquesMax, preparadasMax, usosMax, USO_NOME, descansoCurto, descansoLongo, magiasDominio, efeitoEm, tempoNome,
@@ -63,7 +64,7 @@ export class FichaUI {
     this.el.querySelector('.fp-tit b').textContent = (this.o.nome ? this.o.nome() : this.hero).toUpperCase();
     this.el.querySelector('.fp-tit small').textContent = `${c.nome} · nível ${f.nivel}` + (sub && f.nivel >= 3 ? ` · ${sub.nome}` : '');
     const abas = this.el.querySelector('.fp-abas'); abas.textContent = '';
-    const tabs = [['ficha', 'FICHA'], ...(c.atr ? [['magias', 'MAGIAS']] : []), ['recursos', 'RECURSOS']];
+    const tabs = [['ficha', 'FICHA'], ...(c.atr ? [['magias', 'MAGIAS']] : []), ['itens', 'ITENS'], ['recursos', 'RECURSOS']];
     if (!tabs.some((t) => t[0] === this.tab)) this.tab = 'ficha';
     for (const [id, nome] of tabs) {
       const b = h('button', id === this.tab ? 'sel' : '', nome); b.onclick = () => { this.tab = id; this.render(); this.el.querySelector('.fp-corpo').scrollTop = 0; };
@@ -72,6 +73,7 @@ export class FichaUI {
     const body = this.el.querySelector('.fp-corpo'), top = body.scrollTop; body.textContent = '';
     if (this.tab === 'ficha') this.renderFicha(body, f, c);
     else if (this.tab === 'magias') this.renderMagias(body, f, c);
+    else if (this.tab === 'itens') this.renderItens(body, f, c);
     else this.renderRecursos(body, f, c);
     body.scrollTop = top;
   }
@@ -246,6 +248,57 @@ export class FichaUI {
     };
     else if (!fixed && !toggle) b.onclick = () => this.o.toast('Em combate não dá para trocar as magias preparadas.', 'neg');
     return b;
+  }
+
+  // ---------------------------------------------------------------- aba ITENS: luz e visão no escuro
+  renderItens(body, f, c) {
+    const it = f.itens || (f.itens = { tochas: 5, velas: 2, oleo: 2, lanterna: false });
+    const acesa = this.o.luzAtual ? this.o.luzAtual() : '';
+    const L = LUZ_PESSOAL[acesa];
+    const st = h('div', 'fp-luz-agora' + (L ? ' acesa' : ''));
+    st.append(h('i', '', L ? '🔥' : '·'), h('b', '', L ? `${L.nome} acesa` : 'Sem luz'), h('small', '', L ? (L.plena ? `luz plena ${String(L.plena).replace('.', ',')} m + penumbra ${String(L.penumbra).replace('.', ',')} m` : `só penumbra ${String(L.penumbra).replace('.', ',')} m`) + ' · todos veem a sua luz' : 'À noite, sem luz e sem visão no escuro, você só enxerga o que outra luz ilumina.'));
+    body.appendChild(st);
+    const luz = (tipo) => this.o.setLuz && this.o.setLuz(tipo);
+    const row = (icone, nome, desc, botoes) => {
+      const r = h('div', 'fp-item'); r.append(h('i', '', icone));
+      const t = h('span'); t.append(h('b', '', nome), h('small', '', desc)); r.appendChild(t);
+      for (const [txt, fn, cls] of botoes) { const b = h('button', cls || '', txt); b.onclick = fn; r.appendChild(b); }
+      return r;
+    };
+    this.sec(body, 'LUZ');
+    const box = h('div', 'fp-itens'); body.appendChild(box);
+    box.appendChild(row('🔥', 'Tocha', `6 m de luz plena + 6 m de penumbra, 1 hora · ${it.tochas} na mochila`, acesa === 'tocha'
+      ? [['APAGAR', () => luz('')]]
+      : [['ACENDER', () => { if (!it.tochas) return this.o.toast('Você não tem tochas.', 'neg'); this.change((x) => { x.itens.tochas--; }); luz('tocha'); }, 'sim']]));
+    if (it.lanterna) box.appendChild(row('🏮', 'Lanterna coberta', `9 m + 9 m (capuz baixo: só 1,5 m de penumbra), 6 h por frasco · ${it.oleo} frasco(s) de óleo`,
+      acesa === 'lanterna' ? [['BAIXAR CAPUZ', () => luz('lanterna_baixa')], ['APAGAR', () => luz('')]]
+        : acesa === 'lanterna_baixa' ? [['ERGUER CAPUZ', () => luz('lanterna')], ['APAGAR', () => luz('')]]
+          : [['ACENDER', () => { if (!it.oleo) return this.o.toast('Sem óleo para a lanterna.', 'neg'); this.change((x) => { x.itens.oleo--; }); luz('lanterna'); }, 'sim']]));
+    box.appendChild(row('🕯', 'Vela', `1,5 m + 1,5 m, 1 hora · ${it.velas} na mochila`, acesa === 'vela'
+      ? [['APAGAR', () => luz('')]]
+      : [['ACENDER', () => { if (!it.velas) return this.o.toast('Você não tem velas.', 'neg'); this.change((x) => { x.itens.velas--; }); luz('vela'); }, 'sim']]));
+    if (c.atr) {
+      box.appendChild(row('✨', 'Magia Luz (truque)', '6 m + 6 m, 1 hora · para quem conhece a magia', acesa === 'luz' ? [['ENCERRAR', () => luz('')]] : [['CONJURAR', () => luz('luz'), 'sim']]));
+      if (c.id === 'Cleric') box.appendChild(row('☀', 'Luz do Dia (3º círculo)', '18 m + 18 m, 1 hora · gasta um espaço de 3º círculo', acesa === 'dia' ? [['ENCERRAR', () => luz('')]] : [['CONJURAR', () => {
+        const livre = (slotsMax(f)[2] || 0) - (f.slotsUsados[2] || 0);
+        if (livre <= 0) return this.o.toast('Sem espaço de 3º círculo livre.', 'neg');
+        this.gastar(3); luz('dia');
+      }, 'sim']]));
+    }
+    this.sec(body, 'MOCHILA');
+    const g = h('div', 'fp-grade2'); body.appendChild(g);
+    g.appendChild(this.stepper('Tochas', it.tochas, (v) => this.change((x) => { x.itens.tochas = v; }), { min: 0, max: 99 }));
+    g.appendChild(this.stepper('Velas', it.velas, (v) => this.change((x) => { x.itens.velas = v; }), { min: 0, max: 99 }));
+    g.appendChild(this.stepper('Frascos de óleo', it.oleo, (v) => this.change((x) => { x.itens.oleo = v; }), { min: 0, max: 99 }));
+    const lt = h('button', 'fp-per' + (it.lanterna ? ' on' : ''));
+    lt.append(h('i', '', it.lanterna ? '●' : '○'), h('span', '', 'Tem uma lanterna coberta'));
+    lt.onclick = () => this.change((x) => { x.itens.lanterna = !x.itens.lanterna; });
+    g.appendChild(lt);
+    this.sec(body, 'VISÃO NO ESCURO');
+    const pad = VISAO_ESCURO[this.hero] || 0;
+    body.appendChild(this.stepper('Alcance', f.visaoEscuro ?? pad, (v) => this.change((x) => { x.visaoEscuro = v; }), { min: 0, max: 36, step: 1.5, fmt: (v) => (v ? m2txt(v) : 'não tem'),
+      sub: { Guy: 'halfling: não tem visão no escuro', Kaira: 'aasimar: 18 m', Ghultok: 'orc: 36 m' }[this.hero] || '' }));
+    body.appendChild(h('p', 'fp-nota', 'No alcance da visão no escuro, a penumbra parece luz plena e a escuridão parece penumbra, mas só em tons de cinza (Livro do Jogador 2024). Paredes cortam a visão.'));
   }
 
   // ---------------------------------------------------------------- aba RECURSOS

@@ -604,3 +604,17 @@ body.mesa-cobre .btns-esq { display: none !important; }
 .mesa-voltar { position: absolute; z-index: 3; left: max(10px, env(safe-area-inset-left)); top: max(10px, env(safe-area-inset-top)); padding: 7px 14px; background: rgba(14,12,8,.85); border: 2px solid #ffe27a; color: #fff3c4; font: 14px 'Anton', sans-serif; letter-spacing: .08em; }
 .mesa-voltar[hidden] { display: none; }
 .mu-bt.batalha { border-color: #ff9a7a; color: #ffd9cc; }
+/* ficha: itens de luz */
+.fp-luz-agora { display: grid; grid-template-columns: 34px 1fr; column-gap: 8px; align-items: center; padding: 8px 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.15); }
+.fp-luz-agora i { grid-row: span 2; font-style: normal; font-size: 24px; text-align: center; opacity: .5; }
+.fp-luz-agora.acesa { border-color: #ffb45a; background: rgba(255,170,80,.12); } .fp-luz-agora.acesa i { opacity: 1; }
+.fp-luz-agora b { font-size: 15px; } .fp-luz-agora small { font-size: 12px; opacity: .8; }
+.fp-itens { display: flex; flex-direction: column; gap: 6px; }
+.fp-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); }
+.fp-item > i { font-style: normal; font-size: 20px; width: 26px; text-align: center; }
+.fp-item > span { flex: 1; min-width: 0; } .fp-item b { display: block; font-size: 14px; } .fp-item small { display: block; font-size: 11px; opacity: .75; }
+.fp-item button { padding: 6px 10px; background: rgba(255,255,255,.07); border: 1px solid var(--fp); color: #fff; font: 12px 'Anton', sans-serif; letter-spacing: .06em; }
+.fp-item button.sim { background: var(--fp); color: #111; }
+.horas { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.horas button.sel, #previa-noite.sel { background: linear-gradient(135deg, #ffe27a, #d9a520); color: #2a1d00; border-color: #fff; }
+#previa-noite[hidden] { display: none; }

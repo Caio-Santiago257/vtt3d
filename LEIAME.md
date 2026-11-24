@@ -555,6 +555,63 @@ Padrão de exportação: metros, pivô no chão, frente para +Z no jogo, materia
 
 Para o resultado ficar melhor, exporte o mapa sem os móveis e coloque os móveis 3D pela lista de objetos.
 
+## Luz e horário (iluminação dinâmica)
+
+Em qualquer mapa (importado, pintado com bioma ou pronto), o mestre escolhe o horário na aba **Peças ▸ Luz e horário**. Só o mestre vê esse controle.
+
+| Horário | Como fica |
+|---|---|
+| ☀ **Manhã** | cores vivas e saturadas, tudo iluminado |
+| 🌇 **Tarde** | luz dourada de fim de dia: céu, neblina e sol alaranjados, e um filtro quente na imagem |
+| 🌙 **Noite** | escuro de verdade: só aparece o que uma luz ilumina (luz plena ou penumbra) |
+
+**Como a noite funciona:**
+- **Luz e paredes:** cada fonte projeta luz só até as paredes e as portas fechadas. Uma luz dentro de uma sala ilumina só a sala, e a luz sai apenas pelas aberturas. Muretas e cercas baixas (até 1,6 m) não bloqueiam.
+- **Luz plena e penumbra:** seguem o Livro do Jogador 2024. A penumbra é mais escura e tem menos cor.
+- **Visão no escuro:** dentro do alcance, a penumbra aparece como luz plena e a escuridão como penumbra, só em tons de cinza. Paredes também cortam essa visão.
+  - Personagens: Guy é halfling e não tem visão no escuro; Kaira é aasimar, 18 m; Ghult'ok é orc, 36 m. O alcance pode ser mudado na ficha.
+  - Na visão de um monstro, o mestre enxerga como um monstro com visão no escuro: 18 m, ou 36 m nos grandes.
+- **Tela do mestre:** o que está no escuro aparece só meio apagado, para o mestre enxergar o mapa. **Ver como os jogadores veem a noite** mostra a escuridão de verdade.
+- **Por que vale para qualquer mapa:** a cena inteira é desenhada numa textura, e uma passada final lê, pixel por pixel, a posição no mundo e o mapa de luz calculado de cima. Isso vale para qualquer mapa, peça ou personagem.
+  - A luz é medida um pouco para o lado de quem olha. Por isso a face da parede virada para a luz acende, e a de trás fica escura.
+
+### Fontes de luz no mapa (mestre)
+
+Na mesma aba, clique numa fonte e depois no mapa. Os anéis mostram até onde vai a luz plena (amarelo) e a penumbra (laranja). Selecionando uma fonte colocada:
+- **Apagar a luz / Acender a luz** liga e desliga;
+- Q/E giram (para encostar a tocha de parede na parede);
+- **Remover** tira do mapa.
+
+| Fonte | Luz plena + penumbra |
+|---|---|
+| 🔥 Tocha de parede, tocha em poste | 6 m + 6 m |
+| 🏕 Fogueira | 9 m + 9 m |
+| ♨ Braseiro | 4,5 m + 4,5 m |
+| 🕯 Velas | 1,5 m + 1,5 m |
+| 🕯 Candelabro | 3 m + 3 m |
+| 🏮 Lanterna pendurada | 9 m + 9 m |
+| 💎 Cristal arcano (azul) | 6 m + 6 m |
+| ✨ Luz mágica | 6 m + 6 m |
+| 👻 Fogo-fátuo (verde) | só 3 m de penumbra |
+| ☀ Luz do Dia (magia) | 18 m + 18 m |
+
+- **Animação:** todas são peças 3D animadas, com chamas que tremulam, brilho, a lanterna que balança, os fogos-fátuos que vagueiam e a esfera de luz que flutua. No escuro, a luz também tremula um pouco.
+- **Mapas importados:** as luzes de um mapa do Universal VTT entram como fontes também.
+
+### Luz que o personagem carrega (ficha ▸ ITENS)
+
+- **Tocha:** 6 m + 6 m. Acender gasta uma tocha da mochila.
+- **Lanterna coberta:** 9 m + 9 m. Acender gasta um frasco de óleo. **Baixar capuz** deixa só 1,5 m de penumbra.
+- **Vela:** 1,5 m + 1,5 m.
+- **Magia Luz (truque):** 6 m + 6 m.
+- **Luz do Dia:** só o clérigo; 18 m + 18 m e gasta um espaço de 3º círculo.
+- **No combate:** conjurar Luz ou Luz do Dia pelo menu acende a luz sozinho.
+- **Todos veem:** a luz vai junto com o personagem e aparece na mão dele para todo mundo.
+- **Mochila:** guarda a quantidade de tochas, velas e frascos de óleo, e se o personagem tem lanterna.
+- **Visão no escuro:** o alcance fica na mesma aba.
+
+Código: `public/js/luzes.js` (catálogo, peças animadas, mapa de luz e passada final), `Session.allLights` e `lightBlockers` em `common.js`, mensagens `hora` e `luz_pessoal` em `server.js`.
+
 ## Mesa: mapa do mundo, cena 3D e imagem (teatro da mente)
 
 A aba **Mesa** do mestre escolhe o que aparece no celular dos jogadores:

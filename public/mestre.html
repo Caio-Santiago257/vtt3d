@@ -92,10 +92,18 @@
       <p class="pequeno" style="margin-bottom:0">Tamanho</p>
       <input id="escala" type="range" min="0.5" max="3" step="0.05" value="1">
       <button class="bt visao" id="ver-visao" style="margin-top:8px" title="Entrar na visão deste monstro (atalho: V)">👁 Ver visão do token</button>
+      <button class="bt" id="luz-acesa" style="margin-top:8px" hidden>Apagar a luz</button>
       <button class="bt" id="apagar" style="margin-top:8px">Remover</button>
     </div>
   </div>
 
+  <h2>Luz e horário</h2>
+  <div class="horas" id="horas"></div>
+  <p class="pequeno" id="hora-dica"></p>
+  <button class="bt" id="previa-noite">Ver como os jogadores veem a noite</button>
+  <h2>Fontes de luz</h2>
+  <p class="pequeno">Clique numa fonte e depois no mapa. Os anéis mostram a luz plena (amarelo) e a penumbra (laranja). Paredes e portas fechadas cortam a luz.</p>
+  <div id="luzes" class="lista"></div>
   <h2>Monstros</h2>
   <div id="monstros" class="lista"></div>
   <h2>Objetos</h2>

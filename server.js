@@ -212,11 +212,12 @@ const playerUrl = (ip) => `http://${ip}:${PORT}/`;
 const IMG_DIR = path.join(DATA, 'imagens');
 fs.mkdirSync(IMG_DIR, { recursive: true });
 const MESA_FILE = path.join(DATA, 'mesa.json');
-let mesa = { modo: 'mundo', imagem: null, legenda: '' };
+let mesa = { modo: 'mundo', imagem: null, legenda: '', hora: 'manha' };
 let rotas = [], nextRota = 1;
 try {
   const j = JSON.parse(fs.readFileSync(MESA_FILE, 'utf8'));
   if (['mundo', 'cena', 'imagem'].includes(j.modo)) mesa.modo = j.modo;
+  if (['manha', 'tarde', 'noite'].includes(j.hora)) mesa.hora = j.hora;
   if (j.imagem && fs.existsSync(path.join(IMG_DIR, path.basename(j.imagem)))) { mesa.imagem = j.imagem; mesa.legenda = String(j.legenda || ''); }
   else if (mesa.modo === 'imagem') mesa.modo = 'mundo';
   rotas = Array.isArray(j.rotas) ? j.rotas : [];
@@ -363,7 +364,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/imagens' && req.method === 'DELETE') {
       const f = path.basename(String(url.searchParams.get('f') || ''));
       if (f) fs.rmSync(path.join(IMG_DIR, f), { force: true });
-      if (mesa.imagem === '/imagens/' + f) { mesa = { modo: 'mundo', imagem: null, legenda: '' }; saveMesa(); broadcast({ t: 'mesa', ...mesa }); }
+      if (mesa.imagem === '/imagens/' + f) { mesa = { modo: 'mundo', imagem: null, legenda: '', hora: mesa.hora }; saveMesa(); broadcast({ t: 'mesa', ...mesa }); }
       broadcastGM({ t: 'imagens', list: listImagens() });
       return sendJSON(res, { ok: true });
     }
@@ -427,6 +428,9 @@ function normFicha(hero, f) {
     truques: strList(f.truques, 12), preparadas: strList(f.preparadas, 40),
     slotsUsados: Array.from({ length: 9 }, (_, i) => Math.round(num(f.slotsUsados && f.slotsUsados[i], 0, 9, 0))),
     usos, notas: String(f.notas || '').slice(0, 4000), salvoEm: Date.now(),
+    visaoEscuro: num(f.visaoEscuro, 0, 60, hero === 'Kaira' ? 18 : hero === 'Ghultok' ? 36 : 0),
+    itens: { tochas: Math.round(num(f.itens && f.itens.tochas, 0, 99, 5)), velas: Math.round(num(f.itens && f.itens.velas, 0, 99, 2)),
+      oleo: Math.round(num(f.itens && f.itens.oleo, 0, 99, 2)), lanterna: !!(f.itens && f.itens.lanterna) },
   };
 }
 let fichaTimer = {};
@@ -851,8 +855,20 @@ wss.on('connection', (ws) => {
         const modo = ['mundo', 'cena', 'imagem'].includes(m.modo) ? m.modo : mesa.modo;
         const img = typeof m.imagem === 'string' && m.imagem.startsWith('/imagens/') && fs.existsSync(path.join(IMG_DIR, path.basename(m.imagem))) ? m.imagem : mesa.imagem;
         if (modo === 'imagem' && !img) break;
-        mesa = { modo, imagem: img, legenda: m.legenda !== undefined ? String(m.legenda).slice(0, 120) : mesa.legenda };
+        mesa = { modo, imagem: img, legenda: m.legenda !== undefined ? String(m.legenda).slice(0, 120) : mesa.legenda, hora: mesa.hora };
         saveMesa(); broadcast({ t: 'mesa', ...mesa });
+        break;
+      }
+      case 'hora': {   // manhã, tarde ou noite: só o mestre muda
+        if (ws.role !== 'gm' || !['manha', 'tarde', 'noite'].includes(m.hora)) break;
+        mesa.hora = m.hora; saveMesa(); broadcast({ t: 'mesa', ...mesa });
+        break;
+      }
+      case 'luz_pessoal': {   // tocha, lanterna, vela ou magia de luz que o personagem carrega
+        if (!me) break;
+        const ok = ['tocha', 'lanterna', 'lanterna_baixa', 'vela', 'luz', 'dia'];
+        me.luz = ok.includes(m.luz) ? m.luz : '';
+        broadcast({ t: 'players', list: playerList(), tu: combat.cur ? combat.cur.used : 0 });
         break;
       }
       case 'ping': {   // marca um ponto no mapa do mundo; o do mestre leva a tela dos jogadores até lá
@@ -910,7 +926,7 @@ wss.on('connection', (ws) => {
       case 'aoe_fixar': { const a = aoes.find((x) => x.id === m.id); if (a) { a.fixa = !!m.on; if (!a.fixa) a.at = Date.now(); sendAoes(); } break; }
       case 'ent_add': {
         const e = {
-          id: nextId++, kind: m.kind === 'prop' ? 'prop' : 'monster', model: String(m.model || '').replace(/[^\w]/g, ''),
+          id: nextId++, kind: m.kind === 'prop' || m.kind === 'luz' ? m.kind : 'monster', model: String(m.model || '').replace(/[^\w]/g, ''),
           x: Number(m.x) || 0, z: Number(m.z) || 0, ry: Number(m.ry) || 0, scale: clamp(m.scale || 1, 0.3, 4),
         };
         ents.push(e); broadcast({ t: 'ent', ent: e }); saveSoon();
@@ -936,6 +952,7 @@ wss.on('connection', (ws) => {
         if (m.z !== undefined) e.z = Number(m.z) || 0;
         if (m.ry !== undefined) e.ry = Number(m.ry) || 0;
         if (m.scale !== undefined) e.scale = clamp(m.scale, 0.3, 4);
+        if (m.aceso !== undefined && e.kind === 'luz') e.aceso = !!m.aceso;
         e.mv = 0;
         broadcast({ t: 'ent', ent: e }, ws); saveSoon();
         // arrastar o monstro da vez no mapa também conta como ele se mexendo (pode provocar oportunidade)

@@ -5,6 +5,7 @@ import { areaCreatures, HEROES, MONSTERS, Session, makeRenderer, makeCharacter, 
 import { glowTexture } from './gfx.js';
 import { CelestialForm, hasRevelation } from './revelacao.js';
 import { ReguaTool, RulerDraw, makeLabel, medir, toScreen } from './regua.js';
+import { LightMap, NightPass, tickLuzes, LUZ_PESSOAL, VISAO_ESCURO, M2U as LM2U } from './luzes.js';
 import { MundoView, ImagemView, corDe } from './mundo.js';
 import { FichaUI } from './ficha-ui.js';
 import { temFicha, grimorio, slotsLivres, efeitoEm, CIRC_NOME } from './regras.js';
@@ -89,11 +90,21 @@ function updateMotes(dt, t) {
   }
   out.needsUpdate = true;
 }
-// clima do bioma escolhido pelo mestre
+// clima do bioma escolhido pelo mestre, ajustado pelo horário (manhã, tarde, noite) que o mestre escolhe
 let lastBiome = null;
-function atmosfera(b) {
+const mixHex = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t).getHex();
+const horaAtual = () => (session && session.mesa && session.mesa.hora) || 'manha';
+function comHora(b, hora) {
+  if (hora === 'tarde') return { ...b, fog: mixHex(b.fog, 0xf0a060, 0.55), zenith: mixHex(b.zenith, 0x5a4f9e, 0.55), sky: mixHex(b.sky, 0xffc08a, 0.55),
+    ground: mixHex(b.ground, 0x5a3a40, 0.3), sunColor: 0xffa055, sun: b.sun * 0.95, hemi: b.hemi * 0.85, far: mixHex(b.far, 0xc0703a, 0.35) };
+  if (hora === 'noite') return { ...b, fog: 0x03050a, zenith: 0x010207, sky: 0xaab4d4, ground: 0x34343e, hemi: 1.05, sun: 0.35, sunColor: 0x9fb0ff, torch: 0,
+    density: Math.max(b.density, 0.02), part: { ...b.part, n: Math.min(b.part.n, 60) } };
+  return b;
+}
+function atmosfera(b0) {
+  const b = comHora(b0, horaAtual());
   camera.far = 700; camera.updateProjectionMatrix();   // o fundo panorâmico de cada bioma fica a 300 unidades
-  lastBiome = b;
+  lastBiome = b0;
   paintSky(b.fog, b.zenith);
   pCfg = b.part; pGeo.setDrawRange(0, b.part.n);
   pMat.color.setHex(b.part.color); pMat.size = b.part.size * 2.2; pMat.blending = b.part.glow ? THREE.AdditiveBlending : THREE.NormalBlending; pMat.needsUpdate = true;
@@ -106,6 +117,38 @@ function atmosfera(b) {
 }
 const torch = new THREE.PointLight(0xffc48a, 9, 15, 1.5); // a tocha do próprio jogador
 scene.add(torch);
+
+// ---- iluminação dinâmica: mapa de luz (paredes cortam a luz) e passada final do horário
+const lightmap = new LightMap();
+const night = new NightPass(renderer, { mobile });
+let luzTimer = 0, segTimer = 0, ultimaHora = '';
+const minhaLuz = () => (POSSESS ? '' : (myData() || {}).luz || '');
+function visaoNoEscuro() {   // metros
+  if (POSSESS) return SIZE > 1 ? 36 : 18;   // monstros costumam ter visão no escuro
+  const d = myData(); if (!d) return 0;
+  if (temFicha(d.hero)) { const f = ficha.f; return f.visaoEscuro ?? VISAO_ESCURO[d.hero] ?? 0; }
+  return VISAO_ESCURO[d.hero] || 0;
+}
+function atualizaLuz(dt) {
+  const w = session && session.world; if (!w) return;
+  const hora = horaAtual();
+  if (hora !== ultimaHora) { ultimaHora = hora; if (lastBiome) atmosfera(lastBiome); }
+  lightmap.setBounds(0, 0, w.bounds.w, w.bounds.h);
+  if ((segTimer -= dt) <= 0) { segTimer = 0.3; lightmap.setSegments(session.lightBlockers()); }
+  if ((luzTimer -= dt) > 0) return;
+  luzTimer = 0.1;
+  const q = (v) => Math.round(v * 4) / 4;
+  const self = { id: session.myId, x: q(pos.x), z: q(pos.z), y: posY, luz: minhaLuz() };
+  const all = session.allLights(self).map((l) => ({ ...l, x: q(l.x), z: q(l.z) }));
+  if (hora === 'noite') lightmap.setLights(all);
+  // as fontes do mestre e as dos personagens também acendem luzes de verdade perto de quem olha (brilho nos modelos)
+  session.dynPool = all.filter((l) => l.key[0] !== 'm').map((l) => ({ x: l.x, z: l.z, y: l.y, color: l.cor, range: (l.plena + l.penumbra) * 0.75, intensity: l.fogo ? 0.9 : 0.7 }));
+  // a minha luz: a luz de verdade que vai junto com a câmera
+  const L = LUZ_PESSOAL[minhaLuz()];
+  if (hora === 'noite') { torch.intensity = L ? (L.plena ? 10 : 3) : 0; if (L) { torch.color.setHex(L.cor); torch.distance = (L.plena + L.penumbra) * LM2U * 1.2; } }
+  const dv = visaoNoEscuro();
+  lightmap.setViewer(q(pos.x), q(pos.z), hora === 'noite' && dv > 0 ? dv * LM2U : 0);
+}
 
 const pos = new THREE.Vector3(0, 0, 0);
 let yaw = 0, pitch = 0, joined = false, moving = false;
@@ -292,8 +335,8 @@ function entrar() {
       atmos: atmosfera,
       players: () => updateRevBtn(),
       combat: onCombat,
-      fichas() { ficha.onServer(); updateFichaBtn(); },
-      mesa: () => aplicaMesa(),
+      fichas() { ficha.onServer(); updateFichaBtn(); luzTimer = 0; },
+      mesa: () => { aplicaMesa(); luzTimer = 0; },
       rotas: () => mundo.onRotas(),
       ping(m) {
         mundo.onPing(m);
@@ -488,6 +531,8 @@ function declare(slot, a, target) {
   pending[slot] = true;
   session.send({ t: 'act', slot, id: a.id, target, as: myCid(), spell: castSpell || undefined });
   if (castSlot) ficha.gastar(castSlot);
+  if (castSpell === 'Luz') session.send({ t: 'luz_pessoal', luz: 'luz' });
+  if (castSpell === 'Luz do Dia') session.send({ t: 'luz_pessoal', luz: 'dia' });
   castSpell = ''; castSlot = 0;
   setTimeout(() => { if (pending[slot]) { pending[slot] = false; buildMenu(); } }, 1500); // se o servidor recusar, o botão volta
   closeSub(); buildMenu();
@@ -595,6 +640,8 @@ $('rg-menos').onclick = () => regua.zoomBy(1.25);
 // ---- ficha do personagem (Guy, Kaira, Ghult'ok)
 const ficha = new FichaUI({
   session: () => session, hero: () => (myData() || {}).hero || hero, inFight: () => inFight(), toast,
+  luzAtual: () => minhaLuz(),
+  setLuz: (tipo) => { session.send({ t: 'luz_pessoal', luz: tipo }); setTimeout(() => ficha.isOpen && ficha.render(), 250); },
   nome: () => (myData() || {}).name || hero,
 });
 function updateFichaBtn() {
@@ -956,13 +1003,19 @@ function frame() {
     }
     if (POSSESS) { const e = session.ents.get(POSSESS); if (e) { e.hidden = true; e.holder.position.set(pos.x, posY, pos.z); } }
     session.update(dt, pos);
+    tickLuzes(performance.now() / 1000);
+    atualizaLuz(dt);
     updateCombatHUD(dt, performance.now() / 1000);
     updateTracosCena();
     sky.position.copy(camera.position);
     updateMotes(dt, performance.now() / 1000);
   }
   // com o mapa do mundo ou uma imagem cobrindo a tela, a cena 3D não precisa ser desenhada (poupa a bateria)
-  if (!document.body.classList.contains('mesa-cobre')) renderer.render(scene, camera);
+  if (!document.body.classList.contains('mesa-cobre')) {
+    const hora = horaAtual();
+    if (session && session.world) night.render(scene, camera, hora, lightmap, { amb: 0.022, dv: hora === 'noite' && visaoNoEscuro() > 0 });
+    else renderer.render(scene, camera);
+  }
 }
 frame();
-window.__dbg = { gl: renderer, area: areaTool, regua, ficha, mundo, imagem, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };
+window.__dbg = { gl: renderer, area: areaTool, regua, ficha, mundo, imagem, lightmap, night, openArea, form: () => selfForm, posY: () => posY, flySpeed: () => flySpeed(), pos, setYaw: (v) => { yaw = v; }, setPitch: (v) => { pitch = v; }, turnUsed: () => turnUsed, view, cam: camera, self: selfHolder, torch, scene, hemi, size: () => SIZE, biome: () => lastBiome };

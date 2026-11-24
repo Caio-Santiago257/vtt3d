@@ -5,6 +5,7 @@ import { TERRAINS, BIOMES, generateBiome } from './terreno.js';
 import { fmtArea, SHAPES } from './area.js';
 import { RulerDraw, makeLabel, medir, toScreen } from './regua.js';
 import { MundoView, ImagemView, corDe } from './mundo.js';
+import { LightMap, NightPass, tickLuzes, LUZES, HORAS } from './luzes.js';
 import { CLASSES, HEROI_CLASSE } from './dnd-dados.js';
 import { slotsMax, usosMax, USO_NOME, mod, fmtMod, cdMagia, circMax, magiaClerigo, magiasDominio } from './regras.js';
 import { M2U, fmtM, logText, TurnOrder, banner, toast, chime, makeRangeRing, setPortrait, warmPortraits } from './combate-ui.js';
@@ -108,7 +109,7 @@ const session = new Session({
     },
     combat: () => renderCombat(),
     fichas: () => renderFichas(),
-    mesa: () => aplicaMesa(),
+    mesa: () => { aplicaMesa(); aplicaHora(); },
     rotas: () => mundo.onRotas(),
     imagens: () => renderImagens(),
     ping: (m) => mundo.onPing(m),
@@ -138,16 +139,18 @@ function paleta(el, itens, kind) {
       setBrush(null); setWallTool(null);
       armed = same ? null : { kind, model: it.id, btn: b };
       settingSpawn = false; $('entrada-bt').classList.remove('sel');
-      document.querySelectorAll('#monstros .bt, #objetos .bt').forEach((x) => x.classList.toggle('sel', !same && x === b));
+      document.querySelectorAll('#monstros .bt, #objetos .bt, #luzes .bt').forEach((x) => x.classList.toggle('sel', !same && x === b));
     };
     el.appendChild(b);
   }
 }
 paleta($('monstros'), MONSTERS, 'monster');
 paleta($('objetos'), PROPS, 'prop');
-function disarm() { setBrush(null); setWallTool(null); armed = null; document.querySelectorAll('#monstros .bt, #objetos .bt').forEach((x) => x.classList.remove('sel')); }
+paleta($('luzes'), Object.entries(LUZES).map(([id, L]) => ({ id, nome: `${L.icone} ${L.nome}` })), 'luz');
+function disarm() { setBrush(null); setWallTool(null); armed = null; document.querySelectorAll('#monstros .bt, #objetos .bt, #luzes .bt').forEach((x) => x.classList.remove('sel')); }
 
 function nomeDe(d) {
+  if (d.kind === 'luz') return (LUZES[d.model] || { nome: d.model }).nome + (d.aceso === false ? ' (apagada)' : '');
   const it = (d.kind === 'monster' ? MONSTERS : PROPS).find((x) => x.id === d.model);
   return it ? it.nome : d.model;
 }
@@ -158,6 +161,8 @@ function select(id) {
   $('sel-ctl').hidden = !e; $('sel-nada').hidden = !!e;
   if (e) { $('sel-nome').textContent = nomeDe(e.data); $('escala').value = e.data.scale; }
   $('ver-visao').hidden = !(e && e.data.kind === 'monster');
+  $('luz-acesa').hidden = !(e && e.data.kind === 'luz');
+  if (e && e.data.kind === 'luz') $('luz-acesa').textContent = e.data.aceso === false ? 'Acender a luz' : 'Apagar a luz';
 }
 function changeSel(patch) {
   const e = selected && session.ents.get(selected);
@@ -168,6 +173,7 @@ function changeSel(patch) {
 $('girar-e').onclick = () => changeSel({ ry: session.ents.get(selected).data.ry + Math.PI / 8 });
 $('girar-d').onclick = () => changeSel({ ry: session.ents.get(selected).data.ry - Math.PI / 8 });
 $('escala').oninput = (e) => changeSel({ scale: Number(e.target.value) });
+$('luz-acesa').onclick = () => { const e = selected && session.ents.get(selected); if (!e) return; changeSel({ aceso: e.data.aceso === false }); select(selected); };
 $('apagar').onclick = () => { if (selected) { session.send({ t: 'ent_del', id: selected }); select(null); } };
 $('congelar').onclick = () => session.send({ t: 'freeze', on: !session.frozen });
 $('piso').onclick = () => session.send({ t: 'floor', mode: session.map.floorMode === 'image' ? 'tiles' : 'image' });
@@ -179,7 +185,7 @@ let brush = null, brushSize = 1, rectMode = false, sendTimer = null, dirty = fal
 function setBrush(id) {
   brush = id; cursor.visible = false;
   document.querySelectorAll('#pinceis .bt').forEach((b) => b.classList.toggle('sel', b.dataset.id === id));
-  if (id) { setWallTool(null); armed = null; document.querySelectorAll('#monstros .bt, #objetos .bt').forEach((x) => x.classList.remove('sel')); settingSpawn = false; $('entrada-bt').classList.remove('sel'); }
+  if (id) { setWallTool(null); armed = null; document.querySelectorAll('#monstros .bt, #objetos .bt, #luzes .bt').forEach((x) => x.classList.remove('sel')); settingSpawn = false; $('entrada-bt').classList.remove('sel'); }
 }
 for (const t of TERRAINS) {
   const b = document.createElement('button'); b.className = 'bt'; b.dataset.id = t.id;
@@ -750,6 +756,8 @@ function frame() {
   requestAnimationFrame(frame);
   clock.update(); const dt = Math.min(clock.getDelta(), 0.25);
   session.update(dt, null);
+  tickLuzes(performance.now() / 1000);
+  atualizaLuzGM(dt);
   if (areaPan) {
     const k = Math.min(1, dt * 4); view.cx += (areaPan.x - view.cx) * k; view.cz += (areaPan.z - view.cz) * k; applyCamera();
     if (Math.hypot(areaPan.x - view.cx, areaPan.z - view.cz) < 0.2) areaPan = null;
@@ -764,7 +772,9 @@ function frame() {
   // com a visão do monstro aberta por cima, esta tela não precisa desenhar (sobra placa de vídeo para a visão)
   if (visao && visao.frame && visao.frame.classList.contains('on')) return;
   if (document.body.classList.contains('mesa-cobre')) return;   // mapa do mundo ou imagem por cima
-  renderer.render(scene, camera);
+  // o mestre vê o horário escolhido; à noite, o que está no escuro fica só meio apagado (ele precisa enxergar o mapa)
+  if (session.world) nightGM.render(scene, camera, horaGM(), lightmapGM, { amb: previaNoite ? 0.03 : 0.33 });
+  else renderer.render(scene, camera);
 }
 frame();
 window.__cam = camera; window.__THREE = THREE;
@@ -992,4 +1002,32 @@ function updateTracosCena() {
     const med = medir(t.a.x, t.a.z, t.b.x, t.b.z);
     t.label.show({ ...med, txt: `${t.por}: ${med.txt}` }, toScreen(t.draw.b, camera, canvas));
   }
+}
+
+// ---------------------------------------------------------------- horário e luz
+var lightmapGM = new LightMap(), nightGM = new NightPass(renderer, {}), luzT = 0, segT = 0, previaNoite = false;
+function horaGM() { return (session.mesa && session.mesa.hora) || 'manha'; }
+function aplicaHora() {
+  const h = horaGM();
+  document.querySelectorAll('#horas button').forEach((b) => b.classList.toggle('sel', b.dataset.hora === h));
+  $('hora-dica').textContent = { manha: 'Manhã: cores vivas, tudo iluminado.', tarde: 'Tarde: luz dourada de fim de dia.', noite: 'Noite: só se vê o que tem luz. Quem tem visão no escuro enxerga em cinza até o alcance dela.' }[h];
+  $('previa-noite').hidden = h !== 'noite';
+  luzT = 0;
+}
+for (const [id, nome] of HORAS) {
+  const b = document.createElement('button'); b.className = 'bt'; b.dataset.hora = id; b.textContent = nome;
+  b.onclick = () => session.send({ t: 'hora', hora: id });
+  $('horas').appendChild(b);
+}
+$('previa-noite').onclick = () => { previaNoite = !previaNoite; $('previa-noite').classList.toggle('sel', previaNoite); $('previa-noite').textContent = previaNoite ? 'Voltar a ver o mapa todo' : 'Ver como os jogadores veem a noite'; };
+aplicaHora();
+function atualizaLuzGM(dt) {
+  const w = session.world; if (!w) return;
+  lightmapGM.setBounds(0, 0, w.bounds.w, w.bounds.h);
+  if ((segT -= dt) <= 0) { segT = 0.4; lightmapGM.setSegments(session.lightBlockers()); }
+  if ((luzT -= dt) > 0) return;
+  luzT = 0.15;
+  if (horaGM() !== 'noite') return;
+  const q = (v) => Math.round(v * 4) / 4;
+  lightmapGM.setLights(session.allLights(null).map((l) => ({ ...l, x: q(l.x), z: q(l.z) })));
 }
